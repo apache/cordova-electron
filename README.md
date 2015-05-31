@@ -8,6 +8,7 @@ Build apps for Mac OSX, Windows and Linux using [Electron](http://electron.atom.
 
 # Usage
 
+npm install
 ./bin/create helloworld
 cd helloworld
 ./cordova/run
