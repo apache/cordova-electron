@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -17,10 +19,7 @@
        under the License.
 */
 
-module.exports.help = function () {
-    console.log('WARNING : Electron does not support updating. Remove and then re-Add the platform to get the latest.');
-};
+// Coho updates this line:
+var VERSION = "5.1.0-dev";
 
-module.exports.run = function () {
-    return Promise.reject(new Error('Update not supported'));
-};
+console.log(VERSION);

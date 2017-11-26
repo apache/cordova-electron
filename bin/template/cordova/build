@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -17,10 +19,16 @@
        under the License.
 */
 
-module.exports.help = function () {
-    console.log('WARNING : Electron does not support updating. Remove and then re-Add the platform to get the latest.');
-};
 
-module.exports.run = function () {
-    return Promise.reject(new Error('Update not supported'));
-};
+var build = require('./lib/build'),
+    args  = process.argv;
+
+// provide help
+if ( args[2] == '--help' || args[2] == '/?' || args[2] == '-h' || args[2] == '/h' ||
+                    args[2] == 'help' || args[2] == '-help' || args[2] == '/help') {
+    build.help();
+    process.exit(0);
+} else {
+
+    build.run();
+}

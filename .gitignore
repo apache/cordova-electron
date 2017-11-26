@@ -1,0 +1,8 @@
+
+npm-debug.log
+temp
+.DS_Store
+.gitcore
+*.jar
+.vscode
+node_modules/

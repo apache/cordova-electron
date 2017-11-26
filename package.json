@@ -1,27 +1,62 @@
 {
   "name": "cordova-electron",
-  "version": "0.0.1",
-  "description": "Adding electron as a platform for cordova",
-  "main": "main.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/electron-prebuilt/dist/Electron.app/Contents/MacOS/Electron ."
+  "version": "1.0.0",
+  "description": "electron apps as a target for cordova developers",
+  "main": "bin/template/cordova/Api.js",
+  "bin": "bin/create",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/cordova-electron"
+  },
+  "bugs": {
+    "url": "https://issues.apache.org/jira/browse/CB"
   },
   "kewords": [
     "cordova",
     "electron",
     "apache"
   ],
-  "author": "Steve Gill",
-  "license": "Apache Version 2.0",
+  "scripts": {
+    "eslint": "eslint bin && eslint spec",
+    "jasmine": "jasmine",
+    "test": "npm run eslint && npm run jasmine"
+  },
   "dependencies": {
-    "q": "^1.4.0",
-    "shelljs": "^0.4.0",
-    "electron-prebuilt": "^0.27.1"
+    "cordova-common": "^2.1.1",
+    "electron": "^1.7.9",
+    "nopt": "^3.0.6",
+    "shelljs": "^0.5.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.0.0",
+    "eslint-config-semistandard": "^11.0.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.3.0",
+    "eslint-plugin-node": "^5.0.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "jasmine": "^2.5.3",
+    "tmp": "^0.0.26"
   },
   "bundleDependencies": [
-    "q",
+    "nopt",
     "shelljs",
-    "electron-prebuilt"
-  ]
+    "cordova-common"
+  ],
+  "author": "Apache Software Foundation",
+  "contributors": [
+    {
+      "name": "Steve Gill",
+      "email": "steveng@adobe.com"
+    },
+    {
+      "name": "Jesse MacFadyen",
+      "email": "purplecabbage@apache.org"
+    }
+  ],
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "engineStrict": true
 }

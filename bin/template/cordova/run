@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
        Licensed to the Apache Software Foundation (ASF) under one
        or more contributor license agreements.  See the NOTICE file
@@ -17,10 +19,29 @@
        under the License.
 */
 
-module.exports.help = function () {
-    console.log('WARNING : Electron does not support updating. Remove and then re-Add the platform to get the latest.');
-};
+var fs = require('fs'),
+    path = require('path'),
+    nopt  = require('nopt'),
+    url = require('url'),
+    runForrest = require('./lib/run'),
+    cordovaServe = require('cordova-serve');
 
-module.exports.run = function () {
-    return Promise.reject(new Error('Update not supported'));
-};
+var args = process.argv;
+
+start(args);
+
+function start(argv) {
+    var args  = nopt({'help': Boolean, 'target': String, 'port': Number}, {'help': ['/?', '-h', 'help', '-help', '/help']}, argv);
+    if(args.help) {
+        help();
+    }
+    else {
+        return runForrest.run(args);
+    }
+}
+
+function help() {
+    console.log("\nUsage: run");
+    console.log(""); // TODO ?
+    process.exit(0);
+}
