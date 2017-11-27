@@ -74,15 +74,7 @@ module.exports.createProject = function (project_path, package_name, project_nam
     shell.cp(path.join(ROOT, 'cordova-lib', 'cordova.js'), platform_www);
 
     // copy favicon file to platform_www
-    shell.cp(path.join(ROOT, 'bin/template/www/favicon.ico'), platform_www);
-
-    // load manifest to write name/shortname
-    var manifest = require(path.join(ROOT, 'bin/template/www', 'manifest.json'));
-    manifest.name = project_name;
-    manifest.short_name = project_name;
-    // copy manifest file to platform_www
-    fs.writeFileSync(path.join(platform_www, 'manifest.json'),
-        JSON.stringify(manifest, null, 2), 'utf-8');
+    shell.cp(path.join(ROOT, 'bin/template/main.js'), project_path);
 
     return Promise.resolve();
 };

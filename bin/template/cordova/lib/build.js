@@ -32,6 +32,5 @@ module.exports.run = function () {
 
 module.exports.help = function () {
     console.log('Usage: cordova build electron');
-    var wwwPath = path.resolve(path.join(__dirname, '../../www'));
-    console.log("Build will create the packaged app in '" + wwwPath + "'.");
+    console.log('Packages your app for distribution, or running locally.');
 };

@@ -19,11 +19,14 @@
  * under the License.
  */
 
-// var fs = require('fs');
-// var path = require('path');
-// var url = require('url');
-// var cordovaServe = require('cordova-serve');
+var electron = require('electron');
+var proc = require('child_process');
 
 module.exports.run = function (args) {
-    // TODO:
+
+    //console.log("runOptions : ", args);
+    var child = proc.spawn(electron,['./platforms/cordova-electron/main.js']);
+    child.on('close', function (code) {
+      process.exit(code)
+    })
 };
