@@ -24,8 +24,8 @@ var update = require('./lib/update');
 if (['--help', '/?', '-h', 'help', '-help', '/help'].indexOf(process.argv[2]) > -1) {
     update.help();
 } else {
-    update.run(process.argv).done(function () {
-        console.log('Successfully updated browser project.');
+    update.run(process.argv).then(function () {
+        console.log('Successfully updated electron project.'); // won't happen .. it's not supported
     }, function (err) {
         console.error('Update failed due to', err);
         process.exit(2);

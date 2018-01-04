@@ -18,59 +18,63 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- 
-var fs = require('fs'),
-    shjs = require('shelljs'),
-    args = process.argv,
-    path = require('path'),
-    ROOT    = path.join(__dirname, '..', '..'),
-    check_reqs = require('./check_reqs');
 
-exports.createProject = function(project_path,package_name,project_name){
-    
+var fs = require('fs');
+var shell = require('shelljs');
+var path = require('path');
+var ROOT = path.join(__dirname, '..', '..');
+var events = require('cordova-common').events;
+var check_reqs = require('./check_reqs');
+
+// exported method to create a project, returns a promise that resolves with null
+module.exports.createProject = function (project_path, package_name, project_name) {
+/*
+    // create the dest and the standard place for our api to live
+    // platforms/platformName/cordova/Api.js
+*/
+
+    events.emit('log', 'Creating Cordova project for cordova-electron:');
+    events.emit('log', '\tPath: ' + project_path);
+    events.emit('log', '\tName: ' + project_name);
+
     // Set default values for path, package and name
-    project_path = typeof project_path !== 'undefined' ? project_path : "CordovaExample";    package_name = typeof package_name !== 'undefined' ? package_name : 'org.apache.cordova.example';
-    project_name = typeof project_name !== 'undefined' ? project_name : 'CordovaExample';
+    project_path = project_path || 'CordovaExample';
 
     // Check if project already exists
     if (fs.existsSync(project_path)) {
-        console.error('Project already exists! Delete and recreate');
-        process.exit(2);
+        events.emit('error', 'Oops, destination already exists! Delete it and try again');
     }
-    
+
     // Check that requirements are met and proper targets are installed
     if (!check_reqs.run()) {
-        console.error('Please make sure you meet the software requirements in order to build a browser cordova project');
-        process.exit(2);
+        // TODO: use events.emit
+        events.emit('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
     }
 
-    console.log('Creating Electron project. Path: ' + path.relative(process.cwd(),project_path));
+    // copy template/cordova directory ( recursive )
+    shell.cp('-r', path.join(ROOT, 'bin/template/cordova'), project_path);
 
-    //copy template directory
-    shjs.cp('-r', path.join(ROOT, 'bin', 'templates', 'project', 'www'), project_path);
+    // copy template/www directory ( recursive )
+    shell.cp('-r', path.join(ROOT, 'bin/template/www'), project_path);
 
-    //create cordova/lib if it does not exist yet
-    if (!fs.existsSync(path.join(project_path,'cordova', 'lib'))) {
-        shjs.mkdir('-p', path.join(project_path,'cordova', 'lib'));
-    }
+    // recreate our node_modules structure in the new project
+    shell.cp('-r', path.join(ROOT, 'node_modules'),
+        path.join(project_path, 'cordova'));
 
-    //copy required node_modules
-    shjs.cp('-r', path.join(ROOT, 'node_modules'), path.join(project_path,'cordova'));
+    // copy check_reqs file
+    shell.cp(path.join(ROOT, 'bin/lib/check_reqs.js'),
+        path.join(project_path, 'cordova/lib'));
 
-    //copy check_reqs file
-    shjs.cp( path.join(ROOT, 'bin', 'lib', 'check_reqs.js'), path.join(project_path,'cordova', 'lib'));
-    
-    //copy cordova js file
-    shjs.cp('-r', path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(project_path,'www'));
+    var platform_www = path.join(project_path, 'platform_www');
 
-    //copy cordova directory
-    shjs.cp('-r', path.join(ROOT, 'bin', 'templates', 'project', 'cordova'), project_path); 
-    [
-        'run',
-        'build',
-        'clean',
-        'version',
-    ].forEach(function(f) { 
-         shjs.chmod(755, path.join(project_path, 'cordova', f));
-    });
-}
+    // copy cordova-js-src directory
+    shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), platform_www);
+
+    // copy cordova js file to platform_www
+    shell.cp(path.join(ROOT, 'cordova-lib', 'cordova.js'), platform_www);
+
+    // copy favicon file to platform_www
+    shell.cp(path.join(ROOT, 'bin/template/main.js'), project_path);
+
+    return Promise.resolve();
+};
