@@ -9,7 +9,7 @@
     "url": "https://github.com/apache/cordova-electron"
   },
   "bugs": {
-    "url": "https://issues.apache.org/jira/browse/CB"
+    "url": "https://github.com/apache/cordova-electron/issues"
   },
   "kewords": [
     "cordova",
