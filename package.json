@@ -18,8 +18,8 @@
   ],
   "scripts": {
     "eslint": "eslint bin spec",
-    "jasmine": "jasmine",
-    "test": "npm run eslint && npm run jasmine"
+    "test:unit": "jasmine",
+    "test": "npm run eslint && npm run test:unit"
   },
   "dependencies": {
     "cordova-common": "^2.2.5",
