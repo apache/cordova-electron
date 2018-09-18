@@ -18,7 +18,7 @@
  */
 
 var shell = require('shelljs');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var util = require('util');
 
@@ -32,12 +32,12 @@ function createAndBuild (projectname, projectid) {
     var command;
 
     // remove existing folder
-    shell.rm('-rf', tmpDir);
-    shell.mkdir(tmpDir);
+    fs.removeSync(tmpDir);
+    fs.ensureDirSync(tmpDir);
 
     // create the project
     command = util.format('"%s" "%s/%s" "%s" "%s"', createScriptPath, tmpDir, projectname, projectid, projectname);
-    // shell.echo(command);
+
     return_code = shell.exec(command).code;
     expect(return_code).toBe(0);
 
@@ -55,12 +55,12 @@ function createAndBuild (projectname, projectid) {
 
     // // build the project
     command = util.format('"%s/cordova/build"', path.join(tmpDir, projectname));
-    // shell.echo(command);
+
     return_code = shell.exec(command, { silent: true }).code;
     expect(return_code).toBe(0);
 
     // clean-up
-    shell.rm('-rf', tmpDir);
+    fs.removeSync(tmpDir);
 }
 
 describe('create', function () {

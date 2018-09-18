@@ -18,8 +18,7 @@
 */
 
 var handler = require('../bin/template/cordova/handler');
-var shell = require('shelljs');
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 
 describe('Asset install tests', function () {
@@ -30,7 +29,7 @@ describe('Asset install tests', function () {
     var cpPath = path.join(plugin_dir, asset.src);
 
     it('if src is a directory, should be called with cp, -Rf', function () {
-        var cp = spyOn(shell, 'cp').and.returnValue('-Rf');
+        var copySync = spyOn(fs, 'copySync').and.returnValue('-Rf');
         fsstatMock = {
             isDirectory: function () {
                 return true;
@@ -38,10 +37,10 @@ describe('Asset install tests', function () {
         };
         spyOn(fs, 'statSync').and.returnValue(fsstatMock);
         handler.asset.install(asset, plugin_dir, wwwDest);
-        expect(cp).toHaveBeenCalledWith('-Rf', jasmine.any(String), path.join('dest', asset.target));
+        expect(copySync).toHaveBeenCalledWith(jasmine.any(String), path.join('dest', asset.target));
     });
     it('if src is not a directory, should be called with cp, -f', function () {
-        var cp = spyOn(shell, 'cp').and.returnValue('-f');
+        var copySync = spyOn(fs, 'copySync').and.returnValue('-f');
         fsstatMock = {
             isDirectory: function () {
                 return false;
@@ -49,6 +48,6 @@ describe('Asset install tests', function () {
         };
         spyOn(fs, 'statSync').and.returnValue(fsstatMock);
         handler.asset.install(asset, plugin_dir, wwwDest);
-        expect(cp).toHaveBeenCalledWith('-f', cpPath, path.join('dest', asset.target));
+        expect(copySync).toHaveBeenCalledWith(cpPath, path.join('dest', asset.target));
     });
 });

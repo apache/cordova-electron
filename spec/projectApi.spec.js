@@ -18,7 +18,7 @@
  */
 
 var Api = require('../bin/template/cordova/Api');
-var shell = require('shelljs');
+var fs = require('fs-extra');
 var path = require('path');
 var tmpDir = path.join(__dirname, './temp');
 
@@ -38,12 +38,12 @@ describe('can get the Api', function () {
         expect(promise.then).toBeDefined();
         promise.then(function (res) {
             console.log('result = ' + res);
-            shell.rm('-rf', tmpDir);
+            fs.removeSync(tmpDir);
             done();
         },
         function (err) {
             console.log('spec-error ' + err);
-            shell.rm('-rf', tmpDir);
+            fs.removeSync(tmpDir);
             done();
         });
     });

@@ -19,12 +19,11 @@
  * under the License.
  */
 
-var fs = require('fs');
-var shell = require('shelljs');
+var fs = require('fs-extra');
 var path = require('path');
 var ROOT = path.join(__dirname, '..', '..');
 var events = require('cordova-common').events;
-var check_reqs = require('./check_reqs');
+var check_reqs = require('./../template/cordova/lib/check_reqs.js');
 
 // exported method to create a project, returns a promise that resolves with null
 module.exports.createProject = function (project_path, package_name, project_name) {
@@ -52,29 +51,24 @@ module.exports.createProject = function (project_path, package_name, project_nam
     }
 
     // copy template/cordova directory ( recursive )
-    shell.cp('-r', path.join(ROOT, 'bin/template/cordova'), project_path);
+    fs.copySync(path.join(ROOT, 'bin/template/cordova'), path.join(project_path, 'cordova'), { overwrite: false });
 
     // copy template/www directory ( recursive )
-    shell.cp('-r', path.join(ROOT, 'bin/template/www'), project_path);
+    fs.copySync(path.join(ROOT, 'bin/template/www'), path.join(project_path, 'www'), { overwrite: false });
 
     // recreate our node_modules structure in the new project
-    shell.cp('-r', path.join(ROOT, 'node_modules'),
-        path.join(project_path, 'cordova'));
-
-    // copy check_reqs file
-    shell.cp(path.join(ROOT, 'bin/lib/check_reqs.js'),
-        path.join(project_path, 'cordova/lib'));
+    fs.copySync(path.join(ROOT, 'node_modules'), path.join(project_path, 'cordova', 'node_modules'), { overwrite: false });
 
     var platform_www = path.join(project_path, 'platform_www');
 
     // copy cordova-js-src directory
-    shell.cp('-rf', path.join(ROOT, 'cordova-js-src'), platform_www);
+    fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(platform_www, 'cordova-js-src'), { overwrite: false });
 
     // copy cordova js file to platform_www
-    shell.cp(path.join(ROOT, 'cordova-lib', 'cordova.js'), platform_www);
+    fs.copySync(path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(platform_www, 'cordova.js'), { overwrite: false });
 
     // copy favicon file to platform_www
-    shell.cp(path.join(ROOT, 'bin/template/main.js'), project_path);
+    fs.copySync(path.join(ROOT, 'bin/template/main.js'), path.join(project_path, 'main.js'), { overwrite: false });
 
     return Promise.resolve();
 };
