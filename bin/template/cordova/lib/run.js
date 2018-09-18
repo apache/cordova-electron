@@ -24,9 +24,9 @@ var proc = require('child_process');
 
 module.exports.run = function (args) {
 
-    //console.log("runOptions : ", args);
-    var child = proc.spawn(electron,['./platforms/cordova-electron/main.js']);
+    // console.log("runOptions : ", args);
+    var child = proc.spawn(electron, ['./platforms/cordova-electron/main.js']);
     child.on('close', function (code) {
-      process.exit(code)
-    })
+        process.exit(code);
+    });
 };

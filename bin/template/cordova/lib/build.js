@@ -19,7 +19,6 @@
  * under the License.
  */
 
-var path = require('path');
 var check_reqs = require('./check_reqs');
 
 /**
