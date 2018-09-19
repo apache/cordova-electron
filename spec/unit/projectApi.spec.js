@@ -17,18 +17,17 @@
     under the License.
 */
 
-var Api = require('../../bin/template/cordova/Api');
-var fs = require('fs-extra');
-var path = require('path');
-var tmpDir = path.join(__dirname, '../temp');
+const Api = require('../../bin/template/cordova/Api');
+const fs = require('fs-extra');
+const path = require('path');
+const tmpDir = path.join(__dirname, '../temp');
 
-describe('can get the Api', function () {
-
-    it('should be defined', function () {
+describe('can get the Api', () => {
+    it('should be defined', () => {
         expect(Api).toBeDefined();
     });
 
-    it('should export static createPlatform function', function (done) {
+    it('should export static createPlatform function', (done) => {
         expect(Api.createPlatform).toBeDefined();
         expect(typeof Api.createPlatform).toBe('function');
 
@@ -36,73 +35,71 @@ describe('can get the Api', function () {
         var promise = Api.createPlatform(tmpDir);
         expect(promise).toBeDefined();
         expect(promise.then).toBeDefined();
-        promise.then(function (res) {
+        promise.then((res) => {
             console.log('result = ' + res);
             fs.removeSync(tmpDir);
             done();
         },
-        function (err) {
+        (err) => {
             console.log('spec-error ' + err);
             fs.removeSync(tmpDir);
             done();
         });
     });
 
-    it('should export static updatePlatform function', function () {
+    it('should export static updatePlatform function', () => {
         expect(Api.updatePlatform).toBeDefined();
         expect(typeof Api.updatePlatform).toBe('function');
     });
 
 });
 
-describe('project level Api', function () {
-
+describe('project level Api', () => {
     var testApi = new Api();
 
-    it('can be created', function () {
+    it('can be created', () => {
         expect(testApi).toBeDefined();
     });
 
-    it('has a requirements method', function () {
+    it('has a requirements method', () => {
         expect(testApi.requirements).toBeDefined();
         expect(typeof testApi.requirements).toBe('function');
     });
 
-    it('has a clean method', function () {
+    it('has a clean method', () => {
         expect(testApi.clean).toBeDefined();
         expect(typeof testApi.clean).toBe('function');
     });
 
-    it('has a run method', function () {
+    it('has a run method', () => {
         expect(testApi.run).toBeDefined();
         expect(typeof testApi.run).toBe('function');
     });
 
-    it('has a build method', function () {
+    it('has a build method', () => {
         expect(testApi.build).toBeDefined();
         expect(typeof testApi.build).toBe('function');
     });
 
-    it('has a removePlugin method', function () {
+    it('has a removePlugin method', () => {
         expect(testApi.removePlugin).toBeDefined();
         expect(typeof testApi.removePlugin).toBe('function');
     });
 
-    it('has a addPlugin method', function () {
+    it('has a addPlugin method', () => {
         expect(testApi.addPlugin).toBeDefined();
         expect(typeof testApi.addPlugin).toBe('function');
     });
 
-    it('has a prepare method', function () {
+    it('has a prepare method', () => {
         expect(testApi.prepare).toBeDefined();
         expect(typeof testApi.prepare).toBe('function');
     });
 
-    it('has a getPlatformInfo method', function () {
+    it('has a getPlatformInfo method', () => {
         expect(testApi.getPlatformInfo).toBeDefined();
         expect(typeof testApi.getPlatformInfo).toBe('function');
     });
-
 });
 
 // Static methods

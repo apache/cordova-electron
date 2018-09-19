@@ -19,11 +19,11 @@
     under the License.
 */
 
-var fs = require('fs-extra');
-var path = require('path');
-var ROOT = path.join(__dirname, '..', '..');
-var events = require('cordova-common').events;
-var check_reqs = require('./../template/cordova/lib/check_reqs.js');
+const fs = require('fs-extra');
+const path = require('path');
+const ROOT = path.join(__dirname, '..', '..');
+const events = require('cordova-common').events;
+const check_reqs = require('./../template/cordova/lib/check_reqs.js');
 
 // exported method to create a project, returns a promise that resolves with null
 module.exports.createProject = function (project_path, package_name, project_name) {
@@ -59,7 +59,7 @@ module.exports.createProject = function (project_path, package_name, project_nam
     // recreate our node_modules structure in the new project
     fs.copySync(path.join(ROOT, 'node_modules'), path.join(project_path, 'cordova', 'node_modules'), { overwrite: false });
 
-    var platform_www = path.join(project_path, 'platform_www');
+    const platform_www = path.join(project_path, 'platform_www');
 
     // copy cordova-js-src directory
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(platform_www, 'cordova-js-src'), { overwrite: false });

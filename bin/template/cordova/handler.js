@@ -17,9 +17,9 @@
     under the License.
 */
 
-var path = require('path');
-var fs = require('fs-extra');
-var events = require('cordova-common').events;
+const path = require('path');
+const fs = require('fs-extra');
+const events = require('cordova-common').events;
 
 module.exports = {
     www_dir: function (project_dir) {

@@ -17,11 +17,11 @@
     under the License.
 */
 
-var fs = require('fs-extra');
-var path = require('path');
-var CordovaError = require('cordova-common').CordovaError;
-var events = require('cordova-common').events;
-var FileUpdater = require('cordova-common').FileUpdater;
+const fs = require('fs-extra');
+const path = require('path');
+const CordovaError = require('cordova-common').CordovaError;
+const events = require('cordova-common').events;
+const FileUpdater = require('cordova-common').FileUpdater;
 
 function dirExists (dir) {
     return fs.existsSync(dir) && fs.statSync(dir).isDirectory();

@@ -22,21 +22,21 @@
     'cordova platform add PATH' where path is this repo.
 */
 
-var path = require('path');
-var fs = require('fs-extra');
+const path = require('path');
+const fs = require('fs-extra');
 
-var cdvcmn = require('cordova-common');
-var CordovaLogger = cdvcmn.CordovaLogger;
-var ConfigParser = cdvcmn.ConfigParser;
-var ActionStack = cdvcmn.ActionStack;
-var selfEvents = cdvcmn.events;
-var xmlHelpers = cdvcmn.xmlHelpers;
-var PlatformJson = cdvcmn.PlatformJson;
-var PlatformMunger = cdvcmn.ConfigChanges.PlatformMunger;
-var PluginInfoProvider = cdvcmn.PluginInfoProvider;
+const cdvcmn = require('cordova-common');
+const CordovaLogger = cdvcmn.CordovaLogger;
+const ConfigParser = cdvcmn.ConfigParser;
+const ActionStack = cdvcmn.ActionStack;
+const selfEvents = cdvcmn.events;
+const xmlHelpers = cdvcmn.xmlHelpers;
+const PlatformJson = cdvcmn.PlatformJson;
+const PlatformMunger = cdvcmn.ConfigChanges.PlatformMunger;
+const PluginInfoProvider = cdvcmn.PluginInfoProvider;
 
-var Parser = require('./parser');
-var PLATFORM_NAME = 'electron';
+const Parser = require('./parser');
+const PLATFORM_NAME = 'electron';
 
 function setupEvents (externalEventEmitter) {
     if (externalEventEmitter) {

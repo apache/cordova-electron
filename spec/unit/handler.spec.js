@@ -17,35 +17,29 @@
     under the License.
 */
 
-var handler = require('../../bin/template/cordova/handler');
-var fs = require('fs-extra');
-var path = require('path');
+const handler = require('../../bin/template/cordova/handler');
+const fs = require('fs-extra');
+const path = require('path');
 
-describe('Asset install tests', function () {
-    var fsstatMock;
-    var asset = { itemType: 'asset', src: 'someSrc/ServiceWorker.js', target: 'ServiceWorker.js' };
-    var plugin_dir = 'pluginDir';
-    var wwwDest = 'dest';
-    var cpPath = path.join(plugin_dir, asset.src);
+describe('Asset install tests', () => {
+    const asset = { itemType: 'asset', src: 'someSrc/ServiceWorker.js', target: 'ServiceWorker.js' };
+    const plugin_dir = 'pluginDir';
+    const wwwDest = 'dest';
+    const cpPath = path.join(plugin_dir, asset.src);
 
-    it('if src is a directory, should be called with cp, -Rf', function () {
+    let fsstatMock;
+
+    it('if src is a directory, should be called with cp, -Rf', () => {
         var copySync = spyOn(fs, 'copySync').and.returnValue('-Rf');
-        fsstatMock = {
-            isDirectory: function () {
-                return true;
-            }
-        };
+        fsstatMock = { isDirectory: () => true };
         spyOn(fs, 'statSync').and.returnValue(fsstatMock);
         handler.asset.install(asset, plugin_dir, wwwDest);
         expect(copySync).toHaveBeenCalledWith(jasmine.any(String), path.join('dest', asset.target));
     });
-    it('if src is not a directory, should be called with cp, -f', function () {
+
+    it('if src is not a directory, should be called with cp, -f', () => {
         var copySync = spyOn(fs, 'copySync').and.returnValue('-f');
-        fsstatMock = {
-            isDirectory: function () {
-                return false;
-            }
-        };
+        fsstatMock = { isDirectory: () => false };
         spyOn(fs, 'statSync').and.returnValue(fsstatMock);
         handler.asset.install(asset, plugin_dir, wwwDest);
         expect(copySync).toHaveBeenCalledWith(cpPath, path.join('dest', asset.target));

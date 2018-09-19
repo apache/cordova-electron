@@ -17,14 +17,14 @@
     under the License.
 */
 
-var shell = require('shelljs');
-var fs = require('fs-extra');
-var path = require('path');
-var util = require('util');
+const shell = require('shelljs');
+const fs = require('fs-extra');
+const path = require('path');
+const util = require('util');
 
-var cordova_bin = path.join(__dirname, '../../bin');// is this the same on all platforms?
-var tmpDir = path.join(__dirname, '../../temp');
-var createScriptPath = path.join(cordova_bin, 'create');
+const cordova_bin = path.join(__dirname, '../../bin');// is this the same on all platforms?
+const tmpDir = path.join(__dirname, '../../temp');
+const createScriptPath = path.join(cordova_bin, 'create');
 
 function createAndBuild (projectname, projectid) {
 

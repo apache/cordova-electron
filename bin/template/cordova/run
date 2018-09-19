@@ -19,29 +19,24 @@
     under the License.
 */
 
-var fs = require('fs'),
-    path = require('path'),
-    nopt  = require('nopt'),
-    url = require('url'),
-    runForrest = require('./lib/run'),
-    cordovaServe = require('cordova-serve');
+const nopt = require('nopt');
+const runForrest = require('./lib/run');
 
-var args = process.argv;
+const args = process.argv;
 
 start(args);
 
-function start(argv) {
-    var args  = nopt({'help': Boolean, 'target': String, 'port': Number}, {'help': ['/?', '-h', 'help', '-help', '/help']}, argv);
-    if(args.help) {
+function start (argv) {
+    var args = nopt({ 'help': Boolean, 'target': String, 'port': Number }, { 'help': ['/?', '-h', 'help', '-help', '/help'] }, argv);
+    if (args.help) {
         help();
-    }
-    else {
+    } else {
         return runForrest.run(args);
     }
 }
 
-function help() {
-    console.log("\nUsage: run");
-    console.log(""); // TODO ?
+function help () {
+    console.log('\nUsage: run');
+    console.log(''); // TODO ?
     process.exit(0);
 }

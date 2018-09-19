@@ -21,7 +21,7 @@ module.exports = {
     id: 'electron',
     cordovaVersion: '4.2.0', // cordova-js
 
-    bootstrap: function() {
+    bootstrap: function () {
 
         var modulemapper = require('cordova/modulemapper');
         var channel = require('cordova/channel');
@@ -30,11 +30,10 @@ module.exports = {
 
         channel.onNativeReady.fire();
 
-        document.addEventListener("visibilitychange", function(){
-            if(document.hidden) {
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
                 channel.onPause.fire();
-            }
-            else {
+            } else {
                 channel.onResume.fire();
             }
         });

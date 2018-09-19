@@ -29,20 +29,18 @@
  *  ./create ~/Desktop/radness org.apache.cordova.radness Radness
  */
 
-var path = require('path');
-var ConfigParser = require('cordova-common').ConfigParser;
-var Api = require('./template/cordova/Api');
+const path = require('path');
+const ConfigParser = require('cordova-common').ConfigParser;
+const Api = require('./template/cordova/Api');
 
+const argv = require('nopt')({
+    help: Boolean,
+    cli: Boolean,
+    shared: Boolean, // alias for --link
+    link: Boolean
+}, { d: '--verbose' });
 
-var argv = require('nopt')({
-    'help' : Boolean,
-    'cli' : Boolean,
-    'shared' : Boolean, // alias for --link
-    'link' : Boolean
-}, { 'd' : '--verbose' });
-
-
-var projectPath = argv.argv.remain[0];
+const projectPath = argv.argv.remain[0];
 
 if (argv.help || !projectPath) {
     console.log('Usage: $0 [--link] [--cli] <path_to_new_project> <package_name> <project_name> [<project_template_dir>]');
@@ -53,10 +51,9 @@ if (argv.help || !projectPath) {
     console.log('   <project_name>: Project name');
     console.log('   <project_template_dir>: Path to project template (override).');
     process.exit(0);
-}
-else {
-    var configPath = path.resolve(__dirname, 'template/config.xml');
-    var config = new ConfigParser(configPath);
+} else {
+    const configPath = path.resolve(__dirname, 'template/config.xml');
+    const config = new ConfigParser(configPath);
 
     // apply overrides (package and project names
     if (argv.argv.remain[1]) {
@@ -66,13 +63,11 @@ else {
         config.setName(argv.argv.remain[2]);
     }
 
-    var options = {
+    const options = {
         cli: argv.cli,
         link: argv.link || argv.shared,
-        customTemplate: argv.argv.remain[3],
+        customTemplate: argv.argv.remain[3]
     };
 
     Api.createPlatform(projectPath, config, options);
 }
-
-
