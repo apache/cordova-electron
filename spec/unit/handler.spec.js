@@ -17,7 +17,7 @@
     under the License.
 */
 
-var handler = require('../bin/template/cordova/handler');
+var handler = require('../../bin/template/cordova/handler');
 var fs = require('fs-extra');
 var path = require('path');
 

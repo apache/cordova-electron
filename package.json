@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "eslint": "eslint bin spec",
-    "test:unit": "jasmine",
+    "test:unit": "jasmine --config=spec/unit.json",
     "test": "npm run eslint && npm run test:unit"
   },
   "dependencies": {

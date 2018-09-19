@@ -17,10 +17,10 @@
  under the License.
  */
 
-var Api = require('../bin/template/cordova/Api');
+var Api = require('../../bin/template/cordova/Api');
 var fs = require('fs-extra');
 var path = require('path');
-var tmpDir = path.join(__dirname, './temp');
+var tmpDir = path.join(__dirname, '../temp');
 
 describe('can get the Api', function () {
 
