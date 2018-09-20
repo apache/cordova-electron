@@ -17,10 +17,8 @@
     under the License.
 */
 
-module.exports.help = function () {
+module.exports.help = () => {
     console.log('WARNING : Electron does not support updating. Remove and then re-Add the platform to get the latest.');
 };
 
-module.exports.run = function () {
-    return Promise.reject(new Error('Update not supported'));
-};
+module.exports.run = () => Promise.reject(new Error('Update not supported'));

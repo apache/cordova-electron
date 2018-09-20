@@ -19,17 +19,13 @@
     under the License.
 */
 
-var check_reqs = require('./check_reqs');
-
 /**
  * run
  *   Creates a zip file int platform/build folder
  */
-module.exports.run = function () {
-    return check_reqs.run();
-};
+module.exports.run = () => require('./check_reqs').run();
 
-module.exports.help = function () {
+module.exports.help = () => {
     console.log('Usage: cordova build electron');
     console.log('Packages your app for distribution, or running locally.');
 };

@@ -19,14 +19,14 @@
     under the License.
 */
 
-var electron = require('electron');
-var proc = require('child_process');
+const electron = require('electron');
+const proc = require('child_process');
 
-module.exports.run = function (args) {
-
+module.exports.run = (args) => {
     // console.log("runOptions : ", args);
-    var child = proc.spawn(electron, ['./platforms/cordova-electron/main.js']);
-    child.on('close', function (code) {
+    const child = proc.spawn(electron, ['./platforms/cordova-electron/main.js']);
+
+    child.on('close', (code) => {
         process.exit(code);
     });
 };

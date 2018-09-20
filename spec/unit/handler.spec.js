@@ -26,11 +26,10 @@ describe('Asset install tests', () => {
     const plugin_dir = 'pluginDir';
     const wwwDest = 'dest';
     const cpPath = path.join(plugin_dir, asset.src);
-
     let fsstatMock;
 
     it('if src is a directory, should be called with cp, -Rf', () => {
-        var copySync = spyOn(fs, 'copySync').and.returnValue('-Rf');
+        const copySync = spyOn(fs, 'copySync').and.returnValue('-Rf');
         fsstatMock = { isDirectory: () => true };
         spyOn(fs, 'statSync').and.returnValue(fsstatMock);
         handler.asset.install(asset, plugin_dir, wwwDest);
@@ -38,7 +37,7 @@ describe('Asset install tests', () => {
     });
 
     it('if src is not a directory, should be called with cp, -f', () => {
-        var copySync = spyOn(fs, 'copySync').and.returnValue('-f');
+        const copySync = spyOn(fs, 'copySync').and.returnValue('-f');
         fsstatMock = { isDirectory: () => false };
         spyOn(fs, 'statSync').and.returnValue(fsstatMock);
         handler.asset.install(asset, plugin_dir, wwwDest);

@@ -29,33 +29,21 @@ function dirExists (dir) {
 
 function parser (project) {
     if (!dirExists(project) || !dirExists(path.join(project, 'cordova'))) {
-        throw new CordovaError('The provided path "' + project + '" is not a valid electron project.');
+        throw new CordovaError(`The provided path "${project}" is not a valid electron project.`);
     }
+
     this.path = project;
 }
 
 module.exports = parser;
 
 // Returns a promise.
-parser.prototype.update_from_config = function () {
-    return Promise.resolve();
-};
-
-parser.prototype.www_dir = function () {
-    return path.join(this.path, 'www');
-};
+parser.prototype.update_from_config = () => Promise.resolve();
+parser.prototype.www_dir = () => path.join(this.path, 'www');
 
 // Used for creating platform_www in projects created by older versions.
-parser.prototype.cordovajs_path = function (libDir) {
-    var jsPath = path.join(libDir, 'cordova-lib', 'cordova.js');
-    return path.resolve(jsPath);
-};
-
-parser.prototype.cordovajs_src_path = function (libDir) {
-    // console.log("cordovajs_src_path");
-    var jsPath = path.join(libDir, 'cordova-js-src');
-    return path.resolve(jsPath);
-};
+parser.prototype.cordovajs_path = (libDir) => path.resolve(path.join(libDir, 'cordova-lib', 'cordova.js'));
+parser.prototype.cordovajs_src_path = (libDir) => path.resolve(path.join(libDir, 'cordova-js-src'));
 
 /**
  * Logs all file operations via the verbose event stream, indented.
@@ -66,16 +54,16 @@ function logFileOp (message) {
 
 // Replace the www dir with contents of platform_www and app www.
 parser.prototype.update_www = function (cordovaProject, opts) {
-    var platform_www = path.join(this.path, 'platform_www');
-    var my_www = this.www_dir();
+    const platform_www = path.join(this.path, 'platform_www');
+    const my_www = this.www_dir();
     // add cordova www and platform_www to sourceDirs
-    var sourceDirs = [
+    let sourceDirs = [
         path.relative(cordovaProject.root, cordovaProject.locations.www),
         path.relative(cordovaProject.root, platform_www)
     ];
 
     // If project contains 'merges' for our platform, use them as another overrides
-    var merges_path = path.join(cordovaProject.root, 'merges', 'electron');
+    const merges_path = path.join(cordovaProject.root, 'merges', 'electron');
     if (fs.existsSync(merges_path)) {
         events.emit('verbose', 'Found "merges/electron" folder. Copying its contents into the electron project.');
         // add merges/electron to sourceDirs
@@ -83,8 +71,8 @@ parser.prototype.update_www = function (cordovaProject, opts) {
     }
 
     // targetDir points to electron/www
-    var targetDir = path.relative(cordovaProject.root, my_www);
-    events.emit('verbose', 'Merging and updating files from [' + sourceDirs.join(', ') + '] to ' + targetDir);
+    const targetDir = path.relative(cordovaProject.root, my_www);
+    events.emit('verbose', `Merging and updating files from [${sourceDirs.join(', ')}] to ${targetDir}`);
     FileUpdater.mergeAndUpdateDir(sourceDirs, targetDir, { rootDir: cordovaProject.root }, logFileOp);
 };
 
@@ -100,20 +88,19 @@ parser.prototype.update_overrides = function () {
     // }
 };
 
-parser.prototype.config_xml = function () {
-    return path.join(this.path, 'config.xml');
-};
+parser.prototype.config_xml = () => path.join(this.path, 'config.xml');
 
 // Returns a promise.
-parser.prototype.update_project = function (cfg) {
+parser.prototype.update_project = (cfg) => {
     // console.log("update_project ",cfg);
-    var defer = this.update_from_config();
-    var self = this;
-    var www_dir = self.www_dir();
-    defer.then(function () {
-        self.update_overrides();
+    const defer = this.update_from_config();
+    const www_dir = this.www_dir();
+
+    defer.then(() => {
+        this.update_overrides();
         // Copy munged config.xml to platform www dir
         fs.copySync(path.join(www_dir, '..', 'config.xml'), www_dir);
     });
+
     return defer;
 };

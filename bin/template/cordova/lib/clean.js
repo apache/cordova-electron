@@ -19,13 +19,12 @@
     under the License.
 */
 
-var fs = require('fs-extra');
-var path = require('path');
-var check_reqs = require('./check_reqs');
-var platformBuildDir = path.join('platforms', 'electron', 'www');
+const fs = require('fs-extra');
+const path = require('path');
+const check_reqs = require('./check_reqs');
+const platformBuildDir = path.join('platforms', 'electron', 'www');
 
-var run = function () {
-
+module.exports.run = () => {
     // TODO: everything calls check_reqs ... why?
     // Check that requirements are (still) met
     if (!check_reqs.run()) {
@@ -38,13 +37,12 @@ var run = function () {
             fs.removeSync(platformBuildDir);
         }
     } catch (err) {
-        console.log('could not remove ' + platformBuildDir + ' : ' + err.message);
+        console.log(`could not remove ${platformBuildDir} : ${err.message}`);
     }
 };
 
-module.exports.run = run;
 // just on the off chance something is still calling cleanProject, we will leave this here for a while
-module.exports.cleanProject = function () {
+module.exports.cleanProject = () => {
     console.log('lib/clean will soon only export a `run` command, please update to not call `cleanProject`.');
-    return run();
+    return module.exports.run();
 };

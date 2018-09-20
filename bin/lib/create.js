@@ -26,7 +26,7 @@ const events = require('cordova-common').events;
 const check_reqs = require('./../template/cordova/lib/check_reqs.js');
 
 // exported method to create a project, returns a promise that resolves with null
-module.exports.createProject = function (project_path, package_name, project_name) {
+module.exports.createProject = (project_path, package_name, project_name) => {
 /*
     // create the dest and the standard place for our api to live
     // platforms/platformName/cordova/Api.js
@@ -67,7 +67,7 @@ module.exports.createProject = function (project_path, package_name, project_nam
     // copy cordova js file to platform_www
     fs.copySync(path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(platform_www, 'cordova.js'), { overwrite: false });
 
-    // copy favicon file to platform_www
+    // copy main.js
     fs.copySync(path.join(ROOT, 'bin/template/main.js'), path.join(project_path, 'main.js'), { overwrite: false });
 
     return Promise.resolve();

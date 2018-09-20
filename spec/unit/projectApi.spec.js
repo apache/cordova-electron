@@ -27,35 +27,35 @@ describe('can get the Api', () => {
         expect(Api).toBeDefined();
     });
 
-    it('should export static createPlatform function', (done) => {
+    it('should export static createPlatform function', () => {
         expect(Api.createPlatform).toBeDefined();
         expect(typeof Api.createPlatform).toBe('function');
 
         // TODO: make this do something real
-        var promise = Api.createPlatform(tmpDir);
+        const promise = Api.createPlatform(tmpDir);
+
         expect(promise).toBeDefined();
         expect(promise.then).toBeDefined();
-        promise.then((res) => {
-            console.log('result = ' + res);
-            fs.removeSync(tmpDir);
-            done();
-        },
-        (err) => {
-            console.log('spec-error ' + err);
-            fs.removeSync(tmpDir);
-            done();
-        });
+
+        return promise.then(
+            (res) => {
+                console.log('result = ' + res);
+                fs.removeSync(tmpDir);
+            },
+            (err) => {
+                console.log('spec-error ' + err);
+                fs.removeSync(tmpDir);
+            });
     });
 
     it('should export static updatePlatform function', () => {
         expect(Api.updatePlatform).toBeDefined();
         expect(typeof Api.updatePlatform).toBe('function');
     });
-
 });
 
 describe('project level Api', () => {
-    var testApi = new Api();
+    const testApi = new Api();
 
     it('can be created', () => {
         expect(testApi).toBeDefined();
