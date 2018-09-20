@@ -17,7 +17,7 @@
     under the License.
 */
 
-const handler = require('../../bin/template/cordova/handler');
+const handler = require('../../../bin/templates/cordova/handler');
 const fs = require('fs-extra');
 const path = require('path');
 

@@ -23,7 +23,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const ROOT = path.join(__dirname, '..', '..');
 const events = require('cordova-common').events;
-const check_reqs = require('./../template/cordova/lib/check_reqs.js');
+const check_reqs = require('./../templates/cordova/lib/check_reqs.js');
 
 // exported method to create a project, returns a promise that resolves with null
 module.exports.createProject = (project_path, package_name, project_name, options) => {
@@ -50,11 +50,11 @@ module.exports.createProject = (project_path, package_name, project_name, option
         events.emit('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
     }
 
-    // copy template/cordova directory ( recursive )
-    fs.copySync(path.join(ROOT, 'bin/template/cordova'), path.join(project_path, 'cordova'), { overwrite: false });
+    // copy templates/cordova directory ( recursive )
+    fs.copySync(path.join(ROOT, 'bin/templates/cordova'), path.join(project_path, 'cordova'), { overwrite: false });
 
-    // copy template/www directory ( recursive )
-    fs.copySync(path.join(ROOT, 'bin/template/www'), path.join(project_path, 'www'), { overwrite: false });
+    // copy templates/www directory ( recursive )
+    fs.copySync(path.join(ROOT, 'bin/templates/project/www'), path.join(project_path, 'www'), { overwrite: false });
 
     // recreate our node_modules structure in the new project
     fs.copySync(path.join(ROOT, 'node_modules'), path.join(project_path, 'cordova', 'node_modules'), { overwrite: false });
@@ -68,7 +68,7 @@ module.exports.createProject = (project_path, package_name, project_name, option
     fs.copySync(path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(platform_www, 'cordova.js'), { overwrite: false });
 
     // copy main.js
-    fs.copySync(path.join(ROOT, 'bin/template/main.js'), path.join(project_path, 'main.js'), { overwrite: false });
+    fs.copySync(path.join(ROOT, 'bin/templates/project/main.js'), path.join(project_path, 'main.js'), { overwrite: false });
 
     return Promise.resolve();
 };

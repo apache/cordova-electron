@@ -22,8 +22,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
 
-const cordova_bin = path.join(__dirname, '../../bin');// is this the same on all platforms?
-const tmpDir = path.join(__dirname, '../../temp');
+const cordova_bin = path.join(__dirname, '../../../bin');// is this the same on all platforms?
+const tmpDir = path.join(__dirname, '../../../temp');
 const createScriptPath = path.join(cordova_bin, 'create');
 
 function createAndBuild (projectname, projectid) {

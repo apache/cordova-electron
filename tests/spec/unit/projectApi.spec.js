@@ -17,7 +17,7 @@
     under the License.
 */
 
-const Api = require('../../bin/template/cordova/Api');
+const Api = require('../../../bin/templates/cordova/Api');
 const fs = require('fs-extra');
 const path = require('path');
 const tmpDir = path.join(__dirname, '../temp');

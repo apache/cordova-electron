@@ -2,7 +2,7 @@
   "name": "cordova-electron",
   "version": "1.0.0",
   "description": "electron apps as a target for cordova developers",
-  "main": "bin/template/cordova/Api.js",
+  "main": "bin/templates/cordova/Api.js",
   "bin": "bin/create",
   "repository": {
     "type": "git",
@@ -17,9 +17,9 @@
     "apache"
   ],
   "scripts": {
-    "eslint": "eslint bin spec",
-    "test:unit": "jasmine --config=spec/unit.json",
-    "test": "npm run eslint && npm run test:unit"
+    "eslint": "eslint bin tests",
+    "test": "npm run eslint && npm run test:coverage",
+    "test:unit": "jasmine --config=tests/spec/unit.json"
   },
   "dependencies": {
     "cordova-common": "^2.2.5",
