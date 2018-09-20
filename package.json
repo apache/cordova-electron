@@ -19,7 +19,8 @@
   "scripts": {
     "eslint": "eslint bin tests",
     "test": "npm run eslint && npm run test:coverage",
-    "test:unit": "jasmine --config=tests/spec/unit.json"
+    "test:unit": "jasmine --config=tests/spec/unit.json",
+    "test:coverage": "nyc jasmine --config=tests/spec/coverage.json"
   },
   "dependencies": {
     "cordova-common": "^2.2.5",
@@ -37,6 +38,7 @@
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-standard": "^4.0.0",
     "jasmine": "^3.2.0",
+    "nyc": "^13.0.1",
     "tmp": "^0.0.33"
   },
   "author": "Apache Software Foundation",
@@ -53,5 +55,17 @@
   "license": "Apache-2.0",
   "engines": {
     "node": ">=6.0.0"
+  },
+  "nyc": {
+    "include": [
+      "bin/templates/cordova/**",
+      "bin/lib/**",
+      "bin/create",
+      "bin/update"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
   }
 }
