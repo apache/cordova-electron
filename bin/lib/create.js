@@ -26,7 +26,7 @@ const events = require('cordova-common').events;
 const check_reqs = require('./../template/cordova/lib/check_reqs.js');
 
 // exported method to create a project, returns a promise that resolves with null
-module.exports.createProject = (project_path, package_name, project_name) => {
+module.exports.createProject = (project_path, package_name, project_name, options) => {
 /*
     // create the dest and the standard place for our api to live
     // platforms/platformName/cordova/Api.js

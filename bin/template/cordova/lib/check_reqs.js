@@ -21,4 +21,4 @@
 
 // add methods as we determine what are the requirements
 
-module.exports.run = () => Promise.resolve();
+module.exports.run = () => Promise.resolve([]);
