@@ -19,7 +19,14 @@
     under the License.
 */
 
-// Coho updates this line:
+/*
+    Returns the VERSION of CordovaLib used.
+    Note: it does not work if the --shared option was used to create the project.
+*/
+
+// Coho updates this line
 const VERSION = '5.1.0-dev';
 
-console.log(VERSION);
+module.exports.version = VERSION;
+
+if (!module.parent) console.log(VERSION);

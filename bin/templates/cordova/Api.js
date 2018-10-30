@@ -83,7 +83,7 @@ class Api {
             locations: this.locations,
             root: this.root,
             name: this.platform,
-            version: { version: '1.0.0' }, // um, todo!
+            version: require('./version'),
             projectConfig: this.config
         };
     }
