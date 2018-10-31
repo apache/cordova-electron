@@ -51,7 +51,7 @@ function setupEvents (externalEventEmitter) {
 
 class Api {
     constructor (platform, platformRootDir, events) {
-        this.platform = 'electron';
+        this.platform = 'cordova-electron';
 
         // MyApp/platforms/electron
         this.root = path.resolve(__dirname, '..');
@@ -330,7 +330,6 @@ class Api {
                 const wwwDest = options.usePlatformWww ?
                     this.getPlatformInfo().locations.platformWww :
                     this.handler.www_dir(this.root);
-
                 if (type === 'asset') {
                     installer.install(item, plugin_dir, wwwDest);
                 } else if (type === 'js-module') {

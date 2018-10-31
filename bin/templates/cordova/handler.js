@@ -63,7 +63,7 @@ module.exports = {
 
             const moduleDestination = path.resolve(www_dir, 'plugins', plugin_id, jsModule.src);
 
-            fs.ensureDirSync('-p', path.dirname(moduleDestination));
+            fs.ensureDirSync(path.dirname(moduleDestination));
             fs.writeFileSync(moduleDestination, scriptContent, 'utf-8');
         },
         uninstall: (jsModule, www_dir, plugin_id) => {
