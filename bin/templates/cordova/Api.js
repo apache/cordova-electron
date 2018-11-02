@@ -241,10 +241,15 @@ class Api {
         const actions = new ActionStack();
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
+        let platform = this.platform;
+        if (! pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+            platform = 'browser';
+        }
+
         // gather all files needs to be handled during install
-        pluginInfo.getFilesAndFrameworks(this.platform)
-            .concat(pluginInfo.getAssets(this.platform))
-            .concat(pluginInfo.getJsModules(this.platform))
+        pluginInfo.getFilesAndFrameworks(platform)
+            .concat(pluginInfo.getAssets(platform))
+            .concat(pluginInfo.getJsModules(platform))
             .forEach((item) => {
                 actions.push(actions.createAction(
                     this._getInstaller(item.itemType),
@@ -254,7 +259,7 @@ class Api {
             });
 
         // run through the action stack
-        return actions.process(this.platform, this.root)
+        return actions.process(platform, this.root)
             .then(() => {
                 if (projectFile) {
                     projectFile.write();
@@ -273,7 +278,7 @@ class Api {
 
                 const targetDir = installOptions.usePlatformWww ? this.getPlatformInfo().locations.platformWww : this.getPlatformInfo().locations.www;
 
-                this._addModulesInfo(pluginInfo, targetDir);
+                this._addModulesInfo(platform, pluginInfo, targetDir);
             });
     }
 
@@ -285,10 +290,15 @@ class Api {
         const actions = new ActionStack();
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
+        let platform = this.platform;
+        if (! plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+            platform = 'browser';
+        }
+
         // queue up plugin files
-        plugin.getFilesAndFrameworks(this.platform)
-            .concat(plugin.getAssets(this.platform))
-            .concat(plugin.getJsModules(this.platform))
+        plugin.getFilesAndFrameworks(platform)
+            .concat(plugin.getAssets(platform))
+            .concat(plugin.getJsModules(platform))
             .forEach((item) => {
                 actions.push(actions.createAction(
                     this._getUninstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions, projectFile],
@@ -296,7 +306,7 @@ class Api {
             });
 
         // run through the action stack
-        return actions.process(this.platform, this.root)
+        return actions.process(platform, this.root)
             .then(() => {
                 if (projectFile) {
                     projectFile.write();
@@ -372,12 +382,12 @@ class Api {
      * @param   {String}  targetDir  The directory, where updated cordova_plugins.js
      *   should be written to.
      */
-    _addModulesInfo (plugin, targetDir) {
+    _addModulesInfo (platform, plugin, targetDir) {
         let installedModules = this._platformJson.root.modules || [];
 
         const installedPaths = installedModules.map((installedModule) => installedModule.file);
 
-        let modulesToInstall = plugin.getJsModules(this.platform)
+        let modulesToInstall = plugin.getJsModules(platform)
             .filter((moduleToInstall) => installedPaths.indexOf(moduleToInstall.file) === -1)
             .map((moduleToInstall) => {
                 const moduleName = plugin.id + '.' + (moduleToInstall.name || moduleToInstall.src.match(/([^\/]+)\.js/)[1]);
