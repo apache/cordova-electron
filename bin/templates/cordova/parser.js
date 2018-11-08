@@ -32,7 +32,7 @@ class Parser {
         if (!dirExists(project) || !dirExists(path.join(project, 'cordova'))) {
             throw new CordovaError(`The provided path "${project}" is not a valid electron project.`);
         }
-    
+
         this.path = project;
     }
 
@@ -62,7 +62,7 @@ class Parser {
             path.relative(cordovaProject.root, cordovaProject.locations.www),
             path.relative(cordovaProject.root, platform_www)
         ];
-    
+
         // If project contains 'merges' for our platform, use them as another overrides
         const merges_path = path.join(cordovaProject.root, 'merges', 'electron');
         if (fs.existsSync(merges_path)) {
@@ -70,7 +70,7 @@ class Parser {
             // add merges/electron to sourceDirs
             sourceDirs.push(path.join('merges', 'electron'));
         }
-    
+
         // targetDir points to electron/www
         const targetDir = path.relative(cordovaProject.root, my_www);
         events.emit('verbose', `Merging and updating files from [${sourceDirs.join(', ')}] to ${targetDir}`);

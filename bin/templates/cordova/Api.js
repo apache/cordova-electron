@@ -235,14 +235,13 @@ class Api {
         installOptions = installOptions || {};
         installOptions.variables = installOptions.variables || {};
         // CB-10108 platformVersion option is required for proper plugin installation
-        installOptions.platformVersion = installOptions.platformVersion ||
-            this.getPlatformInfo().version;
+        installOptions.platformVersion = installOptions.platformVersion || this.getPlatformInfo().version;
 
         const actions = new ActionStack();
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
-        if (! pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (!pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 
@@ -291,7 +290,7 @@ class Api {
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
-        if (! plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (!plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 
