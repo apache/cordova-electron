@@ -4,9 +4,13 @@
     "linux": {
       "type": "${BUILD_TYPE}",
       "maintainer": "Erisu",
-      "target": "tar.gz",
-      "arch": [
-        "x64"
+      "target": [
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
       ]
     }
   }

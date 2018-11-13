@@ -68,7 +68,7 @@ module.exports.createProject = (project_path, package_name, project_name, option
     fs.copySync(path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(platform_www, 'cordova.js'), { overwrite: false });
 
     // copy main.js
-    fs.copySync(path.join(ROOT, 'bin/templates/project/main.js'), path.join(project_path, 'main.js'), { overwrite: false });
+    fs.copySync(path.join(ROOT, 'bin/templates/project/main.js'), path.join(platform_www, 'main.js'), { overwrite: false });
 
     return Promise.resolve();
 };
