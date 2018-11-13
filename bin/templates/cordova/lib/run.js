@@ -22,7 +22,7 @@ const proc = require('child_process');
 
 module.exports.run = (args) => {
     // console.log("runOptions : ", args);
-    const child = proc.spawn(electron, ['./platforms/electron/main.js']);
+    const child = proc.spawn(electron, ['./platforms/electron/www/main.js']);
 
     child.on('close', (code) => {
         process.exit(code);
