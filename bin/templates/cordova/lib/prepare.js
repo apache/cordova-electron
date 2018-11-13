@@ -65,16 +65,26 @@ class PackageJson {
 
     configure (config) {
         if (config) {
-            this.package.id = config.packageName() || 'io.cordova.hellocordova';
-            this.package.displayName = config.name() || 'Cordova Hello Cordova';
-            this.package.version = config.version() || '0.0.1';
-            this.package.description = config.description() || 'Cordova Sample App';
-            this.package.homepage = 'https://cordova.io'; // config.homepage() ||
+            this.package.name = config.packageName() || 'io.cordova.hellocordova';
+            this.package.displayName = config.name() || 'HelloCordova';
+            this.package.version = config.version() || '1.0.0';
+            this.package.description = config.description() || 'A sample Apache Cordova application that responds to the deviceready event.';
+            
+            this.configureHomepage(config);
+            this.configureLicense(config);
+            
             this.package.author = config.author() || 'Apache Cordova Team';
-            this.package.license = 'Apache-2.0'; // config.license() ||
         }
 
         return this;
+    }
+
+    configureHomepage (config) {
+        this.package.homepage = (config.doc.find('author') && config.doc.find('author').attrib['href']) || 'https://cordova.io';
+    }
+
+    configureLicense (config) {
+        this.package.license = config.doc.find('license') && config.doc.find('license').text && config.doc.find('license').text.trim() || 'Apache-2.0';
     }
 
     write () {
