@@ -88,10 +88,10 @@ class PackageJson {
             this.package.displayName = config.name() || 'HelloCordova';
             this.package.version = config.version() || '1.0.0';
             this.package.description = config.description() || 'A sample Apache Cordova application that responds to the deviceready event.';
-            
+
             this.configureHomepage(config);
             this.configureLicense(config);
-            
+
             this.package.author = config.author() || 'Apache Cordova Team';
         }
 
@@ -103,7 +103,7 @@ class PackageJson {
     }
 
     configureLicense (config) {
-        this.package.license = config.doc.find('license') && config.doc.find('license').text && config.doc.find('license').text.trim() || 'Apache-2.0';
+        this.package.license = (config.doc.find('license') && config.doc.find('license').text && config.doc.find('license').text.trim()) || 'Apache-2.0';
     }
 
     write () {

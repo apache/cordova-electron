@@ -110,7 +110,7 @@ class Api {
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
-        if (! pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (!pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 
@@ -159,7 +159,7 @@ class Api {
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
-        if (! plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (!plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 

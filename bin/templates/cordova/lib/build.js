@@ -33,7 +33,7 @@ function deepMerge (mergeTo, mergeWith) {
     for (const property in mergeWith) {
         if (Object.prototype.toString.call(mergeWith[property]) === '[object Object]') {
             mergeTo[property] = deepMerge((mergeTo[property] || {}), mergeWith[property]);
-        } else if(Object.prototype.toString.call(mergeWith[property]) === '[object Array]') {
+        } else if (Object.prototype.toString.call(mergeWith[property]) === '[object Array]') {
             mergeTo[property] = [].concat((mergeTo[property] || []), mergeWith[property]);
         } else {
             mergeTo[property] = mergeWith[property];
@@ -54,7 +54,7 @@ module.exports.run = (buildOptions, api) => {
             let platformConfig;
 
             // first load the build configs and format config if present.
-            if(buildOptions && buildOptions.buildConfig && fs.existsSync(buildOptions.buildConfig)) {
+            if (buildOptions && buildOptions.buildConfig && fs.existsSync(buildOptions.buildConfig)) {
                 // Load build configuration JSON file
                 // Check for electron platform
                 // Then each node under electron represents the targeting platform.
@@ -62,7 +62,7 @@ module.exports.run = (buildOptions, api) => {
             }
 
             // Skip defaults if platform config exists from user defined platform.
-            if(!platformConfig) {
+            if (!platformConfig) {
                 switch (process.platform) {
                 case 'win32':
                     platformConfig = require(path.resolve(__dirname, './build/windows.json'));
@@ -80,7 +80,7 @@ module.exports.run = (buildOptions, api) => {
 
             // First merge the configs and start in string format for editing
             let buildSettings = JSON.stringify(deepMerge(baseConfig, platformConfig));
-            
+
             const userConfig = {
                 APP_ID: 'com.erisu.electron',
                 APP_TITLE: 'My Electron App',
