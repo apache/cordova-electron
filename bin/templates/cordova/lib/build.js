@@ -53,31 +53,34 @@ module.exports.run = (buildOptions, api) => {
             const baseConfig = require(path.resolve(__dirname, './build/base.json'));
             let platformConfig;
 
-            const platform = 'win32';
-            // process.platform
-
-            switch (platform) {
-            case 'win32':
-                platformConfig = require(path.resolve(__dirname, './build/windows.json'));
-                break;
-
-            case 'darwin':
-                platformConfig = require(path.resolve(__dirname, './build/mac.json'));
-                break;
-
-            default:
-                platformConfig = require(path.resolve(__dirname, './build/linux.json'));
-                break;
-            }
-
             // first load the build configs and format config if present.
             if(buildOptions && buildOptions.buildConfig && fs.existsSync(buildOptions.buildConfig)) {
+                // Load build configuration JSON file
+                // Check for electron platform
+                // Then each node under electron represents the targeting platform.
+                //  -> Compile Platform Configs
+            }
 
+            // Skip defaults if platform config exists from user defined platform.
+            if(!platformConfig) {
+                switch (process.platform) {
+                case 'win32':
+                    platformConfig = require(path.resolve(__dirname, './build/windows.json'));
+                    break;
+
+                case 'darwin':
+                    platformConfig = require(path.resolve(__dirname, './build/mac.json'));
+                    break;
+
+                default:
+                    platformConfig = require(path.resolve(__dirname, './build/linux.json'));
+                    break;
+                }
             }
 
             // First merge the configs and start in string format for editing
             let buildSettings = JSON.stringify(deepMerge(baseConfig, platformConfig));
-
+            
             const userConfig = {
                 APP_ID: 'com.erisu.electron',
                 APP_TITLE: 'My Electron App',
