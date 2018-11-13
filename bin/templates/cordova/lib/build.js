@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -20,10 +18,91 @@
 */
 
 /**
- * run
- *   Creates a zip file int platform/build folder
- */
-module.exports.run = () => require('./check_reqs').run();
+* run
+*   Creates a zip file int platform/build folder
+*/
+
+const fs = require('fs-extra');
+const path = require('path');
+
+const builder = require('electron-builder');
+// const { Platform, createTargets, DIR_TARGET } = require('electron-builder');
+// const { ConfigParser, xmlHelpers } = require('cordova-common');
+
+function deepMerge (mergeTo, mergeWith) {
+    for (const property in mergeWith) {
+        if (Object.prototype.toString.call(mergeWith[property]) === '[object Object]') {
+            mergeTo[property] = deepMerge((mergeTo[property] || {}), mergeWith[property]);
+        } else if(Object.prototype.toString.call(mergeWith[property]) === '[object Array]') {
+            mergeTo[property] = [].concat((mergeTo[property] || []), mergeWith[property]);
+        } else {
+            mergeTo[property] = mergeWith[property];
+        }
+    }
+
+    return mergeTo;
+}
+
+module.exports.run = (buildOptions, api) => {
+    return require('./check_reqs')
+        .run()
+        .then(() => {
+            // const isDevelopment = false;
+            // const config = new ConfigParser(api.locations.configXml);
+
+            const baseConfig = require(path.resolve(__dirname, './build/base.json'));
+            let platformConfig;
+
+            const platform = 'win32';
+            // process.platform
+
+            switch (platform) {
+            case 'win32':
+                platformConfig = require(path.resolve(__dirname, './build/windows.json'));
+                break;
+
+            case 'darwin':
+                platformConfig = require(path.resolve(__dirname, './build/mac.json'));
+                break;
+
+            default:
+                platformConfig = require(path.resolve(__dirname, './build/linux.json'));
+                break;
+            }
+
+            // first load the build configs and format config if present.
+            if(buildOptions && buildOptions.buildConfig && fs.existsSync(buildOptions.buildConfig)) {
+
+            }
+
+            // First merge the configs and start in string format for editing
+            let buildSettings = JSON.stringify(deepMerge(baseConfig, platformConfig));
+
+            const userConfig = {
+                APP_ID: 'com.erisu.electron',
+                APP_TITLE: 'My Electron App',
+                APP_WWW_DIR: api.locations.www,
+                APP_BUILD_DIR: api.locations.build,
+                BUILD_TYPE: 'distribution'
+            };
+
+            Object.keys(userConfig).forEach((key) => {
+                const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
+                buildSettings = buildSettings.replace(regex, userConfig[key]);
+            });
+
+            // convert back to object after editing.
+            buildSettings = JSON.parse(buildSettings);
+
+            return buildSettings;
+        })
+        .then((buildSettings) => {
+            return builder.build(buildSettings);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
 
 module.exports.help = () => {
     console.log('Usage: cordova build electron');

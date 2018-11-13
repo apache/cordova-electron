@@ -1,0 +1,13 @@
+{
+  "linux": [],
+  "config": {
+    "linux": {
+      "type": "${BUILD_TYPE}",
+      "maintainer": "Erisu",
+      "target": "tar.gz",
+      "arch": [
+        "x64"
+      ]
+    }
+  }
+}

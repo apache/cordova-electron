@@ -26,10 +26,10 @@ const fs = require('fs-extra');
 
 const CordovaCommon = require('cordova-common');
 const CordovaLogger = CordovaCommon.CordovaLogger;
-const ConfigParser = CordovaCommon.ConfigParser;
+// const ConfigParser = CordovaCommon.ConfigParser;
 const ActionStack = CordovaCommon.ActionStack;
 const selfEvents = CordovaCommon.events;
-const xmlHelpers = CordovaCommon.xmlHelpers;
+// const xmlHelpers = CordovaCommon.xmlHelpers;
 const PlatformJson = CordovaCommon.PlatformJson;
 const PlatformMunger = CordovaCommon.ConfigChanges.PlatformMunger;
 const PluginInfoProvider = CordovaCommon.PluginInfoProvider;
@@ -68,6 +68,7 @@ class Api {
             configXml: path.join(this.root, 'config.xml'),
             defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
             build: path.join(this.root, 'build'),
+            cache: path.join(this.root, 'cache'),
             // NOTE: Due to platformApi spec we need to return relative paths here
             cordovaJs: 'bin/templates/project/assets/www/cordova.js',
             cordovaJsSrc: 'cordova-js-src'
@@ -89,140 +90,7 @@ class Api {
     }
 
     prepare (cordovaProject, options) {
-        // First cleanup current config and merge project's one into own
-        const defaultConfigPath = path.join(this.locations.platformRootDir, 'cordova', 'defaults.xml');
-        const ownConfigPath = this.locations.configXml;
-        const sourceCfg = cordovaProject.projectConfig;
-
-        // If defaults.xml is present, overwrite platform config.xml with it.
-        // Otherwise save whatever is there as defaults so it can be
-        // restored or copy project config into platform if none exists.
-        if (fs.existsSync(defaultConfigPath)) {
-            this.events.emit('verbose', `Generating config.xml from defaults for platform "${this.platform}"`);
-            fs.copySync(defaultConfigPath, ownConfigPath);
-        } else if (fs.existsSync(ownConfigPath)) {
-            this.events.emit('verbose', `Generating defaults.xml from own config.xml for platform "${this.platform}"`);
-            fs.copySync(ownConfigPath, defaultConfigPath);
-        } else {
-            this.events.emit('verbose', `case 3"${this.platform}"`);
-            fs.copySync(sourceCfg.path, ownConfigPath);
-        }
-
-        // merge our configs
-        this.config = new ConfigParser(ownConfigPath);
-        xmlHelpers.mergeXml(cordovaProject.projectConfig.doc.getroot(), this.config.doc.getroot(), this.platform, true);
-        this.config.write();
-
-        // Update own www dir with project's www assets and plugins' assets and js-files
-        this.parser.update_www(cordovaProject, options);
-
-        // Copy or Create manifest.json
-        // todo: move this to a manifest helper module
-        // output path
-        const manifestPath = path.join(this.locations.www, 'manifest.json');
-        const srcManifestPath = path.join(cordovaProject.locations.www, 'manifest.json');
-        if (fs.existsSync(srcManifestPath)) {
-            // just blindly copy it to our output/www
-            // todo: validate it? ensure all properties we expect exist?
-            this.events.emit('verbose', `copying ${srcManifestPath} => ${manifestPath}`);
-            fs.copySync(srcManifestPath, manifestPath);
-        } else {
-            let manifestJson = {
-                background_color: '#FFF',
-                display: 'standalone'
-            };
-
-            if (this.config) {
-                if (this.config.name()) {
-                    manifestJson.name = this.config.name();
-                }
-
-                if (this.config.shortName()) {
-                    manifestJson.short_name = this.config.shortName();
-                }
-
-                if (this.config.packageName()) {
-                    manifestJson.version = this.config.packageName();
-                }
-
-                if (this.config.description()) {
-                    manifestJson.description = this.config.description();
-                }
-
-                if (this.config.author()) {
-                    manifestJson.author = this.config.author();
-                }
-
-                // icons
-                const icons = this.config.getStaticResources(this.platform, 'icon');
-
-                manifestJson.icons = icons.map((icon) => {
-                    // given a tag like this :
-                    // <icon src="res/ios/icon.png" width="57" height="57" density="mdpi" />
-                    /* configParser returns icons that look like this :
-                    {   src: 'res/ios/icon.png',
-                        target: undefined,
-                        density: 'mdpi',
-                        platform: null,
-                        width: 57,
-                        height: 57
-                    } ******/
-                    /* manifest expects them to be like this :
-                    {   "src": "images/touch/icon-128x128.png",
-                        "type": "image/png",
-                        "sizes": "128x128"
-                    } ******/
-                    // ?Is it worth looking at file extentions?
-                    return {
-                        src: icon.src,
-                        type: 'image/png',
-                        sizes: `${icon.width}x${icon.height}`
-                    };
-                });
-
-                // orientation
-                // <preference name="Orientation" value="landscape" />
-                const oriPref = this.config.getGlobalPreference('Orientation');
-                if (oriPref) {
-                    // if it's a supported value, use it
-                    if (['landscape', 'portrait'].indexOf(oriPref) > -1) {
-                        manifestJson.orientation = oriPref;
-                    } else { // anything else maps to 'any'
-                        manifestJson.orientation = 'any';
-                    }
-                }
-
-                // get start_url
-                const contentNode = this.config.doc.find('content') || { attrib: { src: 'index.html' } }; // sensible default
-                manifestJson.start_url = contentNode.attrib.src;
-
-                // now we get some values from start_url page ...
-                const startUrlPath = path.join(cordovaProject.locations.www, manifestJson.start_url);
-                if (fs.existsSync(startUrlPath)) {
-                    const contents = fs.readFileSync(startUrlPath, 'utf-8');
-                    // matches <meta name="theme-color" content="#FF0044">
-                    const themeColorRegex = /<meta(?=[^>]*name="theme-color")\s[^>]*content="([^>]*)"/i;
-                    const result = themeColorRegex.exec(contents);
-
-                    let themeColor;
-                    if (result && result.length >= 2) {
-                        themeColor = result[1];
-                    } else { // see if there is a preference in config.xml
-                        // <preference name="StatusBarBackgroundColor" value="#000000" />
-                        themeColor = this.config.getGlobalPreference('StatusBarBackgroundColor');
-                    }
-
-                    if (themeColor) {
-                        manifestJson.theme_color = themeColor;
-                    }
-                }
-            }
-
-            fs.writeFileSync(manifestPath, JSON.stringify(manifestJson, null, 2), 'utf8');
-        }
-
-        // update project according to config.xml changes.
-        return this.parser.update_project(this.config, options);
+        return require('./lib/prepare').prepare.call(this, cordovaProject, options);
     }
 
     addPlugin (pluginInfo, installOptions) {
@@ -235,13 +103,14 @@ class Api {
         installOptions = installOptions || {};
         installOptions.variables = installOptions.variables || {};
         // CB-10108 platformVersion option is required for proper plugin installation
-        installOptions.platformVersion = installOptions.platformVersion || this.getPlatformInfo().version;
+        installOptions.platformVersion = installOptions.platformVersion ||
+            this.getPlatformInfo().version;
 
         const actions = new ActionStack();
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
-        if (!pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (! pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 
@@ -290,7 +159,7 @@ class Api {
         const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
-        if (!plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (! plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 
@@ -472,9 +341,7 @@ class Api {
     }
 
     build (buildOptions) {
-        return require('./lib/check_reqs')
-            .run()
-            .then(() => require('./lib/build').run.call(this, buildOptions));
+        return require('./lib/build').run.call(this, buildOptions, this);
     }
 
     run (runOptions) {

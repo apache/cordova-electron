@@ -1,0 +1,11 @@
+{
+  "win": [],
+  "config": {
+    "win": {
+      "target": "nsis",
+      "arch": [
+        "x64"
+      ]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "mac": [],
+  "config": {
+    "mac": {
+      "type": "${BUILD_TYPE}",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "arch": [
+        "x64"
+      ]
+    }
+  }
+}
