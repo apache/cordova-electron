@@ -46,9 +46,41 @@ module.exports.prepare = function (cordovaProject, options) {
             .write();
     }
 
+    (new PackageJson(this.locations.www))
+        .configure(this.config)
+        .write();
+
     // update project according to config.xml changes.
     return this.parser.update_project(this.config, options);
 };
+
+class PackageJson {
+    constructor (wwwDir) {
+        this.path = path.join(wwwDir, 'package.json');
+        this.www = wwwDir;
+        this.package = {
+            main: 'main.js'
+        };
+    }
+
+    configure (config) {
+        if (config) {
+            this.package.id = config.packageName() || 'io.cordova.hellocordova';
+            this.package.displayName = config.name() || 'Cordova Hello Cordova';
+            this.package.version = config.version() || '0.0.1';
+            this.package.description = config.description() || 'Cordova Sample App';
+            this.package.homepage = 'https://cordova.io'; // config.homepage() ||
+            this.package.author = config.author() || 'Apache Cordova Team';
+            this.package.license = 'Apache-2.0'; // config.license() ||
+        }
+
+        return this;
+    }
+
+    write () {
+        fs.writeFileSync(this.path, JSON.stringify(this.package, null, 2), 'utf8');
+    }
+}
 
 class ManifestJson {
     constructor (wwwDir) {
