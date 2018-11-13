@@ -51,7 +51,7 @@ function setupEvents (externalEventEmitter) {
 
 class Api {
     constructor (platform, platformRootDir, events) {
-        this.platform = 'cordova-electron';
+        this.platform = 'electron';
 
         // MyApp/platforms/electron
         this.root = path.resolve(__dirname, '..');
