@@ -202,7 +202,8 @@ class ElectronBuilder {
 
         Object.keys(userConfig).forEach((key) => {
             const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
-            buildSettingsString = buildSettingsString.replace(regex, userConfig[key]);
+            const value = userConfig[key].replace(/\\/g, `\\\\`);
+            buildSettingsString = buildSettingsString.replace(regex, value);
         });
 
         // update build settings with formated data
