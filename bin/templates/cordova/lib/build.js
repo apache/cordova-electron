@@ -147,27 +147,18 @@ class ElectronBuilder {
 
     __appendUserSingning (platform, signingConfigs, userBuildSettings) {
         if (platform === 'linux') {
-            if (this.isDevelopment && signingConfigs.debug) {
-                // do something for debug signing.
-            } else if (signingConfigs.release) {
-                // do something for release signing.
-            }
+            // emit that there is no signing.
+            return this;
         }
 
-        if (platform === 'mac') {
-            if (this.isDevelopment && signingConfigs.debug) {
-                // do something for debug signing.
-            } else if (signingConfigs.release) {
-                // do something for release signing.
-            }
+        const config = this.isDevelopment ? signingConfigs.debug : signingConfigs.release;
+
+        if (platform === 'mac' && config) {
+            this.__appendMacUserSingning(config, userBuildSettings.config[platform]);
         }
 
-        if (platform === 'windows') {
-            if (this.isDevelopment && signingConfigs.debug) {
-                // do something for debug signing.
-            } else if (signingConfigs.release) {
-                // do something for release signing.
-            }
+        if (platform === 'windows' && config) {
+            this.__appendWindowsUserSingning(config, userBuildSettings.config[platform]);
         }
     }
 
@@ -177,6 +168,60 @@ class ElectronBuilder {
             || platformConfigs.arch
             || platformConfigs.signing
         );
+    }
+
+    __appendMacUserSingning (config, buildConfigs) {
+        if (config.identity || process.env.CSC_LINK || process.env.CSC_NAME) buildConfigs.identity = config.identity || process.env.CSC_LINK || process.env.CSC_NAME;
+
+        const entitlements = config.entitlements;
+        if (entitlements && fs.existsSync(entitlements)) {
+            buildConfigs.entitlements = entitlements;
+        } else if (entitlements) {
+            // emit that the entitlement path is missing.
+        }
+
+        const entitlementsInherit = config.entitlementsInherit;
+        if (entitlementsInherit && fs.existsSync(entitlementsInherit)) {
+            buildConfigs.entitlementsInherit = entitlementsInherit;
+        } else if (entitlementsInherit) {
+            // emit that the entitlement path is missing.
+        }
+
+        const requirements = config.requirements;
+        if (requirements && fs.existsSync(requirements)) {
+            buildConfigs.requirements = requirements;
+        } else if (requirements) {
+            // emit that the entitlement path is missing.
+        }
+
+        const provisioningProfile = config.provisioningProfile;
+        if (provisioningProfile && fs.existsSync(provisioningProfile)) {
+            buildConfigs.provisioningProfile = provisioningProfile;
+        } else if (provisioningProfile) {
+            // emit that the provisioningProfile path is missing.
+        }
+    }
+
+    __appendWindowsUserSingning (config, buildConfigs) {
+        const certificateFile = config.certificateFile;
+        if (certificateFile && fs.existsSync(certificateFile)) {
+            buildConfigs.certificateFile = certificateFile;
+
+            if (config.certificatePassword || process.env.CSC_KEY_PASSWORD) buildConfigs.certificatePassword = config.certificatePassword || process.env.CSC_KEY_PASSWORD;
+        } else if (certificateFile) {
+            // emit that the certificateFile path is missing.
+        }
+
+        if (config.certificateSubjectName) buildConfigs.certificateSubjectName = config.certificateSubjectName;
+        if (config.certificateSha1) buildConfigs.certificateSha1 = config.certificateSha1;
+        if (config.signingHashAlgorithms) buildConfigs.signingHashAlgorithms = config.signingHashAlgorithms;
+
+        const additionalCertificateFile = config.additionalCertificateFile;
+        if (additionalCertificateFile && fs.existsSync(additionalCertificateFile)) {
+            buildConfigs.additionalCertificateFile = additionalCertificateFile;
+        } else if (additionalCertificateFile) {
+            // emit that the additionalCertificateFile path is missing.
+        }
     }
 
     configureBuildSettings () {
