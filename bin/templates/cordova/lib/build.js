@@ -113,6 +113,9 @@ class ElectronBuilder {
 
         if (platformConfigs.package) {
             platformConfigs.package.forEach((target) => {
+                if (target === 'mas') {
+                    userBuildSettings.config['mas'] = {};
+                }
                 /**
                  * The target of arch values are not validated as electron-builder will handle this.
                  * If the arch value is missing, 64-bit will be defaulted.
@@ -152,13 +155,19 @@ class ElectronBuilder {
         }
 
         const config = this.isDevelopment ? signingConfigs.debug : signingConfigs.release;
-
         if (platform === 'mac' && config) {
-            this.__appendMacUserSingning(config, userBuildSettings.config[platform]);
+            this.__appendMacUserSingning(config, userBuildSettings.config.mac);
+        }
+
+        const masConfig = this.isDevelopment ? null : (signingConfigs.store || null);
+        if (platform === 'mac' && masConfig) {
+            // Requirements is not available for mas.
+            if (masConfig.requirements) delete masConfig.requirements;
+            this.__appendMacUserSingning(masConfig, userBuildSettings.config.mas);
         }
 
         if (platform === 'windows' && config) {
-            this.__appendWindowsUserSingning(config, userBuildSettings.config[platform]);
+            this.__appendWindowsUserSingning(config, userBuildSettings.config.windows);
         }
     }
 
