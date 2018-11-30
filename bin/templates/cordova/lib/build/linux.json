@@ -3,7 +3,7 @@
   "config": {
     "linux": {
       "type": "${BUILD_TYPE}",
-      "maintainer": "Erisu",
+      "maintainer": "${AUTHOR}",
       "target": [
         {
           "target": "tar.gz",
