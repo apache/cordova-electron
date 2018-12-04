@@ -445,4 +445,4 @@ All browser-based plugins are usable with the Electron platform.
 
 When adding a plugin, if the plugin supports both the `electron` and `browser` platform, the `electron` portion will be used. If the plugin misses `electron`, but contains the `browser` implementation, it will fall back on the `browser` implementation.
 
-Internally, Electron is using Chromium (Chrome) as its web view. Some plugins may have condition written specifically for each browser. In this type of case, it may affect the behavior from what is intended. Since Electron may support feature that the browser does not, these plugins would need to be updated for Electron.
+Internally, Electron is using Chromium (Chrome) as its web view. Some plugins may have conditions written specifically for each different browser. In this case, it may affect the behavior from what is intended. Since Electron may support feature that the browser does not, these plugins would possibly need to be updated for the `electron` platform.
