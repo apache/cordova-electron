@@ -50,6 +50,9 @@ module.exports.createProject = (project_path, package_name, project_name, option
         events.emit('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
     }
 
+    // Make sure that the platform directory is created if missing.
+    fs.ensureDirSync(project_path);
+
     // copy templates/cordova directory ( recursive )
     fs.copySync(path.join(ROOT, 'bin/templates/cordova'), path.join(project_path, 'cordova'), { overwrite: false });
 
@@ -57,9 +60,13 @@ module.exports.createProject = (project_path, package_name, project_name, option
     fs.copySync(path.join(ROOT, 'bin/templates/project/www'), path.join(project_path, 'www'), { overwrite: false });
 
     // recreate our node_modules structure in the new project
-    fs.copySync(path.join(ROOT, 'node_modules'), path.join(project_path, 'cordova', 'node_modules'), { overwrite: false });
+    if (fs.existsSync(path.join(ROOT, 'node_modules'))) {
+        fs.copySync(path.join(ROOT, 'node_modules'), path.join(project_path, 'cordova', 'node_modules'), { overwrite: false });
+    }
 
     const platform_www = path.join(project_path, 'platform_www');
+
+    fs.ensureDirSync(platform_www);
 
     // copy cordova-js-src directory
     fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(platform_www, 'cordova-js-src'), { overwrite: false });
