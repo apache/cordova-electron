@@ -3,7 +3,7 @@
   "config": {
     "linux": {
       "type": "${BUILD_TYPE}",
-      "maintainer": "${AUTHOR}",
+      "maintainer": "${APP_AUTHOR}",
       "target": [
         {
           "target": "tar.gz",

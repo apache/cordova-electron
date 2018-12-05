@@ -246,6 +246,7 @@ class ElectronBuilder {
         // const isDevelopment = false;
         const packageJson = require(path.join(this.api.locations.www, 'package.json'));
         const userConfig = {
+            APP_AUTHOR: packageJson.author,
             APP_ID: packageJson.name,
             APP_TITLE: packageJson.displayName,
             APP_WWW_DIR: this.api.locations.www,
