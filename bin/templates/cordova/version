@@ -1,4 +1,6 @@
-<!--
+#!/usr/bin/env node
+
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -15,21 +17,16 @@
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
--->
+*/
 
-# Contributing to Apache Cordova
+/*
+    Returns the VERSION of CordovaLib used.
+    Note: it does not work if the --shared option was used to create the project.
+*/
 
-Anyone can contribute to Cordova. And we need your contributions.
+// Coho updates this line
+const VERSION = '5.1.0-dev';
 
-There are multiple ways to contribute: report bugs, improve the docs, and
-contribute code.
+module.exports.version = VERSION;
 
-For instructions on this, start with the 
-[contribution overview](http://cordova.apache.org/#contribute).
-
-The details are explained there, but the important items are:
- - Sign and submit an Apache ICLA (Contributor License Agreement).
- - Have a Jira issue open that corresponds to your contribution.
- - Run the tests so your patch doesn't break existing functionality.
-
-We look forward to your contributions!
+if (!module.parent) console.log(VERSION);

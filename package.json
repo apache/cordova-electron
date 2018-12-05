@@ -2,14 +2,14 @@
   "name": "cordova-electron",
   "version": "1.0.0",
   "description": "electron apps as a target for cordova developers",
-  "main": "bin/template/cordova/Api.js",
+  "main": "bin/templates/cordova/Api.js",
   "bin": "bin/create",
   "repository": {
     "type": "git",
     "url": "https://github.com/apache/cordova-electron"
   },
   "bugs": {
-    "url": "https://issues.apache.org/jira/browse/CB"
+    "url": "https://github.com/apache/cordova-electron/issues"
   },
   "kewords": [
     "cordova",
@@ -17,32 +17,31 @@
     "apache"
   ],
   "scripts": {
-    "eslint": "eslint bin && eslint spec",
-    "jasmine": "jasmine",
-    "test": "npm run eslint && npm run jasmine"
+    "eslint": "eslint bin tests",
+    "test": "npm run eslint && npm run test:coverage",
+    "test:unit": "jasmine --config=tests/spec/unit.json",
+    "test:coverage": "nyc jasmine --config=tests/spec/coverage.json"
   },
   "dependencies": {
-    "cordova-common": "^2.1.1",
-    "electron": "^1.7.9",
-    "nopt": "^3.0.6",
+    "cordova-common": "^2.2.5",
+    "electron": "^3.0.6",
+    "electron-builder": "^20.34.0",
+    "fs-extra": "^7.0.0",
+    "nopt": "^4.0.1",
     "shelljs": "^0.5.3"
   },
   "devDependencies": {
-    "eslint": "^4.0.0",
-    "eslint-config-semistandard": "^11.0.0",
-    "eslint-config-standard": "^10.2.1",
+    "eslint": "^5.6.0",
+    "eslint-config-semistandard": "^12.0.1",
+    "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.3.0",
-    "eslint-plugin-node": "^5.0.0",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "jasmine": "^2.5.3",
-    "tmp": "^0.0.26"
+    "eslint-plugin-node": "^7.0.1",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "jasmine": "^3.2.0",
+    "nyc": "^13.0.1",
+    "tmp": "^0.0.33"
   },
-  "bundleDependencies": [
-    "nopt",
-    "shelljs",
-    "cordova-common"
-  ],
   "author": "Apache Software Foundation",
   "contributors": [
     {
@@ -56,7 +55,18 @@
   ],
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=6.0.0"
   },
-  "engineStrict": true
+  "nyc": {
+    "include": [
+      "bin/templates/cordova/**",
+      "bin/lib/**",
+      "bin/create",
+      "bin/update"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  }
 }

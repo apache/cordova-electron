@@ -1,0 +1,15 @@
+{
+  "config": {
+    "appId": "${APP_ID}",
+    "productName": "${APP_TITLE}",
+    
+    "directories": {
+      "app": "${APP_WWW_DIR}",
+      "output": "${APP_BUILD_DIR}"
+    },
+    
+    "electronDownload": {
+      "version": "3.0.6"
+    }
+  }
+}

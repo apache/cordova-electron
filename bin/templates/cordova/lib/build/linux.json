@@ -1,0 +1,17 @@
+{
+  "linux": [],
+  "config": {
+    "linux": {
+      "type": "${BUILD_TYPE}",
+      "maintainer": "${APP_AUTHOR}",
+      "target": [
+        {
+          "target": "tar.gz",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  }
+}

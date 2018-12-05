@@ -1,4 +1,6 @@
-<!--
+#!/usr/bin/env node
+
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -15,21 +17,26 @@
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
--->
+*/
 
-# Contributing to Apache Cordova
+const nopt = require('nopt');
+const runForrest = require('./lib/run');
 
-Anyone can contribute to Cordova. And we need your contributions.
+const args = process.argv;
 
-There are multiple ways to contribute: report bugs, improve the docs, and
-contribute code.
+start(args);
 
-For instructions on this, start with the 
-[contribution overview](http://cordova.apache.org/#contribute).
+function start (argv) {
+    var args = nopt({ 'help': Boolean, 'target': String, 'port': Number }, { 'help': ['/?', '-h', 'help', '-help', '/help'] }, argv);
+    if (args.help) {
+        help();
+    } else {
+        return runForrest.run(args);
+    }
+}
 
-The details are explained there, but the important items are:
- - Sign and submit an Apache ICLA (Contributor License Agreement).
- - Have a Jira issue open that corresponds to your contribution.
- - Run the tests so your patch doesn't break existing functionality.
-
-We look forward to your contributions!
+function help () {
+    console.log('\nUsage: run');
+    console.log(''); // TODO ?
+    process.exit(0);
+}

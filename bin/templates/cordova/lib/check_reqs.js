@@ -1,4 +1,4 @@
-<!--
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -15,21 +15,8 @@
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
--->
+*/
 
-# Contributing to Apache Cordova
+// add methods as we determine what are the requirements
 
-Anyone can contribute to Cordova. And we need your contributions.
-
-There are multiple ways to contribute: report bugs, improve the docs, and
-contribute code.
-
-For instructions on this, start with the 
-[contribution overview](http://cordova.apache.org/#contribute).
-
-The details are explained there, but the important items are:
- - Sign and submit an Apache ICLA (Contributor License Agreement).
- - Have a Jira issue open that corresponds to your contribution.
- - Run the tests so your patch doesn't break existing functionality.
-
-We look forward to your contributions!
+module.exports.run = () => Promise.resolve([]);
