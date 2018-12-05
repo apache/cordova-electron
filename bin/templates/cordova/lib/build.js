@@ -169,7 +169,7 @@ class ElectronBuilder {
         }
 
         if (platform === 'win' && config) {
-            this.__appendWindowsUserSingning(config, userBuildSettings.config.windows);
+            this.__appendWindowsUserSingning(config, userBuildSettings.config.win);
         }
     }
 
