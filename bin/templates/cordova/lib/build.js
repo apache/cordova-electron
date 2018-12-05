@@ -37,7 +37,8 @@ function deepMerge (mergeTo, mergeWith) {
 const PLATFORM_MAPPING = {
     linux: 'linux',
     mac: 'darwin',
-    windows: 'win32'
+    windows: 'win32',
+    win: 'win'
 };
 
 class ElectronBuilder {
@@ -65,7 +66,6 @@ class ElectronBuilder {
                 if (platform !== 'mac' && platform !== 'linux' && platform !== 'windows') continue;
 
                 const platformConfigs = this.buildConfig.electron[platform];
-
                 /**
                  * In this scenario, the user has added a valid platform to build for but has not provided any custom build configurations.
                  * This will fetch thew platform's default build configuration.
@@ -85,7 +85,12 @@ class ElectronBuilder {
                     throw `The platform "${platform}" contains an invalid property. Valid properties are: package, arch, signing`;
                 }
 
-                this.__formatAppendUserSettings(platform, platformConfigs, userBuildSettings);
+                // Electron uses "win" as it's key, not "windows", so we will update here. We use windows in our settings for clarity.
+                this.__formatAppendUserSettings(
+                    (platform === 'windows' ? 'win' : platform),
+                    platformConfigs,
+                    userBuildSettings
+                );
             }
 
             this.userBuildSettings = userBuildSettings;
@@ -105,11 +110,9 @@ class ElectronBuilder {
             target: []
         };
 
-        // Only macOS and Windows can identifiy the build type. (development or distribution)
-        if (platform !== 'linux') {
-            // eslint-disable-next-line no-template-curly-in-string
-            userBuildSettings.config[platform].type = '${BUILD_TYPE}';
-        }
+        // Only macOS has a build type distinction. (development or distribution)
+        // eslint-disable-next-line no-template-curly-in-string
+        if (platform === 'mac') userBuildSettings.config[platform].type = '${BUILD_TYPE}';
 
         if (platformConfigs.package) {
             platformConfigs.package.forEach((target) => {
@@ -131,7 +134,6 @@ class ElectronBuilder {
              * If the arch value is identified, we will update each default package with the correct arch.
              */
             const platformDefaults = this.fetchPlatformDefaults(PLATFORM_MAPPING[platform]);
-
             let platformTargetPackages = platformDefaults.config[platform].target;
 
             if (platformConfigs.arch) {
@@ -166,7 +168,7 @@ class ElectronBuilder {
             this.__appendMacUserSingning(masConfig, userBuildSettings.config.mas);
         }
 
-        if (platform === 'windows' && config) {
+        if (platform === 'win' && config) {
             this.__appendWindowsUserSingning(config, userBuildSettings.config.windows);
         }
     }
