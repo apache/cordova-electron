@@ -294,7 +294,11 @@ module.exports.run = (buildOptions, api) => require('./check_reqs')
         console.log(error);
     });
 
-module.exports.help = () => {
-    console.log('Usage: cordova build electron');
-    console.log('Packages your app for distribution, or running locally.');
+module.exports.help = (argv) => {
+    const binPath = path.relative(process.cwd(), argv.binPath);
+    console.log(`Usage: ${binPath} [flags]
+Flags:
+    '--debug': will build project in debug mode (default)
+    '--release': will build project for release
+    '--nobuild': will skip build process (useful when using run command)`);
 };

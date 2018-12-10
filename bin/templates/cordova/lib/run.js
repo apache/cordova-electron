@@ -19,6 +19,7 @@
 
 const electron = require('electron');
 const proc = require('child_process');
+const path = require('path');
 
 module.exports.run = (args) => {
     // console.log("runOptions : ", args);
@@ -27,4 +28,11 @@ module.exports.run = (args) => {
     child.on('close', (code) => {
         process.exit(code);
     });
+};
+
+module.exports.help = (argv) => {
+    const binPath = path.relative(process.cwd(), argv.binPath);
+    console.log(`Usage: ${binPath} [flags]
+Flags:
+    '--nobuild': will skip build process (useful when using run command)`);
 };
