@@ -19,22 +19,19 @@
     under the License.
 */
 
-const path = require('path');
-const clean = require('./lib/clean');
-const args = process.argv;
+const argv = require('nopt')({
+    help: Boolean
+}, {
+    help: ['/?', '-h', 'help', '-help', '--help', '/help']
+});
 
-// Support basic help commands
-if (
-    args.length > 2 ||
-    args[2] === '--help' ||
-    args[2] === '/?' ||
-    args[2] === '-h' ||
-    args[2] === 'help' ||
-    args[2] === '-help' ||
-    args[2] === '/help'
-) {
-    console.log('Usage: ' + path.relative(process.cwd(), path.join(__dirname, 'clean')));
+argv.binPath = process.argv[1];
+
+const clean = require('./lib/clean');
+
+if (argv.help) {
+    clean.help(argv);
     process.exit(0);
-} else {
-    clean.run();
 }
+
+clean.run(argv);

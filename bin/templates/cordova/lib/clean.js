@@ -44,3 +44,8 @@ module.exports.cleanProject = () => {
     console.log('lib/clean will soon only export a `run` command, please update to not call `cleanProject`.');
     return module.exports.run();
 };
+
+module.exports.help = (argv) => {
+    const binPath = path.relative(process.cwd(), argv.binPath);
+    console.log(`Usage: ${binPath}`);
+};

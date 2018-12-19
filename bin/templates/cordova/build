@@ -19,21 +19,19 @@
     under the License.
 */
 
-const build = require('./lib/build');
-const args = process.argv;
+const argv = require('nopt')({
+    help: Boolean
+}, {
+    help: ['/?', '-h', 'help', '-help', '--help', '/help']
+});
 
-// provide help
-if (
-    args[2] === '--help' ||
-    args[2] === '/?' ||
-    args[2] === '-h' ||
-    args[2] === '/h' ||
-    args[2] === 'help' ||
-    args[2] === '-help' ||
-    args[2] === '/help'
-) {
-    build.help();
+argv.binPath = process.argv[1];
+
+const build = require('./lib/build');
+
+if (argv.help) {
+    build.help(argv);
     process.exit(0);
-} else {
-    build.run();
 }
+
+build.run(argv);

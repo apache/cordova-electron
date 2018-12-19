@@ -19,24 +19,21 @@
     under the License.
 */
 
-const nopt = require('nopt');
+const argv = require('nopt')({
+    help: Boolean,
+    target: String,
+    port: Number
+}, {
+    help: ['/?', '-h', 'help', '-help', '--help', '/help']
+});
+
+argv.binPath = process.argv[1];
+
 const runForrest = require('./lib/run');
 
-const args = process.argv;
-
-start(args);
-
-function start (argv) {
-    var args = nopt({ 'help': Boolean, 'target': String, 'port': Number }, { 'help': ['/?', '-h', 'help', '-help', '/help'] }, argv);
-    if (args.help) {
-        help();
-    } else {
-        return runForrest.run(args);
-    }
-}
-
-function help () {
-    console.log('\nUsage: run');
-    console.log(''); // TODO ?
+if (argv.help) {
+    runForrest.help(argv);
     process.exit(0);
 }
+
+runForrest.run(argv);
