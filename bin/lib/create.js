@@ -77,5 +77,8 @@ module.exports.createProject = (project_path, package_name, project_name, option
     // copy main.js
     fs.copySync(path.join(ROOT, 'bin/templates/project/main.js'), path.join(platform_www, 'main.js'), { overwrite: false });
 
+    // copy cdv-electron-settings.json
+    fs.copySync(path.join(ROOT, 'bin/templates/project/cdv-electron-settings.json'), path.join(platform_www, 'cdv-electron-settings.json'), { overwrite: false });
+
     return Promise.resolve();
 };
