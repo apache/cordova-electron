@@ -17,11 +17,9 @@
     under the License.
 */
 
-const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
+const fs = require('fs');
+// Module to control application life, browser window and tray.
+const { app, BrowserWindow } = require('electron');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
 
@@ -31,7 +29,20 @@ let mainWindow;
 
 function createWindow () {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 800, height: 600 });
+    let appIcon;
+    if (fs.existsSync(`${__dirname}/img/app.png`)) {
+        appIcon = `${__dirname}/img/app.png`;
+    } else if (fs.existsSync(`${__dirname}/img/icon.png`)) {
+        appIcon = `${__dirname}/img/icon.png`;
+    } else {
+        appIcon = `${__dirname}/img/logo.png`;
+    }
+
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        icon: appIcon
+    });
 
     // and load the index.html of the app.
     // TODO: possibly get this data from config.xml

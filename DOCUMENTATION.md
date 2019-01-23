@@ -30,6 +30,7 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
     - [Create a Project](#create-a-project)
     - [Preview a Project](#preview-a-project)
     - [Build a Project](#build-a-project)
+  - [Customizing the Application's Icon](#customizing-the-applications-icon)
   - [Customizing the Application's Main Process](#customizing-the-applications-main-process)
     - [Window Appearance (BrowserWindow)](#window-appearance-browserwindow)
       - [How to set the window default size?](#how-to-set-the-window-default-size)
@@ -107,18 +108,48 @@ $ cordova build electron --debug
 $ cordova build electron --release
 ```
 
-<!-- @todo Update prepare.
-Customizing the Application's Icon
+## Customizing the Application's Icon
 
-In the `config.xml` file, there should be an Electron platform node with the icons defined. The example is seen as below:
-```
+Customized icon(s) can be declared with the `<icon>` element(s) in the `config.xml` file. There are two types of icons that can be defined, the application icon and the package installer icon. These icons should be defined in the Electron's platform node `<platform name="electron">`.
+
+One icon can be used for the application and installer, but this icon should be at least **512x512** pixels to work across all operating systems.
+
+_Notice: If a customized icon is not provided, the Apache Cordova default icons are used._
+
+_Notice: macOS does not display custom icons when using `cordova run`. It defaults to the Electron's icon._
+
+```xml
 <platform name="electron">
-  <icon src="res/electron/icon.ico" />
-  <icon src="res/electron/icon.icns" />
-  <icon src="res/electron/32x32.png" />
+  <icon src="res/electron/icon.png" />
 </platform>
 ```
--->
+
+You can supply unique icons for the application and installer by setting the `target` attribute. As mentioned above, the installer image should be **512x512** pixels to work across all platforms.
+
+```xml
+<platform name="electron">
+  <icon src="res/electron/app.png" target="app" />
+  <icon src="res/electron/installer.png" target="installer" />
+</platform>
+```
+
+For devices that support high-DPI resolutions, such as Apple's Retina display, you can create a set of images with the same base filename but suffix with its multiplier.
+
+For example, if the base image's filename `icon.png` and is the standard resolution, then `icon@2x.png` will be treated as a high-resolution image that with a DPI doubled from the base.
+
+* icon.png (256px x 256px)
+* icon@2x.png (512px x 512px)
+
+If you want to support displays with different DPI densities at the same time, you can put images with different sizes in the same folder and use the filename without DPI suffixes. For example:
+
+```xml
+<platform name="electron">
+  <icon src="res/electron/icon.png" />
+  <icon src="res/electron/icon@1.5x.png" />
+  <icon src="res/electron/icon@2x.png" />
+  <icon src="res/electron/icon@4x.png" target="installer" />
+</platform>
+```
 
 ## Customizing the Application's Main Process
 
