@@ -190,13 +190,9 @@ mainWindow = new BrowserWindow({ fullscreen: true });
 
 ### DevTools
 
-> :warning: With the current state of the Cordova Electron platform, the `--release` and `--debug` flag does not control the visibility of the DevTools.
+The `--release` and `--debug` flags control the visibility of the DevTools. DevTools are shown by default on **Debug Builds** (`without a flag` or with `--debug`). If you want to hide the DevTools pass in the `--release` flag when building or running the application.
 
-To display the DevTools, uncomment the following line from the main.js process file.
-
-```
-// mainWindow.webContents.openDevTools();
-```
+_Note: DevTools still can be closed or opened manually._
 
 ## Build Configurations
 
