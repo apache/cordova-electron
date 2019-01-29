@@ -1,28 +1,47 @@
-# [Experimental] Cordova Electron
+# Cordova Electron
 
-Build apps for Mac OSX, Windows and Linux using [Electron](http://electron.atom.io/)
+[Electron](https://electronjs.org) is a framework that uses web technologies (HTML, CSS, and JS) to build cross-platform desktop applications.
 
-# Goals
+## Platform Objectives
 
-- Desktop targeted deployment 
+- Build Desktop Applications (Linux, macOS, and Windows)
+- Sign Applications for Release
 
-# Usage
+## Usage
 
-    npm install
-    ./bin/create helloworld
-    cd helloworld
-    ./cordova/run
+### Cordova CLI
 
-# TODO
+```shell
+$ npm install -g cordova@latest
+$ cordova create helloworld
+$ cd helloworld
+$ cordova run electron
+```
 
-- `bin/create`
-- `bin/update`
-- `bin/check_reqs`
-- `bin/templates/scripts/cordova/build`
-- `bin/templates/scripts/cordova/clean`
-- `bin/templates/scripts/cordova/log`
-- `bin/templates/scripts/cordova/emulate`
-- `bin/templates/scripts/cordova/run`
-- `bin/templates/scripts/cordova/version`
-- `bin/templates/www`
+<!-- 
+@todo investigate standalone implementation. The current implementation uses paths that cordova-cli understands while standalone does not recognize them. As the standalone implementation does not work as expected in the current release and is not targeted for this release, please use cordova-cli.
 
+## Standalone
+1. Download the latest release from: [Apache Release Distribution](https://dist.apache.org/repos/dist/release/cordova/platforms/)
+2. Extract `cordova-electron-#.#.#.tgz`.
+3. Change the working directory to the extracted package.
+4. Install package dependencies.
+
+    `npm install`
+
+5. Create new project with standalone binaraies.
+
+```
+$ ./bin/create helloworld
+$ cd helloworld
+$ ./cordova/run
+```
+-->
+
+## Documentation
+
+For more documentation, please refer to the [DOCUMENTATION.md](https://github.com/apache/cordova-electron/blob/master/DOCUMENTATION.md) file.
+
+## Contributions
+
+The Apache Cordova team would like to thank [Ibby Hadeed](https://www.npmjs.com/~ihadeed) for transferring the [`cordova-electron`](https://www.npmjs.com/package/cordova-electron) package name, on [npm](https://npmjs.com), to Apache Cordova.
