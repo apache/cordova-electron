@@ -2,7 +2,6 @@
   "linux": [],
   "config": {
     "linux": {
-      "type": "${BUILD_TYPE}",
       "maintainer": "${APP_AUTHOR}",
       "target": [
         {
