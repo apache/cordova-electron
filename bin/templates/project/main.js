@@ -22,6 +22,8 @@ const electron = require('electron');
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
+// Electron settings from .json file.
+const cdvElectronSettings = require('./cdv-electron-settings.json');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -39,7 +41,9 @@ function createWindow () {
     });
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    if (!cdvElectronSettings.isRelease) {
+        mainWindow.webContents.openDevTools();
+    }
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {

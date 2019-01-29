@@ -69,9 +69,33 @@ module.exports.prepare = function (cordovaProject, options) {
         .configure(this.config)
         .write();
 
+    // update Electron settings in .json file
+    (new SettingJson(this.locations.www))
+        .configure(options.options)
+        .write();
+
     // update project according to config.xml changes.
     return this.parser.update_project(this.config, options);
 };
+
+class SettingJson {
+    constructor (wwwDir) {
+        this.path = path.join(wwwDir, 'cdv-electron-settings.json');
+        this.package = require(this.path);
+    }
+
+    configure (config) {
+        if (config) {
+            this.package.isRelease = (typeof (config.release) !== 'undefined') ? config.release : false;
+        }
+
+        return this;
+    }
+
+    write () {
+        fs.writeFileSync(this.path, JSON.stringify(this.package, null, 2), 'utf8');
+    }
+}
 
 class PackageJson {
     constructor (wwwDir) {
