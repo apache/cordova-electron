@@ -44,4 +44,4 @@ For more documentation, please refer to the [DOCUMENTATION.md](https://github.co
 
 ## Contributions
 
-The Apache Cordova team would like to thank [Ibby Hadeed](https://www.npmjs.com/~ihadeed) for transferring the [`cordova-electron`](https://www.npmjs.com/package/cordova-electron) package name, on [npm](https://npmjs.com), to Apache Cordova.
+The Apache Cordova team would like to thank [Ibby Hadeed](https://www.npmjs.com/~ihadeed) for transferring the [`cordova-electron`](https://www.npmjs.com/package/cordova-electron) [npm](https://npmjs.com) package name to Apache Cordova. Thanks!
