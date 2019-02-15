@@ -62,7 +62,9 @@ describe('Testing prepare.js:', () => {
 
         locations = {
             buildRes: path.join('mock', 'build-res'),
-            www: path.join('mock', 'www')
+            www: path.join('mock', 'www'),
+            configXml: path.join('mock', 'config.xml'),
+            platformRootDir: path.join('mock', 'platform_www')
         };
 
         emitSpy = jasmine.createSpy('emit');
@@ -76,132 +78,11 @@ describe('Testing prepare.js:', () => {
         });
     });
 
-    describe('SettingJon class', () => {
-        let SettingJson;
-        let requireSpy;
-        let options;
+    describe('module.exports.prepare method', () => {
+        it('should be defined.', () => {
+            const exportPrepare = prepare.__get__('module.exports.prepare');
 
-        beforeEach(() => {
-            SettingJson = prepare.__get__('SettingJson');
-
-            requireSpy = jasmine.createSpy('require').and.returnValue({});
-            prepare.__set__({ require: requireSpy });
-        });
-
-        it('should be called and package equal to false, if settings json does not exist.', () => {
-            requireSpy = jasmine.createSpy('require').and.returnValue(false);
-            prepare.__set__({ require: requireSpy });
-
-            SettingJson = new SettingJson(locations.www);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(SettingJson.package).toEqual(false);
-        });
-
-        it('should be called and package equal to true, if settings json does exist.', () => {
-            SettingJson = new SettingJson(locations.www);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(SettingJson.package).toEqual({});
-        });
-
-        it('should be equal to false, when no flag is set.', () => {
-            // mock options data
-            options = { options: { argv: [] } };
-
-            SettingJson = new SettingJson(locations.www).configure(options.options);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(SettingJson.package.isRelease).toEqual(false);
-        });
-
-        it('should be equal to false, when debug flag is set.', () => {
-            // mock options data
-            options = { options: { debug: true, argv: [] } };
-
-            SettingJson = new SettingJson(locations.www).configure(options.options);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(SettingJson.package.isRelease).toEqual(false);
-        });
-
-        it('should be equal to true, when release flag is set.', () => {
-            // mock options data
-            options = { options: { release: true, argv: [] } };
-
-            SettingJson = new SettingJson(locations.www).configure(options.options);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(SettingJson.package.isRelease).toEqual(true);
-        });
-
-        it('should write provided data, when no flag is set.', () => {
-            let writeFileSyncSpy;
-            writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            prepare.__set__('fs', { writeFileSync: writeFileSyncSpy });
-
-            options = { options: { argv: [] } };
-
-            SettingJson = new SettingJson(locations.www).configure(options.options).write();
-
-            expect(writeFileSyncSpy).toHaveBeenCalled();
-
-            const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
-
-            // get settings json file content and remove white spaces
-            let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
-            settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"isRelease":false}');
-
-            const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(settingsFormat).toEqual('utf8');
-        });
-
-        it('should write provided data, when debug flag is set.', () => {
-            let writeFileSyncSpy;
-            writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            prepare.__set__('fs', { writeFileSync: writeFileSyncSpy });
-
-            options = { options: { debug: true, argv: [] } };
-
-            SettingJson = new SettingJson(locations.www).configure(options.options).write();
-
-            expect(writeFileSyncSpy).toHaveBeenCalled();
-
-            const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
-
-            // get settings json file content and remove white spaces
-            let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
-            settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"isRelease":false}');
-
-            const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(settingsFormat).toEqual('utf8');
-        });
-
-        it('should write provided data.', () => {
-            let writeFileSyncSpy;
-            writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            prepare.__set__('fs', { writeFileSync: writeFileSyncSpy });
-
-            options = { options: { release: true, argv: [] } };
-
-            SettingJson = new SettingJson(locations.www).configure(options.options).write();
-
-            expect(writeFileSyncSpy).toHaveBeenCalled();
-
-            const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
-
-            // get settings json file content and remove white spaces
-            let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
-            settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"isRelease":true}');
-
-            const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(settingsFormat).toEqual('utf8');
+            expect(exportPrepare).toBeDefined();
         });
     });
 
