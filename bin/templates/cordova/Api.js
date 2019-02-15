@@ -68,6 +68,7 @@ class Api {
             configXml: path.join(this.root, 'config.xml'),
             defaultConfigXml: path.join(this.root, 'cordova/defaults.xml'),
             build: path.join(this.root, 'build'),
+            buildRes: path.join(this.root, 'build-res'),
             cache: path.join(this.root, 'cache'),
             // NOTE: Due to platformApi spec we need to return relative paths here
             cordovaJs: 'bin/templates/project/assets/www/cordova.js',

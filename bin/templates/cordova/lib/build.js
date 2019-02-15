@@ -249,8 +249,10 @@ class ElectronBuilder {
             APP_AUTHOR: packageJson.author,
             APP_ID: packageJson.name,
             APP_TITLE: packageJson.displayName,
-            APP_WWW_DIR: this.api.locations.www,
+            APP_INSTALLER_ICON: 'installer.png',
             APP_BUILD_DIR: this.api.locations.build,
+            APP_BUILD_RES_DIR: this.api.locations.buildRes,
+            APP_WWW_DIR: this.api.locations.www,
             BUILD_TYPE: this.isDevelopment ? 'development' : 'distribution'
         };
 

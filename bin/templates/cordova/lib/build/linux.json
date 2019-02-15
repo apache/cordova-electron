@@ -3,6 +3,7 @@
   "config": {
     "linux": {
       "maintainer": "${APP_AUTHOR}",
+      "icon": "${APP_INSTALLER_ICON}",
       "target": [
         {
           "target": "tar.gz",

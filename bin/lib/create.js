@@ -53,6 +53,9 @@ module.exports.createProject = (project_path, package_name, project_name, option
     // Make sure that the platform directory is created if missing.
     fs.ensureDirSync(project_path);
 
+    // copy templates/build-res directory ( recursive )
+    fs.copySync(path.join(ROOT, 'bin/templates/build-res'), path.join(project_path, 'build-res'), { overwrite: false });
+
     // copy templates/cordova directory ( recursive )
     fs.copySync(path.join(ROOT, 'bin/templates/cordova'), path.join(project_path, 'cordova'), { overwrite: false });
 
