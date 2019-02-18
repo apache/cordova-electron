@@ -18,6 +18,7 @@
 */
 
 const rewire = require('rewire');
+const path = require('path');
 const CordovaError = require('cordova-common').CordovaError;
 
 /**
@@ -52,16 +53,16 @@ describe('Testing prepare.js:', () => {
         prepare = rewire('../../../../../../bin/templates/cordova/lib/prepare');
 
         cordovaProject = {
-            root: '/mock',
+            root: 'mock',
             projectConfig: {
-                path: '/mock/config.xml',
+                path: path.join('mock', 'config.xml'),
                 cdvNamespacePrefix: 'cdv'
             }
         };
 
         locations = {
-            buildRes: '/mock/build-res',
-            www: '/mock/www'
+            buildRes: path.join('mock', 'build-res'),
+            www: path.join('mock', 'www')
         };
 
         emitSpy = jasmine.createSpy('emit');
@@ -146,7 +147,7 @@ describe('Testing prepare.js:', () => {
             expect(writeFileSyncSpy).toHaveBeenCalled();
 
             const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual('/mock/www/cdv-electron-settings.json');
+            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
 
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
@@ -169,7 +170,7 @@ describe('Testing prepare.js:', () => {
             expect(writeFileSyncSpy).toHaveBeenCalled();
 
             const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual('/mock/www/cdv-electron-settings.json');
+            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
 
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
@@ -192,7 +193,7 @@ describe('Testing prepare.js:', () => {
             expect(writeFileSyncSpy).toHaveBeenCalled();
 
             const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual('/mock/www/cdv-electron-settings.json');
+            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
 
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
@@ -313,7 +314,7 @@ describe('Testing prepare.js:', () => {
         it('should detect icons with wrong size defined and throw an error with and sizes in message.', () => {
             const icons = [
                 mockGetIconItem({
-                    src: 'res/electron/cordova_512.png',
+                    src: path.join('res', 'electron', 'cordova_512.png'),
                     height: 512,
                     width: 256
                 })
@@ -329,7 +330,7 @@ describe('Testing prepare.js:', () => {
         it('should detect icons with wrong size defined for the installer and throw an error with target and sizes in message.', () => {
             const icons = [
                 mockGetIconItem({
-                    src: 'res/electron/cordova_512.png',
+                    src: path.join('res', 'electron', 'cordova_512.png'),
                     target: 'installer',
                     height: 256,
                     width: 256
@@ -353,7 +354,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with custom icon, when there is only one icon in res folder.', () => {
             const icons = mockGetIconItem({
-                src: 'res/logo.png',
+                src: path.join('res', 'logo.png'),
                 platform: undefined
             });
 
@@ -370,7 +371,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with custom icon, when there is only one icon in res/electron folder.', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/logo.png'
+                src: path.join('res', 'electron', 'logo.png')
             });
 
             const actual = prepareIcons([icons]);
@@ -386,7 +387,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with custom icons, when there is only one icon with correct width and height set.', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 width: 512,
                 height: 512
             });
@@ -404,7 +405,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with installer icon, when icon is defined for target=installer', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512
             });
@@ -422,13 +423,13 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with app and installer icon, when there is one icon with target=app and one with target=installer', () => {
             const app = mockGetIconItem({
-                src: 'res/electron/cordova.png',
+                src: path.join('res', 'electron', 'cordova.png'),
                 target: 'app',
                 width: 512,
                 height: 512
             });
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
@@ -448,19 +449,19 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with app and installer icon, when there more one icon with target=app and more than one with target=installer', () => {
             const app = mockGetIconItem({
-                src: 'res/electron/cordova.png',
+                src: path.join('res', 'electron', 'cordova.png'),
                 target: 'app',
                 width: 512,
                 height: 512
             });
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
             });
             const installer2 = mockGetIconItem({
-                src: 'res/electron/cordova_512_extra.png',
+                src: path.join('res', 'electron', 'cordova_512_extra.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
@@ -482,16 +483,16 @@ describe('Testing prepare.js:', () => {
 
             // The emit message was.
             actual = emitSpy.calls.argsFor(0)[1];
-            expected = 'Found extra icon for target installer: res/electron/cordova_512.png and ignoring in favor of res/electron/cordova_512_extra.png.';
+            expected = `Found extra icon for target installer: ${path.join('res', 'electron', 'cordova_512.png')} and ignoring in favor of ${path.join('res', 'electron', 'cordova_512_extra.png')}.`;
             expect(actual).toEqual(expected);
         });
 
         it('should return array of objects with high resolution icons, if they are defined', () => {
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const icons = [ highRes10, highRes15, highRes20, highRes40, highRes80 ];
 
@@ -514,16 +515,16 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with high resolution icons, if they are defined and an extra icon with target=installer', () => {
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
             });
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const icons = [ installer, highRes10, highRes15, highRes20, highRes40, highRes80 ];
 
@@ -569,7 +570,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with remaining icons, when there is only one icon in res/electron folder.', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/logo.png'
+                src: path.join('res', 'electron', 'logo.png')
             });
 
             const actual = findHighResIcons([icons]);
@@ -583,7 +584,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with remaining icon, when there is only one icon with correct width and height set.', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 width: 512,
                 height: 512
             });
@@ -599,7 +600,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with remaining icon, when icon is defined for target=installer', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512
             });
@@ -615,13 +616,13 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with app and installer icon, when there is one icon with target=app and one with target=installer', () => {
             const app = mockGetIconItem({
-                src: 'res/electron/cordova.png',
+                src: path.join('res', 'electron', 'cordova.png'),
                 target: 'app',
                 width: 512,
                 height: 512
             });
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
@@ -639,19 +640,19 @@ describe('Testing prepare.js:', () => {
 
         it('should return remainingIcons array of objects with app and installer icon, when there more one icon with target=app and more than one with target=installer', () => {
             const app = mockGetIconItem({
-                src: 'res/electron/cordova.png',
+                src: path.join('res', 'electron', 'cordova.png'),
                 target: 'app',
                 width: 512,
                 height: 512
             });
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
             });
             const installer2 = mockGetIconItem({
-                src: 'res/electron/cordova_512_extra.png',
+                src: path.join('res', 'electron', 'cordova_512_extra.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
@@ -668,10 +669,10 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should throw Cordova Error when there is no base icon', () => {
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const icons = [ highRes15, highRes20, highRes40, highRes80 ];
 
@@ -683,11 +684,11 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should return array of objects with high resolution icons, if they are defined', () => {
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const icons = [ highRes10, highRes15, highRes20, highRes40, highRes80 ];
 
@@ -708,16 +709,16 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with high resolution icons, if they are defined and an extra icon with target=installer', () => {
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
             });
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const icons = [ installer, highRes10, highRes15, highRes20, highRes40, highRes80 ];
 
@@ -737,11 +738,11 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should return array of objects with high resolution icons, if they are defined and remaining icon with target=installer', () => {
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png', target: 'installer' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png'), target: 'installer' });
 
             const icons = [ highRes10, highRes15, highRes20, highRes40, highRes80 ];
 
@@ -776,7 +777,7 @@ describe('Testing prepare.js:', () => {
         it('should map custom icon to installer and app icon locations', () => {
 
             const icon = mockGetIconItem({
-                src: 'res/logo.png',
+                src: path.join('res', 'logo.png'),
                 platform: undefined
             });
             let data = {
@@ -791,8 +792,8 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { 'res/logo.png': '/mock/www/img/app.png' },
-                { 'res/logo.png': '/mock/build-res/installer.png' }
+                { [path.join('res', 'logo.png')]: path.join('mock', 'www', 'img', 'app.png') },
+                { [path.join('res', 'logo.png')]: path.join('mock', 'build-res', 'installer.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -800,7 +801,7 @@ describe('Testing prepare.js:', () => {
 
         it('should map installer icon to appoporiate location', () => {
             const icons = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512
             });
@@ -816,7 +817,7 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { 'res/electron/cordova_512.png': '/mock/build-res/installer.png' }
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('mock', 'build-res', 'installer.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -824,13 +825,13 @@ describe('Testing prepare.js:', () => {
 
         it('should map installer and app icon to appoporiate location', () => {
             const app = mockGetIconItem({
-                src: 'res/electron/cordova.png',
+                src: path.join('res', 'electron', 'cordova.png'),
                 target: 'app',
                 width: 512,
                 height: 512
             });
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
@@ -847,19 +848,19 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { 'res/electron/cordova.png': '/mock/www/img/app.png' },
-                { 'res/electron/cordova_512.png': '/mock/build-res/installer.png' }
+                { [path.join('res', 'electron', 'cordova.png')]: path.join('mock', 'www', 'img', 'app.png') },
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('mock', 'build-res', 'installer.png') }
             ];
 
             expect(expected).toEqual(actual);
         });
 
         it('should map high resolution icons to appoporiate location', () => {
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const data = {
                 customIcon: undefined,
@@ -879,11 +880,11 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { 'res/electron/cordova@1.5x.png': '/mock/www/img/icon@1.5x.png' },
-                { 'res/electron/cordova@2x.png': '/mock/www/img/icon@2x.png' },
-                { 'res/electron/cordova@4x.png': '/mock/www/img/icon@4x.png' },
-                { 'res/electron/cordova@8x.png': '/mock/www/img/icon@8x.png' },
-                { 'res/electron/cordova.png': '/mock/www/img/icon.png' }
+                { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('mock', 'www', 'img', 'icon@1.5x.png') },
+                { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('mock', 'www', 'img', 'icon@2x.png') },
+                { [path.join('res', 'electron', 'cordova@4x.png')]: path.join('mock', 'www', 'img', 'icon@4x.png') },
+                { [path.join('res', 'electron', 'cordova@8x.png')]: path.join('mock', 'www', 'img', 'icon@8x.png') },
+                { [path.join('res', 'electron', 'cordova.png')]: path.join('mock', 'www', 'img', 'icon.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -891,16 +892,16 @@ describe('Testing prepare.js:', () => {
 
         it('should map high resolution icons and installer icon to appoporiate location', () => {
             const installer = mockGetIconItem({
-                src: 'res/electron/cordova_512.png',
+                src: path.join('res', 'electron', 'cordova_512.png'),
                 target: 'installer',
                 width: 512,
                 height: 512
             });
-            const highRes10 = mockGetIconItem({ src: 'res/electron/cordova.png' });
-            const highRes15 = mockGetIconItem({ src: 'res/electron/cordova@1.5x.png' });
-            const highRes20 = mockGetIconItem({ src: 'res/electron/cordova@2x.png' });
-            const highRes40 = mockGetIconItem({ src: 'res/electron/cordova@4x.png' });
-            const highRes80 = mockGetIconItem({ src: 'res/electron/cordova@8x.png' });
+            const highRes10 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova.png') });
+            const highRes15 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@1.5x.png') });
+            const highRes20 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@2x.png') });
+            const highRes40 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
+            const highRes80 = mockGetIconItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
             const data = {
                 customIcon: undefined,
@@ -920,12 +921,12 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { 'res/electron/cordova_512.png': '/mock/build-res/installer.png' },
-                { 'res/electron/cordova@1.5x.png': '/mock/www/img/icon@1.5x.png' },
-                { 'res/electron/cordova@2x.png': '/mock/www/img/icon@2x.png' },
-                { 'res/electron/cordova@4x.png': '/mock/www/img/icon@4x.png' },
-                { 'res/electron/cordova@8x.png': '/mock/www/img/icon@8x.png' },
-                { 'res/electron/cordova.png': '/mock/www/img/icon.png' }
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('mock', 'build-res', 'installer.png') },
+                { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('mock', 'www', 'img', 'icon@1.5x.png') },
+                { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('mock', 'www', 'img', 'icon@2x.png') },
+                { [path.join('res', 'electron', 'cordova@4x.png')]: path.join('mock', 'www', 'img', 'icon@4x.png') },
+                { [path.join('res', 'electron', 'cordova@8x.png')]: path.join('mock', 'www', 'img', 'icon@8x.png') },
+                { [path.join('res', 'electron', 'cordova.png')]: path.join('mock', 'www', 'img', 'icon.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -955,30 +956,26 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should map to file to file', () => {
-            const sourcePath = `${cordovaProject.root}/res/electron/cordova_512.png`;
-            const targetPath = `${cordovaProject.root}/www/img/icon.png`;
+            const sourcePath = path.join(cordovaProject.root, 'res', 'electron', 'cordova_512.png');
+            const targetPath = path.join(cordovaProject.root, 'www', 'img', 'icon.png');
 
             const expected = {};
             expected[sourcePath] = targetPath;
 
             const actual = mapIconResources(cordovaProject.root, sourcePath, targetPath);
-
             expect(shellLsSpy).toHaveBeenCalled();
-
             expect(expected).toEqual(actual);
         });
 
         it('should map to folder to folder', () => {
-            const sourcePath = `${cordovaProject.root}/res/electron/`;
-            const targetPath = `${cordovaProject.root}/www/img/`;
+            const sourcePath = path.join(cordovaProject.root, 'res', 'electron');
+            const targetPath = path.join(cordovaProject.root, 'www', 'img');
 
             const expected = {};
             expected[sourcePath] = targetPath;
 
             const actual = mapIconResources(cordovaProject.root, sourcePath, targetPath);
-
             expect(shellLsSpy).toHaveBeenCalled();
-
             expect(expected).toEqual(actual);
         });
 
@@ -1002,21 +999,21 @@ describe('Testing prepare.js:', () => {
 
         it('should copy provided resources.', () => {
             copyIcons(cordovaProject.root, [
-                { 'res/electron/cordova_512.png': `${cordovaProject.root}/build-res/installer.png` },
-                { 'res/electron/cordova.png': `${cordovaProject.root}/www/img/icon.png` }
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join(cordovaProject.root, 'build-res', 'installer.png') },
+                { [path.join('res', 'electron', 'cordova.png')]: path.join(cordovaProject.root, 'www', 'img', 'icon.png') }
             ]);
 
             expect(fsCopySyncSpy).toHaveBeenCalled();
 
             const installerIconSrcPathTest = fsCopySyncSpy.calls.argsFor(0)[0];
             const installerIconDestPathTest = fsCopySyncSpy.calls.argsFor(0)[1];
-            expect(installerIconSrcPathTest).toBe(`${cordovaProject.root}/res/electron/cordova_512.png`);
-            expect(installerIconDestPathTest).toBe(`${cordovaProject.root}/build-res/installer.png`);
+            expect(installerIconSrcPathTest).toBe(path.join(cordovaProject.root, 'res', 'electron', 'cordova_512.png'));
+            expect(installerIconDestPathTest).toBe(path.join(cordovaProject.root, 'build-res', 'installer.png'));
 
             const appIconSrcPathTest = fsCopySyncSpy.calls.argsFor(1)[0];
             const appIconDestPathTest = fsCopySyncSpy.calls.argsFor(1)[1];
-            expect(appIconSrcPathTest).toBe(`${cordovaProject.root}/res/electron/cordova.png`);
-            expect(appIconDestPathTest).toBe(`${cordovaProject.root}/www/img/icon.png`);
+            expect(appIconSrcPathTest).toBe(path.join(cordovaProject.root, 'res', 'electron', 'cordova.png'));
+            expect(appIconDestPathTest).toBe(path.join(cordovaProject.root, 'www', 'img', 'icon.png'));
         });
     });
 });
