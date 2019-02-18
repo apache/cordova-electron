@@ -18,15 +18,22 @@
 language: node_js
 sudo: false
 
+os:
+  - linux
+  - osx
+  - windows
+
 node_js:
-  - '6'
-  - '8'
-  - '10'
+  - 6
+  - 8
+  - 10
 
 install:
   - npm install
+  - npm install -g codecov
 
 script:
-  - node --version
-  - npm --version
   - npm test
+
+after_script:
+  - codecov

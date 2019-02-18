@@ -448,8 +448,11 @@ function mapIconResources (rootDir, sourcePath, targetPath) {
  */
 function copyIcons (rootDir, resourceMap) {
     resourceMap.forEach(element => {
-        if (Object.keys(element).length) {
-            fs.copySync(path.join(rootDir, Object.keys(element)[0]), Object.values(element)[0]);
+        const elementKeys = Object.keys(element);
+
+        if (elementKeys.length) {
+            const value = elementKeys.map((e) => element[e])[0];
+            fs.copySync(path.join(rootDir, elementKeys[0]), value);
         }
     });
 }
