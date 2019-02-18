@@ -69,19 +69,19 @@ module.exports = {
         uninstall: (jsModule, www_dir, plugin_id) => {
             const pluginRelativePath = path.join('plugins', plugin_id, jsModule.src);
             // common.removeFileAndParents(www_dir, pluginRelativePath);
-            console.log(`js-module uninstall called : ${pluginRelativePath}`);
+            events.emit('verbose', `js-module uninstall called : ${pluginRelativePath}`);
         }
     },
     'source-file': {
         install: (obj, plugin_dir, project_dir, plugin_id, options) => {
             // var dest = path.join(obj.targetDir, path.basename(obj.src));
             // common.copyFile(plugin_dir, obj.src, project_dir, dest);
-            console.log('install called');
+            events.emit('verbose', 'source-file.install is currently not supported for electron');
         },
         uninstall: (obj, project_dir, plugin_id, options) => {
             // var dest = path.join(obj.targetDir, path.basename(obj.src));
             // common.removeFile(project_dir, dest);
-            console.log('uninstall called');
+            events.emit('verbose', 'source-file.uninstall is currently not supported for electron');
         }
     },
     'header-file': {
