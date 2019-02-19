@@ -36,5 +36,5 @@
         <icon src="res/electron/cordova@16.png" />
         <icon src="res/electron/cordova_512.png" target="installer" />
     </platform>
-    <engine name="electron" spec="github:gedasga/cordova-electron#app-icons" />
+    <engine name="electron" spec="github:Apache/cordova-electron" />
 </widget>

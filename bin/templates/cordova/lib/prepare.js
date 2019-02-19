@@ -170,7 +170,7 @@ function prepareIcons (icons) {
             installerIcon = installerIcon ? chooseOne(installerIcon, icon) : icon;
             break;
         case undefined:
-            if ((size <= 512 || size === undefined) && !Object.keys(highResIcons).length) {
+            if ((size >= 512 || size === undefined) && !Object.keys(highResIcons).length) {
                 customIcon = customIcon ? chooseOne(customIcon, icon) : icon;
             }
             break;

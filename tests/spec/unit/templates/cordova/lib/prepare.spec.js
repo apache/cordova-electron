@@ -20,6 +20,7 @@
 const rewire = require('rewire');
 const path = require('path');
 const CordovaError = require('cordova-common').CordovaError;
+const Api = require(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'Api'));
 
 /**
  * Create a mock item from the getIcon collection with the supplied updated data.
@@ -50,21 +51,27 @@ describe('Testing prepare.js:', () => {
     let locations;
 
     beforeEach(() => {
-        prepare = rewire('../../../../../../bin/templates/cordova/lib/prepare');
-
-        cordovaProject = {
-            root: 'mock',
-            projectConfig: {
-                path: path.join('mock', 'config.xml'),
-                cdvNamespacePrefix: 'cdv'
-            }
-        };
+        prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
 
         locations = {
             buildRes: path.join('mock', 'build-res'),
             www: path.join('mock', 'www'),
             configXml: path.join('mock', 'config.xml'),
             platformRootDir: path.join('mock', 'platform_www')
+        };
+
+        cordovaProject = {
+            root: 'mock',
+            projectConfig: {
+                path: path.join('mock', 'config.xml'),
+                cdvNamespacePrefix: 'cdv',
+                doc: {
+                    getroot: function () {
+                        return this;
+                    }
+                }
+            },
+            locations: locations
         };
 
         emitSpy = jasmine.createSpy('emit');
@@ -79,10 +86,278 @@ describe('Testing prepare.js:', () => {
     });
 
     describe('module.exports.prepare method', () => {
-        it('should be defined.', () => {
-            const exportPrepare = prepare.__get__('module.exports.prepare');
+        // define spies
+        let constructorSpy = jasmine.createSpy('constructor');
+        let configureSpy = jasmine.createSpy('configure');
+        let writeSpy = jasmine.createSpy('write');
+        let mergeXmlSpy = jasmine.createSpy('mergeXml');
+        let updateIconsSpy = jasmine.createSpy('updateIcons');
 
-            expect(exportPrepare).toBeDefined();
+        // define fake classses, methods and variables
+        class FakeParser {
+            constructor () {
+                constructorSpy();
+            }
+            configure () {
+                configureSpy();
+                return this;
+            }
+            write () {
+                writeSpy();
+                return this;
+            }
+        }
+
+        class FakeConfigParser {
+            constructor () {
+                this.doc = {
+                    getroot: function () {
+                        return this;
+                    }
+                };
+                constructorSpy();
+            }
+            write () {
+                writeSpy();
+                return this;
+            }
+        }
+
+        const xmlHelpersMock = {
+            mergeXml: function () {
+                mergeXmlSpy();
+                return this;
+            }
+        };
+
+        const updateIconsFake = () => {
+            updateIconsSpy();
+            return this;
+        };
+
+        it('should generate config.xml from defaults for platform.', () => {
+            // Mocking the scope with dummy API;
+            Promise.resolve().then(function () {
+                const api = new Api(null, '', '');
+                this.locations = api.locations;
+                this.events = { emit: emitSpy };
+                this.config = api.config;
+                this.parser = api.parser;
+                this.parser.update_www = () => { return this; };
+                this.parser.update_project = () => { return this; };
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+                const ownConfigPathMock = api.locations.configXml;
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        return configPath === defaultConfigPathMock;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                prepare.prepare(cordovaProject, {}, api);
+
+                expect(copySyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock);
+                expect(mergeXmlSpy).toHaveBeenCalled();
+                expect(updateIconsSpy).toHaveBeenCalled();
+                expect(updateIconsSpy).toHaveBeenCalled();
+                expect(constructorSpy).toHaveBeenCalled();
+                expect(configureSpy).toHaveBeenCalled();
+                expect(writeSpy).toHaveBeenCalled();
+
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'Generating config.xml';
+                expect(actual).toContain(expected);
+            });
+        });
+
+        it('should generate defaults.xml from own config.xml for platform.', () => {
+            // Mocking the scope with dummy API;
+            Promise.resolve().then(function () {
+                const api = new Api(null, '', '');
+                this.locations = api.locations;
+                this.events = { emit: emitSpy };
+                this.config = api.config;
+                this.parser = api.parser;
+                this.parser.update_www = () => { return this; };
+                this.parser.update_project = () => { return this; };
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+                const ownConfigPathMock = api.locations.configXml;
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        return configPath === ownConfigPathMock;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                prepare.prepare(cordovaProject, {}, api);
+
+                expect(copySyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock);
+                expect(mergeXmlSpy).toHaveBeenCalled();
+                expect(updateIconsSpy).toHaveBeenCalled();
+                expect(constructorSpy).toHaveBeenCalled();
+                expect(configureSpy).toHaveBeenCalled();
+                expect(writeSpy).toHaveBeenCalled();
+
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'Generating defaults.xml';
+                expect(actual).toContain(expected);
+            });
+        });
+
+        it('should hit case 3.', () => {
+            // Mocking the scope with dummy API;
+            Promise.resolve().then(function () {
+                const api = new Api(null, '', '');
+                this.locations = api.locations;
+                this.events = { emit: emitSpy };
+                this.config = api.config;
+                this.parser = api.parser;
+                this.parser.update_www = () => { return this; };
+                this.parser.update_project = () => { return this; };
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+                const ownConfigPathMock = api.locations.configXml;
+                const sourceCfgMock = cordovaProject.projectConfig;
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        return configPath !== ownConfigPathMock && configPath !== defaultConfigPathMock;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                prepare.prepare(cordovaProject, {}, api);
+
+                expect(copySyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock);
+                expect(mergeXmlSpy).toHaveBeenCalled();
+                expect(updateIconsSpy).toHaveBeenCalled();
+                expect(constructorSpy).toHaveBeenCalled();
+                expect(configureSpy).toHaveBeenCalled();
+                expect(writeSpy).toHaveBeenCalled();
+
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'case 3';
+                expect(actual).toContain(expected);
+            });
+        });
+
+        it('should copy manifest.', () => {
+            // Mocking the scope with dummy API;
+            Promise.resolve().then(function () {
+                const api = new Api(null, '', '');
+                this.locations = api.locations;
+                this.events = { emit: emitSpy };
+                this.config = api.config;
+                this.parser = api.parser;
+                this.parser.update_www = () => { return this; };
+                this.parser.update_project = () => { return this; };
+
+                const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
+                const manifestPathMock = path.join(api.locations.www, 'manifest.json');
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (srcManifestPath) {
+                        return srcManifestPath === srcManifestPathMock;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                prepare.prepare(cordovaProject, {}, api);
+
+                expect(copySyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock);
+                expect(mergeXmlSpy).toHaveBeenCalled();
+                expect(updateIconsSpy).toHaveBeenCalled();
+                expect(constructorSpy).toHaveBeenCalled();
+                expect(configureSpy).toHaveBeenCalled();
+                expect(writeSpy).toHaveBeenCalled();
+
+                const actual = emitSpy.calls.argsFor(1)[1];
+                const expected = 'Copying';
+                expect(actual).toContain(expected);
+            });
+        });
+
+        it('should create new manifest file.', () => {
+            // Mocking the scope with dummy API;
+            Promise.resolve().then(function () {
+                const api = new Api(null, '', '');
+                this.locations = api.locations;
+                this.events = { emit: emitSpy };
+                this.config = api.config;
+                this.parser = api.parser;
+                this.parser.update_www = () => { return this; };
+                this.parser.update_project = () => { return this; };
+
+                const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (srcManifestPath) {
+                        return srcManifestPath !== srcManifestPathMock;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                prepare.prepare(cordovaProject, {}, api);
+
+                expect(mergeXmlSpy).toHaveBeenCalled();
+                expect(updateIconsSpy).toHaveBeenCalled();
+                expect(constructorSpy).toHaveBeenCalled();
+                expect(configureSpy).toHaveBeenCalled();
+                expect(writeSpy).toHaveBeenCalled();
+
+                const actual = emitSpy.calls.argsFor(1)[1];
+                const expected = 'Creating';
+                expect(actual).toContain(expected);
+            });
         });
     });
 
@@ -145,6 +420,22 @@ describe('Testing prepare.js:', () => {
 
         beforeEach(() => {
             checkIconsAttributes = prepare.__get__('checkIconsAttributes');
+        });
+
+        it('should detect icons with missing src and throw an error with size=undefined in message.', () => {
+            const icons = [
+                mockGetIconItem({
+                    src: path.join('res', 'electron', 'cordova_512.png'),
+                    width: 512,
+                    height: 512
+                })
+            ];
+
+            expect(() => {
+                checkIconsAttributes(icons);
+            }).not.toThrow(
+                new CordovaError()
+            );
         });
 
         it('should detect icons with missing src and throw an error with size=undefined in message.', () => {
@@ -284,6 +575,56 @@ describe('Testing prepare.js:', () => {
             expect(expected).toEqual(actual);
         });
 
+        it('should return array of objects with custom icons, when there is two icons with wrong width and height set.', () => {
+            const icon1 = mockGetIconItem({
+                src: path.join('res', 'electron', 'cordova.png'),
+                width: 512,
+                height: 512
+            });
+
+            const icon2 = mockGetIconItem({
+                src: path.join('res', 'electron', 'cordova_extra.png'),
+                width: 512,
+                height: 512
+            });
+
+            let actual = prepareIcons([icon1, icon2]);
+            let expected = {
+                customIcon: icon2,
+                appIcon: undefined,
+                installerIcon: undefined,
+                highResIcons: []
+            };
+
+            expect(expected).toEqual(actual);
+
+            // The emit was called
+            expect(emitSpy).toHaveBeenCalled();
+
+            // The emit message was.
+            actual = emitSpy.calls.argsFor(0)[1];
+            expected = `Found extra icon for target undefined: ${path.join('res', 'electron', 'cordova.png')} and ignoring in favor of ${path.join('res', 'electron', 'cordova_extra.png')}.`;
+            expect(actual).toEqual(expected);
+        });
+
+        it('should return array of objects with custom icons, when there is only one icon with wrong width and height set.', () => {
+            const icons = mockGetIconItem({
+                src: path.join('res', 'electron', 'cordova_512.png'),
+                width: 500,
+                height: 500
+            });
+
+            const actual = prepareIcons([icons]);
+            const expected = {
+                customIcon: undefined,
+                appIcon: undefined,
+                installerIcon: undefined,
+                highResIcons: []
+            };
+
+            expect(expected).toEqual(actual);
+        });
+
         it('should return array of objects with installer icon, when icon is defined for target=installer', () => {
             const icons = mockGetIconItem({
                 src: path.join('res', 'electron', 'cordova_512.png'),
@@ -329,8 +670,14 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should return array of objects with app and installer icon, when there more one icon with target=app and more than one with target=installer', () => {
-            const app = mockGetIconItem({
+            const app1 = mockGetIconItem({
                 src: path.join('res', 'electron', 'cordova.png'),
+                target: 'app',
+                width: 512,
+                height: 512
+            });
+            const app2 = mockGetIconItem({
+                src: path.join('res', 'electron', 'cordova_extra.png'),
                 target: 'app',
                 width: 512,
                 height: 512
@@ -347,12 +694,12 @@ describe('Testing prepare.js:', () => {
                 width: 512,
                 height: 512
             });
-            const icons = [ app, installer, installer2 ];
+            const icons = [ app1, app2, installer, installer2 ];
 
             let actual = prepareIcons(icons);
             let expected = {
                 customIcon: undefined,
-                appIcon: Object.assign(app, { extension: '.png' }),
+                appIcon: Object.assign(app2, { extension: '.png' }),
                 installerIcon: Object.assign(installer2, { extension: '.png' }),
                 highResIcons: []
             };
@@ -364,6 +711,9 @@ describe('Testing prepare.js:', () => {
 
             // The emit message was.
             actual = emitSpy.calls.argsFor(0)[1];
+            expected = `Found extra icon for target app: ${path.join('res', 'electron', 'cordova.png')} and ignoring in favor of ${path.join('res', 'electron', 'cordova_extra.png')}.`;
+            expect(actual).toEqual(expected);
+            actual = emitSpy.calls.argsFor(1)[1];
             expected = `Found extra icon for target installer: ${path.join('res', 'electron', 'cordova_512.png')} and ignoring in favor of ${path.join('res', 'electron', 'cordova_512_extra.png')}.`;
             expect(actual).toEqual(expected);
         });
@@ -436,7 +786,7 @@ describe('Testing prepare.js:', () => {
 
         it('should return array of objects with remaining icons, when there is only one icon in res folder.', () => {
             const icons = mockGetIconItem({
-                src: 'res/logo.png',
+                src: path.join('res', 'logo.png'),
                 platform: undefined
             });
 
@@ -874,7 +1224,7 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should not copy as no resources provided.', () => {
-            copyIcons(cordovaProject.root, []);
+            copyIcons(cordovaProject.root, [{}]);
             expect(fsCopySyncSpy).not.toHaveBeenCalled();
         });
 
