@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="whatever" version="1.1.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>HelloWorld</name>
+    <description>
+        A sample Apache Cordova application.
+    </description>
+    <author email="dev@cordova.com" href="http://cordova.io">
+        Cordova Team
+    </author>
+    <license>Apache 2.0 License</license>
+    <preference name="Orientation" value="portrait" />
+    <content src="index.html" main="index.js" />
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+    </platform>
+    <icon src="res/electron/cordova.png"  width="16" height="16"/>
+    <platform name="electron">
+        <icon src="res/electron/cordova.png"/>
+        <icon src="res/electron/cordova@1.5.png" />
+        <icon src="res/electron/cordova@2.png" />
+        <icon src="res/electron/cordova@3.png" />
+        <icon src="res/electron/cordova@4.png" />
+        <icon src="res/electron/cordova@8.png" />
+        <icon src="res/electron/cordova@16.png" />
+        <icon src="res/electron/cordova_512.png" target="installer" />
+    </platform>
+    <engine name="electron" spec="github:gedasga/cordova-electron#app-icons" />
+</widget>

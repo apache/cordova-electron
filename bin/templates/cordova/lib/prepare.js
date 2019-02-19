@@ -21,8 +21,11 @@ const fs = require('fs-extra');
 const path = require('path');
 const shell = require('shelljs');
 const { ConfigParser, xmlHelpers, events, CordovaError } = require('cordova-common');
+const ManifestJsonParser = require('./ManifestJsonParser');
+const PackageJsonParser = require('./PackageJsonParser');
+const SettingJsonParser = require('./SettingJsonParser');
 
-module.exports.prepare = function (cordovaProject, options) {
+module.exports.prepare = (cordovaProject, options) => {
     // First cleanup current config and merge project's one into own
     const defaultConfigPath = path.join(this.locations.platformRootDir, 'cordova', 'defaults.xml');
     const ownConfigPath = this.locations.configXml;
@@ -63,189 +66,23 @@ module.exports.prepare = function (cordovaProject, options) {
     } else {
         this.events.emit('verbose', `Creating new manifest file in => ${this.path}`);
 
-        (new ManifestJson(this.locations.www))
+        (new ManifestJsonParser(this.locations.www))
             .configure(this.config)
             .write();
     }
 
-    (new PackageJson(this.locations.www))
+    (new PackageJsonParser(this.locations.www))
         .configure(this.config)
         .write();
 
     // update Electron settings in .json file
-    (new SettingJson(this.locations.www))
+    (new SettingJsonParser(this.locations.www))
         .configure(options.options)
         .write();
 
     // update project according to config.xml changes.
     return this.parser.update_project(this.config, options);
 };
-
-class SettingJson {
-    constructor (wwwDir) {
-        this.path = path.join(wwwDir, 'cdv-electron-settings.json');
-        this.package = require(this.path);
-    }
-
-    configure (config) {
-        if (config) {
-            this.package.isRelease = (typeof (config.release) !== 'undefined') ? config.release : false;
-        }
-
-        return this;
-    }
-
-    write () {
-        fs.writeFileSync(this.path, JSON.stringify(this.package, null, 2), 'utf8');
-    }
-}
-
-class PackageJson {
-    constructor (wwwDir) {
-        this.path = path.join(wwwDir, 'package.json');
-        this.www = wwwDir;
-        this.package = {
-            main: 'main.js'
-        };
-    }
-
-    configure (config) {
-        if (config) {
-            this.package.name = config.packageName() || 'io.cordova.hellocordova';
-            this.package.displayName = config.name() || 'HelloCordova';
-            this.package.version = config.version() || '1.0.0';
-            this.package.description = config.description() || 'A sample Apache Cordova application that responds to the deviceready event.';
-
-            this.configureHomepage(config);
-            this.configureLicense(config);
-
-            this.package.author = config.author() || 'Apache Cordova Team';
-        }
-
-        return this;
-    }
-
-    configureHomepage (config) {
-        this.package.homepage = (config.doc.find('author') && config.doc.find('author').attrib['href']) || 'https://cordova.io';
-    }
-
-    configureLicense (config) {
-        this.package.license = (config.doc.find('license') && config.doc.find('license').text && config.doc.find('license').text.trim()) || 'Apache-2.0';
-    }
-
-    write () {
-        fs.writeFileSync(this.path, JSON.stringify(this.package, null, 2), 'utf8');
-    }
-}
-
-class ManifestJson {
-    constructor (wwwDir) {
-        this.path = path.join(wwwDir, 'manifest.json');
-        this.www = wwwDir;
-        this.manifest = {
-            background_color: '#FFF',
-            display: 'standalone',
-            orientation: 'any',
-            start_url: 'index.html'
-        };
-    }
-
-    configureIcons (config) {
-        /**
-        * given a tag like this :
-        * <icon src="res/ios/icon.png" width="57" height="57" density="mdpi" />
-        *
-        * configParser returns icons that look like this :
-        * {
-        *      src: 'res/ios/icon.png',
-        *      target: undefined,
-        *      density: 'mdpi',
-        *      platform: null,
-        *      width: 57,
-        *      height: 57
-        * }
-        *
-        * manifest expects them to be like this :
-        * {
-        *      "src": "images/touch/icon-128x128.png",
-        *      "type": "image/png",
-        *      "sizes": "128x128"
-        * }
-        */
-        const icons = config.getStaticResources(this.platform, 'icon')
-            .map((icon) => ({
-                src: icon.src,
-                type: 'image/png',
-                sizes: `${icon.width}x${icon.height}`
-            }));
-
-        if (icons) this.manifest.icons = icons;
-
-        return this;
-    }
-
-    configureOrientation (config) {
-        // orientation
-        // <preference name="Orientation" value="landscape" />
-        const oriPref = config.getGlobalPreference('Orientation');
-        if (oriPref === 'landscape' || oriPref === 'portrait') {
-            this.manifest.orientation = oriPref;
-        }
-
-        return this;
-    }
-
-    configureStartUrl (config) {
-        // get start_url
-        const contentNode = config.doc.find('content');
-        if (contentNode) this.manifest.start_url = contentNode.attrib.src;
-
-        return this;
-    }
-
-    configureThemeColor (config) {
-        if (this.manifest.start_url) {
-            const startUrlPath = path.join(this.www, this.manifest.start_url);
-
-            if (fs.existsSync(startUrlPath)) {
-                // fetch start url file content and parse for theme-color.
-                const contents = fs.readFileSync(startUrlPath, 'utf-8');
-                const result = /<meta(?=[^>]*name="theme-color")\s[^>]*content="([^>]*)"/i.exec(contents);
-
-                // If theme-color exists, the value is in index 1.
-                if (result && result.length >= 2) this.manifest.theme_color = result[1];
-            }
-        }
-
-        if (this.manifest.start_url && !this.manifest.theme_color) {
-            const themeColor = config.getGlobalPreference('StatusBarBackgroundColor');
-            if (themeColor) this.manifest.theme_color = themeColor;
-        }
-
-        return this;
-    }
-
-    configure (config) {
-        if (config) {
-            if (config.name()) this.manifest.name = config.name();
-            if (config.shortName()) this.manifest.short_name = config.shortName();
-            if (config.packageName()) this.manifest.version = config.packageName();
-            if (config.description()) this.manifest.description = config.description();
-            if (config.author()) this.manifest.author = config.author();
-
-            this.configureIcons(config)
-                .configureOrientation(config)
-                .configureStartUrl(config)
-                .configureThemeColor(config);
-        }
-
-        return this;
-    }
-
-    write () {
-        fs.writeFileSync(this.path, JSON.stringify(this.manifest, null, 2), 'utf8');
-    }
-}
 
 /**
  * Update Electron App and Installer icons.
@@ -254,7 +91,7 @@ function updateIcons (cordovaProject, locations) {
     const icons = cordovaProject.projectConfig.getIcons('electron');
 
     // Skip if there are no app defined icons in config.xml
-    if (icons.length === 0) {
+    if (!icons.length) {
         events.emit('verbose', 'This app does not have icons defined');
         return;
     }
@@ -284,13 +121,13 @@ function checkIconsAttributes (icons) {
         }
     });
     if (errorMissingAttributes.length > 0) {
-        errorMessage.push('One of the following attributes are set but missing the other for the target: ' + errorMissingAttributes.join(', ') + '. Please ensure that all required attributes are defined.');
+        errorMessage.push(`One of the following attributes are set but missing the other for the target: ${errorMissingAttributes}. Please ensure that all required attributes are defined.`);
     }
     if (errorWrongSize.length > 0) {
-        errorMessage.push('Size of icon does not match required size ' + errorWrongSize.join(', ') + '. Please ensure that .png icon for is at least 512x512.');
+        errorMessage.push(`Size of icon does not match required size ${errorWrongSize}. Please ensure that .png icon for is at least 512x512.`);
     }
     if (errorMessage.length > 0) {
-        throw new CordovaError(errorMessage.join(' '));
+        throw new CordovaError(errorMessage);
     }
 }
 
