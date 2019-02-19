@@ -21,10 +21,12 @@ const shell = require('shelljs');
 const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
+const rewire = require('rewire');
 
 const cordova_bin = path.join(__dirname, '../../../bin');// is this the same on all platforms?
 const tmpDir = path.join(__dirname, '../../../temp');
 const createScriptPath = path.join(cordova_bin, 'create');
+const create = rewire(path.join(cordova_bin, 'lib', 'create'));
 
 function createAndBuild (projectname, projectid) {
     let return_code = 0;
@@ -61,50 +63,84 @@ function createAndBuild (projectname, projectid) {
     fs.removeSync(tmpDir);
 }
 
-describe('create', function () {
-    it('has a create script in bin/cordova', function () {
+describe('create', () => {
+    it('has a create script in bin/cordova', () => {
         expect(fs.existsSync(createScriptPath)).toBe(true);
     });
 
-    it('create project with ascii name, no spaces', function () {
+    it('create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('create project with ascii name, and spaces', function () {
+    it('create project with ascii name, and spaces', () => {
         const projectname = 'test create';
         const projectid = 'com.test.app2';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('create project with unicode name, no spaces', function () {
+    it('create project with unicode name, no spaces', () => {
         const projectname = '応応応応用用用用';
         const projectid = 'com.test.app3';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('create project with unicode name, and spaces', function () {
+    it('create project with unicode name, and spaces', () => {
         const projectname = '応応応応 用用用用';
         const projectid = 'com.test.app4';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('create project with ascii+unicode name, no spaces', function () {
+    it('create project with ascii+unicode name, no spaces', () => {
         const projectname = '応応応応hello用用用用';
         const projectid = 'com.test.app5';
 
         createAndBuild(projectname, projectid);
     });
 
-    it('create project with ascii+unicode name, and spaces', function () {
+    it('create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
 
         createAndBuild(projectname, projectid);
+    });
+
+    it('should stop creating project when project destination already exists', () => {
+        const _fs = create.__get__('fs');
+        create.__set__('fs', {
+            existsSync: jasmine.createSpy('existsSync').and.returnValue(true)
+        });
+
+        const projectname = 'alreadyexist';
+        const projectid = 'com.test.alreadyexist';
+
+        expect(() => {
+            create.createProject(tmpDir, projectname, projectid, projectname);
+        }).toThrowError(/destination already exists/);
+
+        create.__set__('fs', _fs);
+    });
+
+    it('should stop creating project when requirement check fails', () => {
+        create.__set__('check_reqs', {
+            run: jasmine.createSpy('check_reqs').and.returnValue(false)
+        });
+
+        const emitSpy = jasmine.createSpy('emit');
+        create.__set__('events', {
+            emit: emitSpy
+        });
+
+        const projectname = 'reqfail';
+        const projectid = 'com.test.reqfail';
+
+        create.createProject(tmpDir, projectname, projectid, projectname);
+
+        expect(emitSpy).toHaveBeenCalledWith('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
     });
 });
