@@ -67,6 +67,7 @@ module.exports = {
             fs.writeFileSync(moduleDestination, scriptContent, 'utf-8');
         },
         uninstall: (jsModule, www_dir, plugin_id) => {
+            fs.removeSync(path.join(www_dir, 'plugins', plugin_id));
             const pluginRelativePath = path.join('plugins', plugin_id, jsModule.src);
             // common.removeFileAndParents(www_dir, pluginRelativePath);
             events.emit('verbose', `js-module uninstall called : ${pluginRelativePath}`);

@@ -54,7 +54,7 @@ class Api {
         this.platform = 'electron';
 
         // MyApp/platforms/electron
-        this.root = path.resolve(__dirname, '..');
+        this.root = platformRootDir || path.resolve(__dirname, '..');
         this.events = setupEvents(events);
         this.parser = new Parser(this.root);
         this.handler = require('./handler');
