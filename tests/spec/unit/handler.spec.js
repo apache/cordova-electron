@@ -148,7 +148,14 @@ describe('Handler export', () => {
                 const www_dir = 'www';
                 const pluginRelativePath = path.join('plugins', plugin_id, jsModule.src);
 
+                const removeSyncSpy = jasmine.createSpy('writeFileSync');
+                handler.__set__('fs', {
+                    removeSync: removeSyncSpy
+                });
+
                 handler['js-module'].uninstall(jsModule, www_dir, plugin_id);
+
+                expect(removeSyncSpy).toHaveBeenCalled();
 
                 const actual = emitSpy.calls.argsFor(0)[1];
                 const expected = `js-module uninstall called : ${pluginRelativePath}`;
