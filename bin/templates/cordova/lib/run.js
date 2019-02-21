@@ -22,7 +22,6 @@ const proc = require('child_process');
 const path = require('path');
 
 module.exports.run = (args) => {
-    // console.log("runOptions : ", args);
     const child = proc.spawn(electron, ['./platforms/electron/www/main.js']);
 
     child.on('close', (code) => {

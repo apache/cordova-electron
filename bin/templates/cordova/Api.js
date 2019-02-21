@@ -23,7 +23,6 @@
 */
 const path = require('path');
 const fs = require('fs-extra');
-
 const CordovaCommon = require('cordova-common');
 const CordovaLogger = CordovaCommon.CordovaLogger;
 // const ConfigParser = CordovaCommon.ConfigParser;
@@ -95,8 +94,6 @@ class Api {
     }
 
     addPlugin (pluginInfo, installOptions) {
-
-        // console.log(new Error().stack);
         if (!pluginInfo) {
             return Promise.reject(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
         }
@@ -183,7 +180,7 @@ class Api {
 
                 this._removeModulesInfo(plugin, targetDir);
                 // Remove stale plugin directory
-                // TODO: this should be done by plugin files uninstaller
+                // @todo this should be done by plugin files uninstaller
                 fs.removeSync(path.resolve(this.root, 'Plugins', plugin.id));
             });
     }
@@ -193,8 +190,7 @@ class Api {
             const installer = this.handler[type];
 
             if (!installer) {
-                console.log('unrecognized type ' + type);
-
+                this.events.emit('warn', `Unrecognized type "${type}"`);
             } else {
                 const wwwDest = options.usePlatformWww ?
                     this.getPlatformInfo().locations.platformWww :
@@ -215,8 +211,7 @@ class Api {
             const installer = this.handler[type];
 
             if (!installer) {
-                console.log(`electron plugin uninstall: unrecognized type, skipping : ${type}`);
-
+                this.events.emit('warn', `electron plugin uninstall: unrecognized type, skipping : ${type}`);
             } else {
                 const wwwDest = options.usePlatformWww ?
                     this.getPlatformInfo().locations.platformWww :
@@ -347,9 +342,7 @@ class Api {
         return require('./lib/check_reqs').run();
     }
 }
-
-// console.log("test-platform:Api:updatePlatform");
-// todo?: create projectInstance and fulfill promise with it.
+// @todo create projectInstance and fulfill promise with it.
 Api.updatePlatform = () => Promise.resolve();
 
 Api.createPlatform = function (dest, config, options, events) {
