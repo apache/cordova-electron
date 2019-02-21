@@ -25,7 +25,7 @@ const ManifestJsonParser = require('./ManifestJsonParser');
 const PackageJsonParser = require('./PackageJsonParser');
 const SettingJsonParser = require('./SettingJsonParser');
 
-module.exports.prepare = (cordovaProject, options) => {
+module.exports.prepare = function (cordovaProject, options) {
     // First cleanup current config and merge project's one into own
     const defaultConfigPath = path.join(this.locations.platformRootDir, 'cordova', 'defaults.xml');
     const ownConfigPath = this.locations.configXml;

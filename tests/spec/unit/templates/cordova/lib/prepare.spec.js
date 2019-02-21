@@ -138,13 +138,11 @@ describe('Testing prepare.js:', () => {
         it('should generate config.xml from defaults for platform.', () => {
             // Mocking the scope with dummy API;
             Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
-                this.locations = api.locations;
-                this.events = { emit: emitSpy };
-                this.config = api.config;
-                this.parser = api.parser;
-                this.parser.update_www = () => { return this; };
-                this.parser.update_project = () => { return this; };
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
@@ -165,7 +163,7 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
-                prepare.prepare(cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -184,13 +182,11 @@ describe('Testing prepare.js:', () => {
         it('should generate defaults.xml from own config.xml for platform.', () => {
             // Mocking the scope with dummy API;
             Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
-                this.locations = api.locations;
-                this.events = { emit: emitSpy };
-                this.config = api.config;
-                this.parser = api.parser;
-                this.parser.update_www = () => { return this; };
-                this.parser.update_project = () => { return this; };
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
@@ -211,7 +207,7 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
-                prepare.prepare(cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -229,13 +225,11 @@ describe('Testing prepare.js:', () => {
         it('should hit case 3.', () => {
             // Mocking the scope with dummy API;
             Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
-                this.locations = api.locations;
-                this.events = { emit: emitSpy };
-                this.config = api.config;
-                this.parser = api.parser;
-                this.parser.update_www = () => { return this; };
-                this.parser.update_project = () => { return this; };
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
@@ -257,7 +251,7 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
-                prepare.prepare(cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -275,13 +269,11 @@ describe('Testing prepare.js:', () => {
         it('should copy manifest.', () => {
             // Mocking the scope with dummy API;
             Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
-                this.locations = api.locations;
-                this.events = { emit: emitSpy };
-                this.config = api.config;
-                this.parser = api.parser;
-                this.parser.update_www = () => { return this; };
-                this.parser.update_project = () => { return this; };
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
 
                 const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
                 const manifestPathMock = path.join(api.locations.www, 'manifest.json');
@@ -302,7 +294,7 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
-                prepare.prepare(cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -320,13 +312,11 @@ describe('Testing prepare.js:', () => {
         it('should create new manifest file.', () => {
             // Mocking the scope with dummy API;
             Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
-                this.locations = api.locations;
-                this.events = { emit: emitSpy };
-                this.config = api.config;
-                this.parser = api.parser;
-                this.parser.update_www = () => { return this; };
-                this.parser.update_project = () => { return this; };
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
 
                 const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
 
@@ -346,7 +336,7 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
-                prepare.prepare(cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
