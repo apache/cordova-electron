@@ -19,6 +19,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const events = require('cordova-common').events;
 
 function deepMerge (mergeTo, mergeWith) {
     for (const property in mergeWith) {
@@ -58,7 +59,7 @@ class ElectronBuilder {
         return this;
     }
 
-    configureUserBuildSettings (buildOptions) {
+    configureUserBuildSettings () {
         if (this.buildConfig && this.buildConfig.electron) {
             let userBuildSettings = {};
 
@@ -152,7 +153,7 @@ class ElectronBuilder {
 
     __appendUserSingning (platform, signingConfigs, userBuildSettings) {
         if (platform === 'linux') {
-            // emit that there is no signing.
+            events.emit('warn', `The provided signing information for the Linux platform is ignored. Linux does not support signing.`);
             return this;
         }
 
@@ -188,28 +189,28 @@ class ElectronBuilder {
         if (entitlements && fs.existsSync(entitlements)) {
             buildConfigs.entitlements = entitlements;
         } else if (entitlements) {
-            // emit that the entitlement path is missing.
+            events.emit('warn', `The provided entitlements file does not exist in the given path => ${entitlements}`);
         }
 
         const entitlementsInherit = config.entitlementsInherit;
         if (entitlementsInherit && fs.existsSync(entitlementsInherit)) {
             buildConfigs.entitlementsInherit = entitlementsInherit;
         } else if (entitlementsInherit) {
-            // emit that the entitlement path is missing.
+            events.emit('warn', `The provided entitlements inherit file does not exist in the given path => ${entitlementsInherit}`);
         }
 
         const requirements = config.requirements;
         if (requirements && fs.existsSync(requirements)) {
             buildConfigs.requirements = requirements;
         } else if (requirements) {
-            // emit that the entitlement path is missing.
+            events.emit('warn', `The provided requirements file does not exist in the given path => ${requirements}`);
         }
 
         const provisioningProfile = config.provisioningProfile;
         if (provisioningProfile && fs.existsSync(provisioningProfile)) {
             buildConfigs.provisioningProfile = provisioningProfile;
         } else if (provisioningProfile) {
-            // emit that the provisioningProfile path is missing.
+            events.emit('warn', `The provided provisioning profile does not exist in the given path => ${provisioningProfile}`);
         }
     }
 
@@ -220,7 +221,7 @@ class ElectronBuilder {
 
             if (config.certificatePassword || process.env.CSC_KEY_PASSWORD) buildConfigs.certificatePassword = config.certificatePassword || process.env.CSC_KEY_PASSWORD;
         } else if (certificateFile) {
-            // emit that the certificateFile path is missing.
+            events.emit('warn', `The provided certificate file does not exist in the given path => ${certificateFile}`);
         }
 
         if (config.certificateSubjectName) buildConfigs.certificateSubjectName = config.certificateSubjectName;
@@ -231,7 +232,7 @@ class ElectronBuilder {
         if (additionalCertificateFile && fs.existsSync(additionalCertificateFile)) {
             buildConfigs.additionalCertificateFile = additionalCertificateFile;
         } else if (additionalCertificateFile) {
-            // emit that the additionalCertificateFile path is missing.
+            events.emit('warn', `The provided addition certificate file does not exist in the given path => ${additionalCertificateFile}`);
         }
     }
 
