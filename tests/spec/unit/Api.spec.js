@@ -195,158 +195,138 @@ describe('Api class', () => {
             );
         });
 
-        it('empty plugin', (done) => {
-            api.addPlugin({
-                id: 'empty_plugin',
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => { return []; },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    expect(dirExists(path.resolve(testProjectDir, 'www'))).toBeTruthy();
-                    expect(fileExists(path.resolve(testProjectDir, 'electron.json'))).toBeTruthy();
-                    expect(fileExists(path.resolve(testProjectDir, 'www', 'cordova_plugins.js'))).toBeTruthy();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                }
-            );
-        });
+        it('empty plugin', () => api.addPlugin({
+            id: 'empty_plugin',
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => { return []; },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+                expect(dirExists(path.resolve(testProjectDir, 'www'))).toBeTruthy();
+                expect(fileExists(path.resolve(testProjectDir, 'electron.json'))).toBeTruthy();
+                expect(fileExists(path.resolve(testProjectDir, 'www', 'cordova_plugins.js'))).toBeTruthy();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('asset plugin', (done) => {
-            api.addPlugin({
-                id: 'asset-plugin',
-                dir: pluginFixture,
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => {
-                    return [{
-                        itemType: 'asset',
-                        src: 'src/electron/sample.json',
-                        target: 'js/sample.json'
-                    }];
-                },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    expect(fileExists(path.resolve(testProjectDir, 'www', 'js', 'sample.json'))).toBeTruthy();
-                    expect(readJson(path.resolve(testProjectDir, 'www', 'js', 'sample.json')).title).toEqual('sample');
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                }
-            );
-        });
+        it('asset plugin', () => api.addPlugin({
+            id: 'asset-plugin',
+            dir: pluginFixture,
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => {
+                return [{
+                    itemType: 'asset',
+                    src: 'src/electron/sample.json',
+                    target: 'js/sample.json'
+                }];
+            },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+                expect(fileExists(path.resolve(testProjectDir, 'www', 'js', 'sample.json'))).toBeTruthy();
+                expect(readJson(path.resolve(testProjectDir, 'www', 'js', 'sample.json')).title).toEqual('sample');
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('js-module plugin', (done) => {
-            api.addPlugin({
-                id: 'module-plugin',
-                dir: pluginFixture,
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => { return []; },
-                getJsModules: (platform) => {
-                    return [{
-                        itemType: 'js-module',
-                        name: 'testmodule',
-                        src: 'www/plugin.js',
-                        clobbers: [ 'ModulePlugin.clobbers' ],
-                        merges: [ 'ModulePlugin.merges' ],
-                        runs: true
-                    }];
-                },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    expect(fileExists(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'))).toBeTruthy();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                }
-            );
-        });
+        it('js-module plugin', () => api.addPlugin({
+            id: 'module-plugin',
+            dir: pluginFixture,
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => { return []; },
+            getJsModules: (platform) => {
+                return [{
+                    itemType: 'js-module',
+                    name: 'testmodule',
+                    src: 'www/plugin.js',
+                    clobbers: [ 'ModulePlugin.clobbers' ],
+                    merges: [ 'ModulePlugin.merges' ],
+                    runs: true
+                }];
+            },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+                expect(fileExists(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'))).toBeTruthy();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('unrecognized type plugin', (done) => {
-            api.addPlugin({
-                id: 'unrecognized-plugin',
-                dir: pluginFixture,
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => {
-                    return [{
-                        itemType: 'unrecognized'
-                    }];
-                },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                    done();
-                }
-            );
-        });
+        it('unrecognized type plugin', () => api.addPlugin({
+            id: 'unrecognized-plugin',
+            dir: pluginFixture,
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => {
+                return [{
+                    itemType: 'unrecognized'
+                }];
+            },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('source-file type plugin', (done) => {
-            api.addPlugin({
-                id: 'source-file-plugin',
-                dir: pluginFixture,
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => {
-                    return [{
-                        itemType: 'source-file'
-                    }];
-                },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    expect(logs.verbose.some((message) => { return message === 'source-file.install is currently not supported for electron'; })).toBeTruthy();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                    done();
-                }
-            );
-        });
+        it('source-file type plugin', () => api.addPlugin({
+            id: 'source-file-plugin',
+            dir: pluginFixture,
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => {
+                return [{
+                    itemType: 'source-file'
+                }];
+            },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+                expect(logs.verbose.some((message) => { return message === 'source-file.install is currently not supported for electron'; })).toBeTruthy();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('empty plugin with browser platform', (done) => {
-            api.addPlugin({
-                id: 'empty_plugin',
-                getPlatformsArray: () => { return ['browser']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => { return []; },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    expect(dirExists(path.resolve(testProjectDir, 'www'))).toBeTruthy();
-                    expect(fileExists(path.resolve(testProjectDir, 'electron.json'))).toBeTruthy();
-                    expect(fileExists(path.resolve(testProjectDir, 'www', 'cordova_plugins.js'))).toBeTruthy();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                }
-            );
-        });
+        it('empty plugin with browser platform', () => api.addPlugin({
+            id: 'empty_plugin',
+            getPlatformsArray: () => { return ['browser']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => { return []; },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+                expect(dirExists(path.resolve(testProjectDir, 'www'))).toBeTruthy();
+                expect(fileExists(path.resolve(testProjectDir, 'electron.json'))).toBeTruthy();
+                expect(fileExists(path.resolve(testProjectDir, 'www', 'cordova_plugins.js'))).toBeTruthy();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
     });
 
     /**
@@ -374,30 +354,26 @@ describe('Api class', () => {
             expect(typeof api.removePlugin).toBe('function');
         });
 
-        it('remove empty plugin', (done) => {
-            api.removePlugin({
-                id: 'empty_plugin',
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => { return []; },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                    done();
-                }
-            );
-        });
+        it('remove empty plugin', () => api.removePlugin({
+            id: 'empty_plugin',
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => { return []; },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('asset plugin', (done) => {
+        it('asset plugin', () => {
             fs.ensureDirSync(path.resolve(testProjectDir, 'www', 'js'));
             writeJson(path.resolve(testProjectDir, 'www', 'js', 'sample.json'), { 'title': 'sample' });
-            api.removePlugin({
+            return api.removePlugin({
                 id: 'empty_plugin',
                 dir: pluginFixture,
                 getPlatformsArray: () => { return ['electron']; },
@@ -415,20 +391,18 @@ describe('Api class', () => {
                 (result) => {
                     expect(result).not.toBeDefined();
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'js', 'sample.json'))).toBeFalsy();
-                    done();
                 },
                 (error) => {
                     fail('Unwanted code branch: ' + error);
-                    done();
                 }
             );
         });
 
-        it('js-module plugin', (done) => {
+        it('js-module plugin', () => {
             fs.ensureDirSync(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www'));
             fs.copySync(path.resolve(pluginFixture, 'www', 'plugin.js'), path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'));
             expect(fileExists(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'))).toBeTruthy();
-            api.removePlugin({
+            return api.removePlugin({
                 id: 'module-plugin',
                 dir: pluginFixture,
                 getPlatformsArray: () => { return ['electron']; },
@@ -449,85 +423,71 @@ describe('Api class', () => {
                 (result) => {
                     expect(result).not.toBeDefined();
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'))).toBeFalsy();
-                    done();
                 },
                 (error) => {
                     fail('Unwanted code branch: ' + error);
-                    done();
                 }
             );
         });
 
-        it('unrecognized type plugin', (done) => {
-            api.removePlugin({
-                id: 'unrecognized-plugin',
-                dir: pluginFixture,
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => {
-                    return [{
-                        itemType: 'unrecognized'
-                    }];
-                },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                    done();
-                }
-            );
-        });
+        it('unrecognized type plugin', () => api.removePlugin({
+            id: 'unrecognized-plugin',
+            dir: pluginFixture,
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => {
+                return [{
+                    itemType: 'unrecognized'
+                }];
+            },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('source-file type plugin', (done) => {
-            api.removePlugin({
-                id: 'source-file-plugin',
-                dir: pluginFixture,
-                getPlatformsArray: () => { return ['electron']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => {
-                    return [{
-                        itemType: 'source-file'
-                    }];
-                },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    expect(logs.verbose.some((message) => { return message === 'source-file.uninstall is currently not supported for electron'; })).toBeTruthy();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                    done();
-                }
-            );
-        });
+        it('source-file type plugin', () => api.removePlugin({
+            id: 'source-file-plugin',
+            dir: pluginFixture,
+            getPlatformsArray: () => { return ['electron']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => {
+                return [{
+                    itemType: 'source-file'
+                }];
+            },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+                expect(logs.verbose.some((message) => { return message === 'source-file.uninstall is currently not supported for electron'; })).toBeTruthy();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
-        it('remove empty plugin with browser platform', (done) => {
-            api.removePlugin({
-                id: 'empty_plugin',
-                getPlatformsArray: () => { return ['browser']; },
-                getFilesAndFrameworks: (platform) => { return []; },
-                getAssets: (platform) => { return []; },
-                getJsModules: (platform) => { return []; },
-                getConfigFiles: (platform) => { return []; }
-            }, { }).then(
-                (result) => {
-                    expect(result).not.toBeDefined();
-                    done();
-                },
-                (error) => {
-                    fail('Unwanted code branch: ' + error);
-                    done();
-                }
-            );
-        });
+        it('remove empty plugin with browser platform', () => api.removePlugin({
+            id: 'empty_plugin',
+            getPlatformsArray: () => { return ['browser']; },
+            getFilesAndFrameworks: (platform) => { return []; },
+            getAssets: (platform) => { return []; },
+            getJsModules: (platform) => { return []; },
+            getConfigFiles: (platform) => { return []; }
+        }, { }).then(
+            (result) => {
+                expect(result).not.toBeDefined();
+            },
+            (error) => {
+                fail('Unwanted code branch: ' + error);
+            }
+        ));
 
     });
 
