@@ -108,7 +108,6 @@ class Api {
             this.getPlatformInfo().version;
 
         const actions = new ActionStack();
-        const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
         if (!pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
@@ -122,18 +121,14 @@ class Api {
             .forEach((item) => {
                 actions.push(actions.createAction(
                     this._getInstaller(item.itemType),
-                    [item, pluginInfo.dir, pluginInfo.id, installOptions, projectFile],
+                    [item, pluginInfo.dir, pluginInfo.id, installOptions],
                     this._getUninstaller(item.itemType),
-                    [item, pluginInfo.dir, pluginInfo.id, installOptions, projectFile]));
+                    [item, pluginInfo.dir, pluginInfo.id, installOptions]));
             });
 
         // run through the action stack
         return actions.process(platform, this.root)
             .then(() => {
-                if (projectFile) {
-                    projectFile.write();
-                }
-
                 // Add PACKAGE_NAME variable into vars
                 if (!installOptions.variables.PACKAGE_NAME) {
                     installOptions.variables.PACKAGE_NAME = this.handler.package_name(this.root);
@@ -157,7 +152,6 @@ class Api {
         uninstallOptions.platformVersion = uninstallOptions.platformVersion || this.getPlatformInfo().version;
 
         const actions = new ActionStack();
-        const projectFile = this.handler.parseProjectFile && this.handler.parseProjectFile(this.root);
 
         let platform = this.platform;
         if (!plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
@@ -170,17 +164,13 @@ class Api {
             .concat(plugin.getJsModules(platform))
             .forEach((item) => {
                 actions.push(actions.createAction(
-                    this._getUninstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions, projectFile],
-                    this._getInstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions, projectFile]));
+                    this._getUninstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions],
+                    this._getInstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions]));
             });
 
         // run through the action stack
         return actions.process(platform, this.root)
             .then(() => {
-                if (projectFile) {
-                    projectFile.write();
-                }
-
                 this._munger
                     // Ignore passed `is_top_level` option since platform itself doesn't know
                     // anything about managing dependencies - it's responsibility of caller.
@@ -373,7 +363,6 @@ Api.createPlatform = function (dest, config, options, events) {
         return require('../../lib/create').createProject(dest, id, name, options).then(() => new Api(null, dest, events));
     } catch (e) {
         events.emit('error', 'createPlatform is not callable from the electron project API.');
-        throw (e);
     }
 };
 
