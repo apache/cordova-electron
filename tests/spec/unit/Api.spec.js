@@ -25,9 +25,7 @@ const Api = rewire(path.join(templateDir, 'cordova', 'Api'));
 const tmpDir = path.join(__dirname, '../../../temp');
 const tmpWorkDir = path.join(tmpDir, 'work');
 const apiRequire = Api.__get__('require');
-
 const FIXTURES = path.join(__dirname, '..', 'fixtures');
-
 const pluginFixture = path.join(FIXTURES, 'testplugin');
 const testProjectDir = path.join(tmpDir, 'testapp');
 
@@ -61,7 +59,6 @@ function writeJson (file, json) {
 }
 
 describe('Api class', () => {
-
     fs.removeSync(tmpDir);
     fs.ensureDirSync(tmpWorkDir);
     copyTestProject();
@@ -163,10 +160,6 @@ describe('Api class', () => {
         });
     });
 
-    /**
-     * @todo Add useful tests.
-     */
-
     describe('addPlugin method', () => {
         let logs = {};
         beforeEach(() => {
@@ -266,26 +259,37 @@ describe('Api class', () => {
             }
         ));
 
-        it('unrecognized type plugin', () => api.addPlugin({
-            id: 'unrecognized-plugin',
-            dir: pluginFixture,
-            getPlatformsArray: () => { return ['electron']; },
-            getFilesAndFrameworks: (platform) => { return []; },
-            getAssets: (platform) => {
-                return [{
-                    itemType: 'unrecognized'
-                }];
-            },
-            getJsModules: (platform) => { return []; },
-            getConfigFiles: (platform) => { return []; }
-        }, { }).then(
-            (result) => {
-                expect(result).not.toBeDefined();
-            },
-            (error) => {
-                fail('Unwanted code branch: ' + error);
-            }
-        ));
+        it('unrecognized type plugin', () => {
+            const _events = api.events;
+            const emitSpy = jasmine.createSpy('emit');
+            api.events = {
+                emit: emitSpy
+            };
+
+            return api.addPlugin({
+                id: 'unrecognized-plugin',
+                dir: pluginFixture,
+                getPlatformsArray: () => { return ['electron']; },
+                getFilesAndFrameworks: (platform) => { return []; },
+                getAssets: (platform) => {
+                    return [{
+                        itemType: 'unrecognized'
+                    }];
+                },
+                getJsModules: (platform) => { return []; },
+                getConfigFiles: (platform) => { return []; }
+            }, { }).then(
+                (result) => {
+                    expect(emitSpy.calls.argsFor(0)[1]).toContain('unrecognized');
+                    expect(result).not.toBeDefined();
+                    api.events = _events;
+                },
+                (error) => {
+                    fail('Unwanted code branch: ' + error);
+                    api.events = _events;
+                }
+            );
+        });
 
         it('source-file type plugin', () => api.addPlugin({
             id: 'source-file-plugin',
@@ -489,51 +493,6 @@ describe('Api class', () => {
             }
         ));
 
-    });
-
-    /**
-     * @todo Add useful test or drop and accept coveage from the parent method call (addPlugin & removePlugin).
-     */
-    describe('_getInstaller method', () => {
-        it('should exist', () => {
-            expect(api._getInstaller).toBeDefined();
-        });
-    });
-
-    /**
-     * @todo Add useful test or drop and accept coveage from the parent method call (addPlugin & removePlugin).
-     */
-    describe('_getUninstaller method', () => {
-        it('should exist', () => {
-            expect(api._getUninstaller).toBeDefined();
-        });
-    });
-
-    /**
-     * @todo Add useful test or drop and accept coveage from the parent method call (addPlugin).
-     */
-    describe('_addModulesInfo method', () => {
-        it('should exist', () => {
-            expect(api._addModulesInfo).toBeDefined();
-        });
-    });
-
-    /**
-     * @todo Add useful test or drop and accept coveage from the parent method call (addPlugin & removePlugin).
-     */
-    describe('_writePluginModules method', () => {
-        it('should exist', () => {
-            expect(api._writePluginModules).toBeDefined();
-        });
-    });
-
-    /**
-     * @todo Add useful test or drop and accept coveage from the parent method call (removePlugin).
-     */
-    describe('_removeModulesInfo method', () => {
-        it('should exist', () => {
-            expect(api._removeModulesInfo).toBeDefined();
-        });
     });
 
     describe('updatePlatform method', () => {
