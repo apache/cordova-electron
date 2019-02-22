@@ -337,12 +337,36 @@ describe('Handler export', () => {
                 const copySyncSpy = jasmine.createSpy('copySync').and.returnValue('-Rf');
                 const fsstatMock = { isDirectory: () => true };
                 const statSyncSpy = jasmine.createSpy('statSync').and.returnValue(fsstatMock);
+                const ensureDirSyncSpy = jasmine.createSpy('ensureDirSync').and.returnValue(true);
+
                 handler.__set__('fs', {
                     copySync: copySyncSpy,
-                    statSync: statSyncSpy
+                    statSync: statSyncSpy,
+                    ensureDirSync: ensureDirSyncSpy
                 });
 
                 handler.asset.install(asset, plugin_dir, wwwDest);
+                expect(ensureDirSyncSpy).toHaveBeenCalled();
+                expect(copySyncSpy).toHaveBeenCalledWith(jasmine.any(String), path.join('dest', asset.target));
+            });
+
+            it('if src is a directory, should be called with cp, -Rf', () => {
+                const asset = { itemType: 'asset', src: 'someSrc/ServiceWorker.js', target: 'ServiceWorker.js' };
+
+                // Spies
+                const copySyncSpy = jasmine.createSpy('copySync').and.returnValue('-Rf');
+                const fsstatMock = { isDirectory: () => true };
+                const statSyncSpy = jasmine.createSpy('statSync').and.returnValue(fsstatMock);
+                const ensureDirSyncSpy = jasmine.createSpy('ensureDirSync');
+
+                handler.__set__('fs', {
+                    copySync: copySyncSpy,
+                    statSync: statSyncSpy,
+                    ensureDirSync: ensureDirSyncSpy
+                });
+
+                handler.asset.install(asset, plugin_dir, wwwDest);
+                expect(ensureDirSyncSpy).toHaveBeenCalled();
                 expect(copySyncSpy).toHaveBeenCalledWith(jasmine.any(String), path.join('dest', asset.target));
             });
 
@@ -354,9 +378,11 @@ describe('Handler export', () => {
                 const copySyncSpy = jasmine.createSpy('copySync').and.returnValue('-f');
                 const fsstatMock = { isDirectory: () => false };
                 const statSyncSpy = jasmine.createSpy('statSync').and.returnValue(fsstatMock);
+                const ensureDirSyncSpy = jasmine.createSpy('ensureDirSync');
                 handler.__set__('fs', {
                     copySync: copySyncSpy,
-                    statSync: statSyncSpy
+                    statSync: statSyncSpy,
+                    ensureDirSync: ensureDirSyncSpy
                 });
 
                 handler.asset.install(asset, plugin_dir, wwwDest);
