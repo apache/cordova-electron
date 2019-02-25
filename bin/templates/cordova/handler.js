@@ -121,12 +121,10 @@ module.exports = {
         install: (asset, plugin_dir, wwwDest) => {
             const src = path.join(plugin_dir, asset.src);
             const dest = path.join(wwwDest, asset.target);
+            const destDir = path.parse(dest).dir;
 
-            if (fs.statSync(src).isDirectory()) {
-                fs.copySync(src + '/*', dest);
-            } else {
-                fs.copySync(src, dest);
-            }
+            if (destDir) fs.ensureDirSync(destDir);
+            fs.copySync(src, dest);
         },
         uninstall: (asset, wwwDest, plugin_id) => {
             fs.removeSync(path.join(wwwDest, asset.target));
