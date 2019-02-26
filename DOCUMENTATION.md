@@ -85,6 +85,13 @@ $ cd sampleApp
 $ cordova platform add electron
 ```
 
+_Notice: If using Cordova CLI prior to version 9.x, you will need to use the `cordova-electron` argument instead of `electron` for any command that requires the platform's name. For example:_
+
+```
+$ cordova platform add cordova-electron
+$ cordova run cordova-electron
+```
+
 ### Preview a Project
 
 It is not necessary to build the Electron application for previewing. Since the building process can be slow, it is recommended to pass in the `--no-build` flag to disable the build process when previewing.

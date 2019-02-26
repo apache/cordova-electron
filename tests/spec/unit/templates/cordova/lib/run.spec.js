@@ -18,6 +18,7 @@
 */
 
 const rewire = require('rewire');
+const path = require('path');
 const run = rewire('../../../../../../bin/templates/cordova/lib/run');
 
 describe('Run', () => {
@@ -27,6 +28,7 @@ describe('Run', () => {
             const spawnSpy = jasmine.createSpy('spawn');
             const onSpy = jasmine.createSpy('on');
             const exitSpy = jasmine.createSpy('exit');
+            const expectedPathToMain = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'www', 'main.js');
 
             run.__set__('electron', 'electron-require');
             run.__set__('process', {
@@ -41,7 +43,7 @@ describe('Run', () => {
 
             run.run();
 
-            expect(spawnSpy).toHaveBeenCalledWith('electron-require', ['./platforms/electron/www/main.js']);
+            expect(spawnSpy).toHaveBeenCalledWith('electron-require', [expectedPathToMain]);
             expect(onSpy).toHaveBeenCalled();
             expect(exitSpy).not.toHaveBeenCalled();
 
