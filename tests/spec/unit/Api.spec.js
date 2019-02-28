@@ -23,16 +23,10 @@ const rewire = require('rewire');
 const templateDir = path.resolve(__dirname, '..', '..', '..', 'bin', 'templates');
 const Api = rewire(path.join(templateDir, 'cordova', 'Api'));
 const tmpDir = path.join(__dirname, '../../../temp');
-const tmpWorkDir = path.join(tmpDir, 'work');
 const apiRequire = Api.__get__('require');
 const FIXTURES = path.join(__dirname, '..', 'fixtures');
 const pluginFixture = path.join(FIXTURES, 'testplugin');
 const testProjectDir = path.join(tmpDir, 'testapp');
-
-function copyTestProject () {
-    fs.ensureDirSync(tmpDir);
-    fs.copySync(path.resolve(FIXTURES, 'testapp'), path.resolve(tmpDir, 'testapp'));
-}
 
 function dirExists (dir) {
     return fs.existsSync(dir) && fs.statSync(dir).isDirectory();
@@ -59,9 +53,8 @@ function writeJson (file, json) {
 }
 
 describe('Api class', () => {
-    fs.removeSync(tmpDir);
-    fs.ensureDirSync(tmpWorkDir);
-    copyTestProject();
+    fs.ensureDirSync(tmpDir);
+    fs.copySync(path.resolve(FIXTURES, 'testapp'), path.resolve(tmpDir, 'testapp'));
 
     const api = new Api(null, testProjectDir);
     const apiEvents = Api.__get__('selfEvents');
@@ -508,18 +501,18 @@ describe('Api class', () => {
 
     describe('createPlatform method', () => {
         beforeEach(() => {
-            fs.removeSync(tmpWorkDir);
+            fs.removeSync(tmpDir);
         });
 
         afterEach(() => {
-            fs.removeSync(tmpWorkDir);
+            fs.removeSync(tmpDir);
         });
 
         /**
          * @todo improve createPlatform to test actual created platforms.
          */
         it('should export static createPlatform function', () => {
-            return Api.createPlatform(tmpWorkDir).then(
+            return Api.createPlatform(tmpDir).then(
                 (results) => {
                     expect(results.constructor.name).toBe(api.constructor.name);
                 }
@@ -533,7 +526,7 @@ describe('Api class', () => {
                 };
             });
 
-            expect(() => Api.createPlatform(tmpWorkDir)).toThrowError(/createPlatform is not callable from the electron project API/);
+            expect(() => Api.createPlatform(tmpDir)).toThrowError(/createPlatform is not callable from the electron project API/);
 
             Api.__set__('require', apiRequire);
         });
