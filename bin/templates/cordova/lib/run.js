@@ -22,7 +22,8 @@ const proc = require('child_process');
 const path = require('path');
 
 module.exports.run = (args) => {
-    const child = proc.spawn(electron, ['./platforms/electron/www/main.js']);
+    const pathToMain = path.resolve(__dirname, '..', '..', 'www', 'main.js');
+    const child = proc.spawn(electron, [pathToMain]);
 
     child.on('close', (code) => {
         process.exit(code);
