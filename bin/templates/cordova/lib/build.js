@@ -39,7 +39,7 @@ const PLATFORM_MAPPING = {
     linux: 'linux',
     mac: 'darwin',
     windows: 'win32',
-    win: 'win'
+    win: 'win32'
 };
 
 class ElectronBuilder {
@@ -83,7 +83,7 @@ class ElectronBuilder {
                  * If there is there are no valid properties
                  */
                 if (!this.__validateUserPlatformBuildSettings(platformConfigs)) {
-                    throw `The platform "${platform}" contains an invalid property. Valid properties are: package, arch, signing`;
+                    throw Error(`The platform "${platform}" contains an invalid property. Valid properties are: package, arch, signing`);
                 }
 
                 // Electron uses "win" as it's key, not "windows", so we will update here. We use windows in our settings for clarity.
@@ -276,7 +276,7 @@ class ElectronBuilder {
         const platformFile = path.resolve(__dirname, `./build/${platform}.json`);
 
         if (!fs.existsSync(platformFile)) {
-            throw `Your platform "${platform}" is not supported as a default target platform for Electron.`;
+            throw Error(`Your platform "${platform}" is not supported as a default target platform for Electron.`);
         }
 
         return require(platformFile);
