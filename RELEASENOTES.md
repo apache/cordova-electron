@@ -19,6 +19,12 @@
 
 ## Release Notes for Cordova Electron
 
+### 1.0.1 (Mar 04, 2019)
+
+* [GH-35](https://github.com/apache/cordova-electron/pull/35) Refactor `build.js` and Include Test Coverage
+* [GH-32](https://github.com/apache/cordova-electron/pull/32) Improve `temp` Folder Cleanup in `Api.spec.js`
+* [GH-33](https://github.com/apache/cordova-electron/pull/33) Update `cordova run` to Work with Pre-Cordova 9.x CLI
+
 ### 1.0.0 (Feb 25, 2019)
 
 * [GH-30](https://github.com/apache/cordova-electron/pull/30) Asset Install Fix from Mobilespec Report
