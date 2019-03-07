@@ -75,9 +75,14 @@ module.exports.prepare = function (cordovaProject, options) {
         .configure(this.config)
         .write();
 
+    const userElectronSettings = cordovaProject.projectConfig.getPlatformPreference('ElectronSettingsFilePath', 'electron');
+    const userElectronSettingsPath = userElectronSettings && fs.existsSync(path.resolve(cordovaProject.root, userElectronSettings))
+        ? path.resolve(cordovaProject.root, userElectronSettings)
+        : undefined;
+
     // update Electron settings in .json file
     (new SettingJsonParser(this.locations.www))
-        .configure(options.options)
+        .configure(options.options, userElectronSettingsPath)
         .write();
 
     // update project according to config.xml changes.

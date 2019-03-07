@@ -19,6 +19,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const { deepMerge } = require('./util');
 
 class SettingJsonParser {
     constructor (wwwDir) {
@@ -26,7 +27,13 @@ class SettingJsonParser {
         this.package = require(this.path);
     }
 
-    configure (config) {
+    configure (config, userElectronSettingsPath) {
+        // Apply user settings ontop of defaults.
+        if (userElectronSettingsPath) {
+            const userElectronSettings = require(userElectronSettingsPath);
+            this.package = deepMerge(this.package, userElectronSettings);
+        }
+
         if (config) {
             this.package.isRelease = (typeof (config.release) !== 'undefined') ? config.release : false;
         }

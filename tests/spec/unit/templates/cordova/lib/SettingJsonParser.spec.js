@@ -152,6 +152,60 @@ describe('Testing SettingJsonParser.js:', () => {
             expect(settingsFormat).toEqual('utf8');
         });
 
+        it('should load users blank settings and merge on default.', () => {
+            options = { options: { debug: true, argv: [] } };
+
+            SettingJsonParser.__set__('require', (file) => {
+                if (file === 'LOAD_MY_FAKE_DATA') return {};
+
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        isRelease: false,
+                        webPreferences: {
+                            nodeIntegration: true
+                        }
+                    };
+                }
+
+                return require(file);
+            });
+
+            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, 'LOAD_MY_FAKE_DATA');
+
+            expect(settingJsonParser.package.webPreferences.nodeIntegration).toBe(true);
+        });
+
+        it('should load users override settings and merge on default.', () => {
+            options = { options: { debug: true, argv: [] } };
+
+            SettingJsonParser.__set__('require', (file) => {
+                if (file === 'LOAD_MY_FAKE_DATA') {
+                    return {
+                        webPreferences: {
+                            nodeIntegration: false
+                        }
+                    };
+                }
+
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        isRelease: false,
+                        webPreferences: {
+                            nodeIntegration: true
+                        }
+                    };
+                }
+
+                return require(file);
+            });
+
+            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, 'LOAD_MY_FAKE_DATA');
+
+            expect(settingJsonParser.package.webPreferences.nodeIntegration).toBe(false);
+        });
+
         it('should write provided data.', () => {
             const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
             settingJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });

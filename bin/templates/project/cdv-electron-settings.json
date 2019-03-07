@@ -1,6 +1,11 @@
 {
     "isRelease": false,
-    "webPreferences": {
-        "nodeIntegration": false
+    "browserWindow": {
+        "devTools": false,
+        "width": 800,
+        "height": 600,
+        "webPreferences": {
+            "nodeIntegration": false
+        }
     }
 }

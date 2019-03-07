@@ -21,6 +21,7 @@ const rewire = require('rewire');
 const path = require('path');
 const CordovaError = require('cordova-common').CordovaError;
 const Api = require(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'Api'));
+let prepare;
 
 /**
  * Create a mock item from the getIcon collection with the supplied updated data.
@@ -40,104 +41,118 @@ function mockGetIconItem (data) {
     }, data);
 }
 
-describe('Testing prepare.js:', () => {
-    let prepare;
+const cordovaProjectDefault = {
+    root: 'mock',
+    projectConfig: {
+        path: path.join('mock', 'config.xml'),
+        cdvNamespacePrefix: 'cdv',
+        doc: {
+            getroot: function () {
+                return this;
+            }
+        }
+    },
+    locations: {
+        buildRes: path.join('mock', 'build-res'),
+        www: path.join('mock', 'www'),
+        configXml: path.join('mock', 'config.xml'),
+        platformRootDir: path.join('mock', 'platform_www')
+    }
+};
 
-    // Spies
-    let emitSpy;
-    let updatePathsSpy;
+const locationsDefault = cordovaProjectDefault.locations;
 
-    let cordovaProject;
-    let locations;
+let fakeParserConstructorSpy;
+let fakeParserConfigureSpy;
+let fakeParserWriteSpy;
+let fakeConfigParserConstructorSpy;
+let fakeConfigParserWriteSpy;
+let mergeXmlSpy;
+let updateIconsSpy;
+let emitSpy;
+let xmlHelpersMock;
+let updateIconsFake;
 
-    beforeEach(() => {
-        prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+function createSpies () {
+    fakeParserConstructorSpy = jasmine.createSpy('fakeParserConstructorSpy');
+    fakeParserConfigureSpy = jasmine.createSpy('fakeParserConfigureSpy');
+    fakeParserWriteSpy = jasmine.createSpy('fakeParserWriteSpy');
 
-        locations = {
-            buildRes: path.join('mock', 'build-res'),
-            www: path.join('mock', 'www'),
-            configXml: path.join('mock', 'config.xml'),
-            platformRootDir: path.join('mock', 'platform_www')
-        };
+    fakeConfigParserConstructorSpy = jasmine.createSpy('fakeConfigParserConstructorSpy');
+    fakeConfigParserWriteSpy = jasmine.createSpy('fakeConfigParserWriteSpy');
+    mergeXmlSpy = jasmine.createSpy('mergeXmlSpy');
+    updateIconsSpy = jasmine.createSpy('updateIconsSpy');
+    emitSpy = jasmine.createSpy('emitSpy');
 
-        cordovaProject = {
-            root: 'mock',
-            projectConfig: {
-                path: path.join('mock', 'config.xml'),
-                cdvNamespacePrefix: 'cdv',
-                doc: {
-                    getroot: function () {
-                        return this;
-                    }
-                }
-            },
-            locations: locations
-        };
+    prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
 
-        emitSpy = jasmine.createSpy('emit');
-        prepare.__set__('events', {
-            emit: emitSpy
-        });
-
-        updatePathsSpy = jasmine.createSpy('updatePaths');
-        prepare.__set__('FileUpdater', {
-            updatePaths: updatePathsSpy
-        });
+    prepare.__set__('events', {
+        emit: emitSpy
     });
 
+    xmlHelpersMock = {
+        mergeXml: function () {
+            mergeXmlSpy();
+            return this;
+        }
+    };
+
+    updateIconsFake = () => {
+        updateIconsSpy();
+        return this;
+    };
+}
+
+// define fake classses, methods and variables
+class FakeParser {
+    constructor () {
+        fakeParserConstructorSpy();
+    }
+    configure (options, userElectronFile) {
+        fakeParserConfigureSpy(options, userElectronFile);
+        return this;
+    }
+    write () {
+        fakeParserWriteSpy();
+        return this;
+    }
+}
+
+class FakeConfigParser {
+    constructor () {
+        this.doc = {
+            getroot: function () {
+                return this;
+            }
+        };
+        fakeConfigParserConstructorSpy();
+    }
+
+    write () {
+        fakeConfigParserWriteSpy();
+        return this;
+    }
+}
+
+describe('Testing prepare.js:', () => {
     describe('module.exports.prepare method', () => {
         // define spies
-        let constructorSpy = jasmine.createSpy('constructor');
-        let configureSpy = jasmine.createSpy('configure');
-        let writeSpy = jasmine.createSpy('write');
-        let mergeXmlSpy = jasmine.createSpy('mergeXml');
-        let updateIconsSpy = jasmine.createSpy('updateIcons');
+        let updatePathsSpy;
+        let cordovaProject;
 
-        // define fake classses, methods and variables
-        class FakeParser {
-            constructor () {
-                constructorSpy();
-            }
-            configure () {
-                configureSpy();
-                return this;
-            }
-            write () {
-                writeSpy();
-                return this;
-            }
-        }
+        beforeEach(() => {
+            createSpies();
+            cordovaProject = Object.assign({}, cordovaProjectDefault);
 
-        class FakeConfigParser {
-            constructor () {
-                this.doc = {
-                    getroot: function () {
-                        return this;
-                    }
-                };
-                constructorSpy();
-            }
-            write () {
-                writeSpy();
-                return this;
-            }
-        }
-
-        const xmlHelpersMock = {
-            mergeXml: function () {
-                mergeXmlSpy();
-                return this;
-            }
-        };
-
-        const updateIconsFake = () => {
-            updateIconsSpy();
-            return this;
-        };
+            updatePathsSpy = jasmine.createSpy('updatePaths');
+            prepare.__set__('FileUpdater', {
+                updatePaths: updatePathsSpy
+            });
+        });
 
         it('should generate config.xml from defaults for platform.', () => {
             // Mocking the scope with dummy API;
-            Promise.resolve().then(function () {
+            return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
@@ -163,15 +178,19 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
                 prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
-                expect(constructorSpy).toHaveBeenCalled();
-                expect(configureSpy).toHaveBeenCalled();
-                expect(writeSpy).toHaveBeenCalled();
+                expect(fakeParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeParserWriteSpy).toHaveBeenCalled();
+                expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
                 const actual = emitSpy.calls.argsFor(0)[1];
                 const expected = 'Generating config.xml';
@@ -179,9 +198,84 @@ describe('Testing prepare.js:', () => {
             });
         });
 
+        it('should get user supplied Electron settings overide path from config.xml but iggnore for incorrect path.', () => {
+            // Mocking the scope with dummy API;
+            return Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
+                const api = new Api(null, '', '');
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        if (configPath === defaultConfigPathMock) return true;
+                        if (configPath.includes('fail_test_path')) return false;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                cordovaProject.projectConfig.getPlatformPreference = (name, platform) => 'fail_test_path';
+
+                prepare.prepare.call(api, cordovaProject, {}, api);
+
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                const actual = fakeParserConfigureSpy.calls.argsFor(2)[1];
+                expect(actual).toEqual(undefined);
+            });
+        });
+
+        it('should get valid user supplied Electron settings overide path from config.xml.', () => {
+            // Mocking the scope with dummy API;
+            return Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
+                const api = new Api(null, '', '');
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => { return this; };
+                api.parser.update_project = () => { return this; };
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        if (configPath === defaultConfigPathMock) return true;
+                        if (configPath.includes('pass_test_path')) return true;
+                    },
+                    copySync: copySyncSpy
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('ManifestJsonParser', FakeParser);
+                prepare.__set__('PackageJsonParser', FakeParser);
+                prepare.__set__('SettingJsonParser', FakeParser);
+
+                cordovaProject.projectConfig.getPlatformPreference = (name, platform) => 'pass_test_path';
+
+                prepare.prepare.call(api, cordovaProject, {}, api);
+
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                const actual = fakeParserConfigureSpy.calls.argsFor(2)[1];
+                expect(actual).toContain('pass_test_path');
+            });
+        });
+
         it('should generate defaults.xml from own config.xml for platform.', () => {
             // Mocking the scope with dummy API;
-            Promise.resolve().then(function () {
+            return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
@@ -207,14 +301,18 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
                 prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
-                expect(constructorSpy).toHaveBeenCalled();
-                expect(configureSpy).toHaveBeenCalled();
-                expect(writeSpy).toHaveBeenCalled();
+                expect(fakeParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeParserWriteSpy).toHaveBeenCalled();
+                expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
                 const actual = emitSpy.calls.argsFor(0)[1];
                 const expected = 'Generating defaults.xml';
@@ -224,7 +322,7 @@ describe('Testing prepare.js:', () => {
 
         it('should hit case 3.', () => {
             // Mocking the scope with dummy API;
-            Promise.resolve().then(function () {
+            return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
@@ -251,14 +349,18 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
                 prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
-                expect(constructorSpy).toHaveBeenCalled();
-                expect(configureSpy).toHaveBeenCalled();
-                expect(writeSpy).toHaveBeenCalled();
+                expect(fakeParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeParserWriteSpy).toHaveBeenCalled();
+                expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
                 const actual = emitSpy.calls.argsFor(0)[1];
                 const expected = 'case 3';
@@ -268,7 +370,7 @@ describe('Testing prepare.js:', () => {
 
         it('should copy manifest.', () => {
             // Mocking the scope with dummy API;
-            Promise.resolve().then(function () {
+            return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
@@ -294,14 +396,18 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
                 prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
-                expect(constructorSpy).toHaveBeenCalled();
-                expect(configureSpy).toHaveBeenCalled();
-                expect(writeSpy).toHaveBeenCalled();
+                expect(fakeParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeParserWriteSpy).toHaveBeenCalled();
+                expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
                 const actual = emitSpy.calls.argsFor(1)[1];
                 const expected = 'Copying';
@@ -311,7 +417,7 @@ describe('Testing prepare.js:', () => {
 
         it('should create new manifest file.', () => {
             // Mocking the scope with dummy API;
-            Promise.resolve().then(function () {
+            return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
@@ -336,13 +442,17 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('PackageJsonParser', FakeParser);
                 prepare.__set__('SettingJsonParser', FakeParser);
 
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
                 prepare.prepare.call(api, cordovaProject, {}, api);
 
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
-                expect(constructorSpy).toHaveBeenCalled();
-                expect(configureSpy).toHaveBeenCalled();
-                expect(writeSpy).toHaveBeenCalled();
+                expect(fakeParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
+                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeParserWriteSpy).toHaveBeenCalled();
+                expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
                 const actual = emitSpy.calls.argsFor(1)[1];
                 const expected = 'Creating';
@@ -352,13 +462,19 @@ describe('Testing prepare.js:', () => {
     });
 
     describe('updateIcons method', () => {
+        let cordovaProject;
+        let locations;
+
+        beforeEach(() => {
+            createSpies();
+            cordovaProject = Object.assign({}, cordovaProjectDefault);
+            locations = Object.assign({}, locationsDefault);
+        });
 
         it('should detect no defined icons.', () => {
             const updateIcons = prepare.__get__('updateIcons');
 
-            cordovaProject.projectConfig.getIcons = () => {
-                return [];
-            };
+            cordovaProject.projectConfig.getIcons = () => [];
 
             updateIcons(cordovaProject, locations);
 
@@ -407,8 +523,10 @@ describe('Testing prepare.js:', () => {
 
     describe('checkIconsAttributes method', () => {
         let checkIconsAttributes;
+        // let emitSpy;
 
         beforeEach(() => {
+            createSpies();
             checkIconsAttributes = prepare.__get__('checkIconsAttributes');
         });
 
@@ -511,6 +629,7 @@ describe('Testing prepare.js:', () => {
         let prepareIcons;
 
         beforeEach(() => {
+            createSpies();
             prepareIcons = prepare.__get__('prepareIcons');
         });
 
@@ -771,6 +890,7 @@ describe('Testing prepare.js:', () => {
         let findHighResIcons;
 
         beforeEach(() => {
+            createSpies();
             findHighResIcons = prepare.__get__('findHighResIcons');
         });
 
@@ -986,8 +1106,14 @@ describe('Testing prepare.js:', () => {
     describe('createResourceMap method', () => {
         let createResourceMap;
         let shellLsSpy;
+        let cordovaProject;
+        let locations;
 
         beforeEach(() => {
+            prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+
+            cordovaProject = Object.assign({}, cordovaProjectDefault);
+            locations = Object.assign({}, locationsDefault);
             createResourceMap = prepare.__get__('createResourceMap');
             shellLsSpy = prepare.__get__('mapIconResources');
 
@@ -1158,8 +1284,12 @@ describe('Testing prepare.js:', () => {
     describe('mapIconResources method', () => {
         let mapIconResources;
         let shellLsSpy;
+        let cordovaProject;
 
         beforeEach(() => {
+            prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+
+            cordovaProject = Object.assign({}, cordovaProjectDefault);
             mapIconResources = prepare.__get__('mapIconResources');
             shellLsSpy = prepare.__get__('mapIconResources');
 
@@ -1205,8 +1335,12 @@ describe('Testing prepare.js:', () => {
     describe('copyIcons method', () => {
         let copyIcons;
         let fsCopySyncSpy;
+        let cordovaProject;
 
         beforeEach(() => {
+            prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+
+            cordovaProject = Object.assign({}, cordovaProjectDefault);
             copyIcons = prepare.__get__('copyIcons');
 
             fsCopySyncSpy = jasmine.createSpy('copySync');
