@@ -77,8 +77,8 @@ module.exports.createProject = (project_path, package_name, project_name, option
     // copy cordova js file to platform_www
     fs.copySync(path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(platform_www, 'cordova.js'), { overwrite: false });
 
-    // copy main.js
-    fs.copySync(path.join(ROOT, 'bin/templates/project/main.js'), path.join(platform_www, 'main.js'), { overwrite: false });
+    // copy cdv-electron-main.js
+    fs.copySync(path.join(ROOT, 'bin/templates/project/cdv-electron-main.js'), path.join(platform_www, 'cdv-electron-main.js'), { overwrite: false });
 
     // copy cdv-electron-settings.json
     fs.copySync(path.join(ROOT, 'bin/templates/project/cdv-electron-settings.json'), path.join(platform_www, 'cdv-electron-settings.json'), { overwrite: false });

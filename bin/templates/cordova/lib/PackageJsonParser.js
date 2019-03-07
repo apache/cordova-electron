@@ -25,7 +25,7 @@ class PackageJsonParser {
         this.path = path.join(wwwDir, 'package.json');
         this.www = wwwDir;
         this.package = {
-            main: 'main.js'
+            main: 'cdv-electron-main.js'
         };
     }
 

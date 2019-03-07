@@ -56,7 +56,7 @@ describe('Testing PackageJsonParser.js:', () => {
             packageJsonParser = new PackageJsonParser(locations.www);
 
             // mock package JSON Object
-            const packageJsonObj = { main: 'main.js' };
+            const packageJsonObj = { main: 'cdv-electron-main.js' };
 
             expect(packageJsonParser.path).toEqual(path.join('mock', 'www', 'package.json'));
             expect(packageJsonParser.www).toEqual(locations.www);
@@ -67,7 +67,7 @@ describe('Testing PackageJsonParser.js:', () => {
             packageJsonParser = new PackageJsonParser(locations.www).configure(undefined);
 
             // mock package JSON Object
-            const packageJsonObj = { main: 'main.js' };
+            const packageJsonObj = { main: 'cdv-electron-main.js' };
 
             expect(packageJsonParser.package).toEqual(packageJsonObj);
         });
@@ -79,7 +79,7 @@ describe('Testing PackageJsonParser.js:', () => {
             const packageJsonObj = {
                 package:
                     {
-                        main: 'main.js',
+                        main: 'cdv-electron-main.js',
                         name: 'io.cordova.hellocordova',
                         displayName: 'HelloCordova',
                         version: '1.0.0',
@@ -100,7 +100,7 @@ describe('Testing PackageJsonParser.js:', () => {
             const packageJsonObj = {
                 package:
                     {
-                        main: 'main.js',
+                        main: 'cdv-electron-main.js',
                         name: 'whatever',
                         displayName: 'HelloWorld',
                         version: '1.1.1',
@@ -126,7 +126,7 @@ describe('Testing PackageJsonParser.js:', () => {
             let packageJsonObj = {
                 package:
                     {
-                        main: 'main.js',
+                        main: 'cdv-electron-main.js',
                         name: 'io.cordova.hellocordova',
                         displayName: 'HelloCordova',
                         version: '1.0.0',
@@ -164,7 +164,7 @@ describe('Testing PackageJsonParser.js:', () => {
             let packageJsonObj = {
                 package:
                     {
-                        main: 'main.js',
+                        main: 'cdv-electron-main.js',
                         name: 'whatever',
                         displayName: 'HelloWorld',
                         version: '1.1.1',
