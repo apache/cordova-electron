@@ -1,6 +1,6 @@
 {
     "isRelease": false,
     "webPreferences": {
-        "nodeIntegration": true
+        "nodeIntegration": false
     }
 }
