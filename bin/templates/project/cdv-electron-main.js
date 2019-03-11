@@ -41,7 +41,8 @@ function createWindow () {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        icon: appIcon
+        icon: appIcon,
+        webPreferences: cdvElectronSettings.webPreferences
     });
 
     // and load the index.html of the app.

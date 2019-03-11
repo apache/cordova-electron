@@ -1,3 +1,6 @@
 {
-    "isRelease": false
+    "isRelease": false,
+    "webPreferences": {
+        "nodeIntegration": false
+    }
 }
