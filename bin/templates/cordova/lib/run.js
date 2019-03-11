@@ -22,7 +22,7 @@ const proc = require('child_process');
 const path = require('path');
 
 module.exports.run = (args) => {
-    const pathToMain = path.resolve(__dirname, '..', '..', 'www', 'main.js');
+    const pathToMain = path.resolve(__dirname, '..', '..', 'www', 'cdv-electron-main.js');
     const child = proc.spawn(electron, [pathToMain]);
 
     child.on('close', (code) => {

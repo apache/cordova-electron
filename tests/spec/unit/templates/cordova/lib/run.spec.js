@@ -23,12 +23,12 @@ const run = rewire('../../../../../../bin/templates/cordova/lib/run');
 
 describe('Run', () => {
     describe('run export method', () => {
-        it('should spawn electron with main.js.', () => {
+        it('should spawn electron with cdv-electron-main.js.', () => {
             const _process = run.__get__('process');
             const spawnSpy = jasmine.createSpy('spawn');
             const onSpy = jasmine.createSpy('on');
             const exitSpy = jasmine.createSpy('exit');
-            const expectedPathToMain = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'www', 'main.js');
+            const expectedPathToMain = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'www', 'cdv-electron-main.js');
 
             run.__set__('electron', 'electron-require');
             run.__set__('process', {
