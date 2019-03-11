@@ -49,7 +49,7 @@ function createWindow () {
     });
 
     // Open the DevTools.
-    if (!cdvElectronSettings.isRelease) {
+    if (!cdvElectronSettings.browserWindow.webPreferences.devTools) {
         mainWindow.webContents.openDevTools();
     }
 

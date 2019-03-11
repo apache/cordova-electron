@@ -1,11 +1,9 @@
 {
-    "isRelease": false,
     "browserWindow": {
-        "devTools": false,
+        "webPreferences":{
+            "devTools": true
+        },
         "width": 800,
-        "height": 600,
-        "webPreferences": {
-            "nodeIntegration": false
-        }
+        "height": 600
     }
 }

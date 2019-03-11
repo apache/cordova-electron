@@ -35,7 +35,7 @@ class SettingJsonParser {
         }
 
         if (config) {
-            this.package.isRelease = (typeof (config.release) !== 'undefined') ? config.release : false;
+            this.package.browserWindow.webPreferences.devTools = !config.release;
         }
 
         return this;
