@@ -67,108 +67,124 @@ describe('Testing SettingJsonParser.js:', () => {
             expect(settingJsonParser.package).toEqual({});
         });
 
-        it('should be equal to undefined, when config file is undefined.', () => {
-            // mock options data
-            options = { options: { argv: [] } };
-
-            settingJsonParser = new SettingJsonParser(locations.www).configure(undefined);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(settingJsonParser.package.isRelease).toEqual(undefined);
-        });
-
-        it('should be equal to false, when no flag is set.', () => {
-            // mock options data
-            options = { options: { argv: [] } };
-
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(settingJsonParser.package.isRelease).toEqual(false);
-        });
-
-        it('should be equal to false, when debug flag is set.', () => {
-            // mock options data
-            options = { options: { debug: true, argv: [] } };
-
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options);
-
-            expect(requireSpy).toHaveBeenCalled();
-            expect(settingJsonParser.package.isRelease).toEqual(false);
-        });
-
-        it('should be equal to true, when release flag is set.', () => {
-            // mock options data
+        it('should use default when users settings files does not exist, but set devTools value from options', () => {
             options = { options: { release: true, argv: [] } };
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options);
+            SettingJsonParser.__set__('require', (file) => {
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        browserWindow: {
+                            webPreferences: {
+                                devTools: true,
+                                nodeIntegration: true
+                            }
+                        }
+                    };
+                }
 
-            expect(requireSpy).toHaveBeenCalled();
-            expect(settingJsonParser.package.isRelease).toEqual(true);
+                return require(file);
+            });
+
+            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, false);
+
+            expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(false);
+            expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(true);
         });
 
-        it('should write provided data, when no flag is set.', () => {
-            let writeFileSyncSpy;
-            writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            settingJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
+        it('should use default when users settings files does not exist.', () => {
+            options = {};
 
-            options = { options: { argv: [] } };
+            SettingJsonParser.__set__('require', (file) => {
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        browserWindow: {
+                            webPreferences: {
+                                devTools: true,
+                                nodeIntegration: true
+                            }
+                        }
+                    };
+                }
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options).write();
+                return require(file);
+            });
 
-            expect(writeFileSyncSpy).toHaveBeenCalled();
+            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, false);
 
-            const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
-
-            // get settings json file content and remove white spaces
-            let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
-            settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"isRelease":false}');
-
-            const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(settingsFormat).toEqual('utf8');
+            expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(true);
+            expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(true);
         });
 
-        it('should write provided data, when debug flag is set.', () => {
-            const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            settingJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
-
+        it('should load users override settings and merge on default, but set devTools value from options.', () => {
             options = { options: { debug: true, argv: [] } };
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options).write();
+            SettingJsonParser.__set__('require', (file) => {
+                if (file === 'LOAD_MY_FAKE_DATA') {
+                    return {
+                        browserWindow: {
+                            webPreferences: {
+                                devTools: false,
+                                nodeIntegration: false
+                            }
+                        }
+                    };
+                }
 
-            expect(writeFileSyncSpy).toHaveBeenCalled();
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        browserWindow: {
+                            webPreferences: {
+                                devTools: true,
+                                nodeIntegration: true
+                            }
+                        }
+                    };
+                }
 
-            const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
+                return require(file);
+            });
 
-            // get settings json file content and remove white spaces
-            let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
-            settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"isRelease":false}');
+            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, 'LOAD_MY_FAKE_DATA');
 
-            const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(settingsFormat).toEqual('utf8');
+            expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(true);
+            expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(false);
+
         });
 
         it('should write provided data.', () => {
             const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
             settingJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
+            options = { options: { debug: true, argv: [] } };
 
-            options = { options: { release: true, argv: [] } };
+            SettingJsonParser.__set__('require', (file) => {
+                if (file === 'LOAD_MY_FAKE_DATA') return {};
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options).write();
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        browserWindow: {
+                            webPreferences: {
+                                devTools: true,
+                                nodeIntegration: true
+                            }
+                        }
+                    };
+                }
+
+                return require(file);
+            });
+
+            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, 'LOAD_MY_FAKE_DATA').write();
 
             expect(writeFileSyncSpy).toHaveBeenCalled();
-
-            const settingsPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(settingsPath).toEqual(path.join('mock', 'www', 'cdv-electron-settings.json'));
 
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
             settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"isRelease":true}');
+            expect(settingsFile).toEqual(`{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}}}`);
 
             const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
             expect(settingsFormat).toEqual('utf8');

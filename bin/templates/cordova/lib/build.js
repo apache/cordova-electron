@@ -20,20 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const events = require('cordova-common').events;
-
-function deepMerge (mergeTo, mergeWith) {
-    for (const property in mergeWith) {
-        if (Object.prototype.toString.call(mergeWith[property]) === '[object Object]') {
-            mergeTo[property] = deepMerge((mergeTo[property] || {}), mergeWith[property]);
-        } else if (Object.prototype.toString.call(mergeWith[property]) === '[object Array]') {
-            mergeTo[property] = [].concat((mergeTo[property] || []), mergeWith[property]);
-        } else {
-            mergeTo[property] = mergeWith[property];
-        }
-    }
-
-    return mergeTo;
-}
+const { deepMerge } = require('./util');
 
 const PLATFORM_MAPPING = {
     linux: 'linux',

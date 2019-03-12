@@ -29,24 +29,6 @@ describe('Testing build.js:', () => {
         build = rewire('../../../../../../bin/templates/cordova/lib/build');
     });
 
-    describe('deepMerge method', () => {
-        it('should deep merge objects and arrays.', () => {
-            const deepMerge = build.__get__('deepMerge');
-
-            const mergeTo = { foo: 'bar', abc: [ 1, 2, 3 ] };
-            const mergeWith = { food: 'candy', abc: [ 5 ] };
-
-            const actual = deepMerge(mergeTo, mergeWith);
-            const expected = {
-                foo: 'bar',
-                food: 'candy',
-                abc: [ 1, 2, 3, 5 ]
-            };
-
-            expect(actual).toEqual(expected);
-        });
-    });
-
     describe('Build class', () => {
         let ElectronBuilder;
         let electronBuilder;
