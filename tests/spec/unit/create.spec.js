@@ -142,5 +142,8 @@ describe('create', () => {
         create.createProject(tmpDir, projectname, projectid, projectname);
 
         expect(emitSpy).toHaveBeenCalledWith('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
+
+        // clean-up
+        fs.removeSync(tmpDir);
     });
 });
