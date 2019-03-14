@@ -19,11 +19,20 @@
 
 ## Release Notes for Cordova Electron
 
-### 1.0.1 (Mar 04, 2019)
+### 1.0.2 (Mar 15, 2019)
 
+* [GH-40](https://github.com/apache/cordova-electron/pull/40) Remove `temp` Dir After `create.spec.js` Test
+* [GH-39](https://github.com/apache/cordova-electron/pull/39) Added Missing License Header in `util.js`
+* [GH-38](https://github.com/apache/cordova-electron/pull/38) Support User Defined **Electron** Settings
+* [GH-37](https://github.com/apache/cordova-electron/pull/37) Remove `nodeIntegration` Warning by Setting Default to `false`
+* [GH-36](https://github.com/apache/cordova-electron/pull/36) Rename **Electron** Main Entry File
 * [GH-35](https://github.com/apache/cordova-electron/pull/35) Refactor `build.js` and Include Test Coverage
 * [GH-32](https://github.com/apache/cordova-electron/pull/32) Improve `temp` Folder Cleanup in `Api.spec.js`
 * [GH-33](https://github.com/apache/cordova-electron/pull/33) Update `cordova run` to Work with Pre-Cordova 9.x CLI
+
+### 1.0.1 (Mar 04, 2019)
+
+Version bump with no change.
 
 ### 1.0.0 (Feb 25, 2019)
 
