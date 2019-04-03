@@ -36,6 +36,7 @@
 $ npm install -g cordova@latest
 $ cordova create helloworld
 $ cd helloworld
+$ cordova platform add electron
 $ cordova run electron
 ```
 
