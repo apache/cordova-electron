@@ -98,6 +98,10 @@ class ElectronBuilder {
             target: []
         };
 
+        // Apply custom app installer icon when the user is using a custom build configuration
+        // eslint-disable-next-line no-template-curly-in-string
+        userBuildSettings.config[platform].icon = '${APP_INSTALLER_ICON}';
+
         // Only macOS has a build type distinction. (development or distribution)
         // eslint-disable-next-line no-template-curly-in-string
         if (platform === 'mac') userBuildSettings.config[platform].type = '${BUILD_TYPE}';
