@@ -225,13 +225,15 @@ describe('Testing build.js:', () => {
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
                 ],
-                type: '${BUILD_TYPE}'
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
             };
             const expectedLinux = {
                 target: [
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
-                ]
+                ],
+                icon: '${APP_INSTALLER_ICON}'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
@@ -358,13 +360,15 @@ describe('Testing build.js:', () => {
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
                 ],
-                type: '${BUILD_TYPE}'
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
             };
             const expectedLinux = {
                 target: [
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
-                ]
+                ],
+                icon: '${APP_INSTALLER_ICON}'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
@@ -408,7 +412,6 @@ describe('Testing build.js:', () => {
             electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
 
             expect(existsSyncSpy).toHaveBeenCalled();
-            // expect(requireSpy).toHaveBeenCalled();
 
             const expected = {
                 linux: [],
@@ -416,6 +419,7 @@ describe('Testing build.js:', () => {
                 win: [],
                 config: {
                     linux: {
+                        icon: '${APP_INSTALLER_ICON}',
                         target: [
                             {
                                 target: 'tar.gz',
@@ -425,6 +429,7 @@ describe('Testing build.js:', () => {
                     },
                     mac: {
                         type: '${BUILD_TYPE}',
+                        icon: '${APP_INSTALLER_ICON}',
                         target: [
                             {
                                 target: 'dmg',
@@ -437,6 +442,7 @@ describe('Testing build.js:', () => {
                         ]
                     },
                     win: {
+                        icon: '${APP_INSTALLER_ICON}',
                         target: [
                             {
                                 target: 'nsis',
@@ -515,13 +521,15 @@ describe('Testing build.js:', () => {
                     { target: 'package', arch: [ 'x64' ] },
                     { target: 'package2', arch: [ 'x64' ] }
                 ],
-                type: '${BUILD_TYPE}'
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
             };
             const expectedLinux = {
                 target: [
                     { target: 'package', arch: [ 'x64' ] },
                     { target: 'package2', arch: [ 'x64' ] }
-                ]
+                ],
+                icon: '${APP_INSTALLER_ICON}'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
@@ -567,13 +575,15 @@ describe('Testing build.js:', () => {
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
                 ],
-                type: '${BUILD_TYPE}'
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
             };
             const expectedLinux = {
                 target: [
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
-                ]
+                ],
+                icon: '${APP_INSTALLER_ICON}'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
@@ -680,7 +690,8 @@ describe('Testing build.js:', () => {
                 target: [
                     { target: 'mas', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
-                ]
+                ],
+                icon: '${APP_INSTALLER_ICON}'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(undefined);
