@@ -17,8 +17,10 @@
     under the License.
 */
 
-const rewire = require('rewire');
 const path = require('path');
+const rewire = require('rewire');
+
+const PackageJsonParser = rewire('../../../../../../bin/templates/cordova/lib/PackageJsonParser');
 const ConfigParser = require('cordova-common').ConfigParser;
 
 const FIXTURES = path.join(__dirname, '..', '..', '..', '..', 'fixtures');
@@ -27,167 +29,203 @@ const FIXTURES = path.join(__dirname, '..', '..', '..', '..', 'fixtures');
 const cfg = new ConfigParser(path.join(FIXTURES, 'test-config-1.xml'));
 const cfgEmpty = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
 
-describe('Testing PackageJsonParser.js:', () => {
-    let PackageJsonParser;
-    let locations;
+const defaultMockProjectPackageJson = {
+    name: 'io.cordova.electronTest',
+    displayName: 'electronTest',
+    version: '1.0.0',
+    description: 'A Sample Apache Cordova Electron Application.',
+    author: 'Apache Cordova Team',
+    license: 'Apache-2.0',
+    dependencies: { 'cordova-electron': '^1.0.2' },
+    devDependencies: {},
+    cordova: {
+        plugins: {},
+        platforms: ['electron']
+    }
+};
+
+const locations = {
+    buildRes: path.join('mock', 'build-res'),
+    www: path.join('mock', 'www'),
+    configXml: path.join('mock', 'config.xml')
+};
+
+describe('PackageJsonParser class', () => {
+    let packageJsonParser;
+    let emitSpy;
 
     beforeEach(() => {
-        PackageJsonParser = rewire('../../../../../../bin/templates/cordova/lib/PackageJsonParser');
+        packageJsonParser = PackageJsonParser.__get__('PackageJsonParser');
 
-        locations = {
-            buildRes: path.join('mock', 'build-res'),
-            www: path.join('mock', 'www'),
-            configXml: path.join('mock', 'config.xml')
-        };
+        emitSpy = jasmine.createSpy('emit');
+        packageJsonParser.__set__('events', { emit: emitSpy });
     });
 
-    describe('PackageJson class', () => {
-        let packageJsonParser;
+    it('should should be defined.', () => {
+        expect(packageJsonParser).toBeDefined();
+    });
 
-        beforeEach(() => {
-            packageJsonParser = PackageJsonParser.__get__('PackageJsonParser');
-        });
+    it('should set initial value correctly.', () => {
+        packageJsonParser = new PackageJsonParser(locations.www);
 
-        it('should should be defined.', () => {
-            expect(packageJsonParser).toBeDefined();
-        });
+        // mock package JSON Object
+        const packageJsonObj = { main: 'cdv-electron-main.js' };
 
-        it('should set initial value correctly.', () => {
-            packageJsonParser = new PackageJsonParser(locations.www);
+        expect(packageJsonParser.path).toEqual(path.join('mock', 'www', 'package.json'));
+        expect(packageJsonParser.www).toEqual(locations.www);
+        expect(packageJsonParser.package).toEqual(packageJsonObj);
+    });
 
-            // mock package JSON Object
-            const packageJsonObj = { main: 'cdv-electron-main.js' };
+    it('should return when config xml is not defined.', () => {
+        packageJsonParser = new PackageJsonParser(locations.www).configure(undefined);
 
-            expect(packageJsonParser.path).toEqual(path.join('mock', 'www', 'package.json'));
-            expect(packageJsonParser.www).toEqual(locations.www);
-            expect(packageJsonParser.package).toEqual(packageJsonObj);
-        });
+        // mock package JSON Object
+        const packageJsonObj = { main: 'cdv-electron-main.js' };
 
-        it('should return when config xml is not defined.', () => {
-            packageJsonParser = new PackageJsonParser(locations.www).configure(undefined);
+        expect(packageJsonParser.package).toEqual(packageJsonObj);
+    });
 
-            // mock package JSON Object
-            const packageJsonObj = { main: 'cdv-electron-main.js' };
+    it('should set package json object values to default, when config xml is empty.', () => {
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty, defaultMockProjectPackageJson);
 
-            expect(packageJsonParser.package).toEqual(packageJsonObj);
-        });
+        // mock package JSON Object
+        const packageJsonObj = {
+            package:
+                {
+                    main: 'cdv-electron-main.js',
+                    name: 'io.cordova.hellocordova',
+                    displayName: 'HelloCordova',
+                    version: '1.0.0',
+                    description: 'A sample Apache Cordova application that responds to the deviceready event.',
+                    dependencies: { 'cordova-electron': '^1.0.2' },
+                    homepage: 'https://cordova.io',
+                    license: 'Apache-2.0',
+                    author: 'Apache Cordova Team'
+                }
+        };
 
-        it('should set package json object values to default, when config xml is empty.', () => {
-            packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty);
+        expect(packageJsonParser.package).toEqual(packageJsonObj.package);
+    });
 
-            // mock package JSON Object
-            const packageJsonObj = {
-                package:
-                    {
-                        main: 'cdv-electron-main.js',
-                        name: 'io.cordova.hellocordova',
-                        displayName: 'HelloCordova',
-                        version: '1.0.0',
-                        description: 'A sample Apache Cordova application that responds to the deviceready event.',
-                        homepage: 'https://cordova.io',
-                        license: 'Apache-2.0',
-                        author: 'Apache Cordova Team'
-                    }
-            };
+    it('should read and set package json object values from config xml.', () => {
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson);
 
-            expect(packageJsonParser.package).toEqual(packageJsonObj.package);
-        });
+        // mock package JSON Object
+        const packageJsonObj = {
+            package:
+                {
+                    main: 'cdv-electron-main.js',
+                    name: 'whatever',
+                    displayName: 'HelloWorld',
+                    version: '1.1.1',
+                    description: 'A sample Apache Cordova application.',
+                    dependencies: { 'cordova-electron': '^1.0.2' },
+                    homepage: 'http://cordova.io',
+                    license: 'Apache 2.0 License',
+                    author: 'Cordova Team'
+                }
+        };
 
-        it('should read and set package json object values from config xml.', () => {
-            packageJsonParser = new PackageJsonParser(locations.www).configure(cfg);
+        expect(packageJsonParser.package).toEqual(packageJsonObj.package);
+    });
 
-            // mock package JSON Object
-            const packageJsonObj = {
-                package:
-                    {
-                        main: 'cdv-electron-main.js',
-                        name: 'whatever',
-                        displayName: 'HelloWorld',
-                        version: '1.1.1',
-                        description: 'A sample Apache Cordova application.',
-                        homepage: 'http://cordova.io',
-                        license: 'Apache 2.0 License',
-                        author: 'Cordova Team'
-                    }
-            };
+    it('should warn that cordova-electron is defined as dependency.', () => {
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson);
 
-            expect(packageJsonParser.package).toEqual(packageJsonObj.package);
-        });
+        const actual = emitSpy.calls.argsFor(0)[1];
+        const expectedPartial = 'The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.';
 
-        it('should write provided data when config xml is empty.', () => {
-            const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
+        expect(emitSpy).toHaveBeenCalled();
+        expect(actual).toContain(expectedPartial);
+        expect(actual).toContain('cordova-electron');
+    });
 
-            packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty).write();
+    it('should not warn that cordova-electron is defined as dev dependency.', () => {
+        // Fix defaultMockProjectPackageJson where cordova-* is devDependency
+        let mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
+        mockProjectPackageJson.dependencies = {};
 
-            expect(writeFileSyncSpy).toHaveBeenCalled();
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, mockProjectPackageJson);
 
-            // mock package JSON Object
-            let packageJsonObj = {
-                package:
-                    {
-                        main: 'cdv-electron-main.js',
-                        name: 'io.cordova.hellocordova',
-                        displayName: 'HelloCordova',
-                        version: '1.0.0',
-                        description: 'A sample Apache Cordova application that responds to the deviceready event.',
-                        homepage: 'https://cordova.io',
-                        license: 'Apache-2.0',
-                        author: 'Apache Cordova Team'
-                    }
-            };
+        expect(emitSpy).not.toHaveBeenCalled();
+    });
 
-            const packagePath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(packagePath).toEqual(path.join('mock', 'www', 'package.json'));
+    it('should write provided data when config xml is empty.', () => {
+        const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
+        packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
 
-            // get package json file content and remove white spaces
-            let packageFile = writeFileSyncSpy.calls.argsFor(0)[1];
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty, defaultMockProjectPackageJson).write();
 
-            // convert to remove white space
-            packageFile = packageFile.replace(/\s+/g, '');
-            packageJsonObj = JSON.stringify(packageJsonObj.package).replace(/\s/g, '');
-            expect(packageFile).toEqual(packageJsonObj);
+        expect(writeFileSyncSpy).toHaveBeenCalled();
 
-            const packageFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(packageFormat).toEqual('utf8');
-        });
+        // mock package JSON Object
+        let packageJsonObj = {
+            package:
+                {
+                    main: 'cdv-electron-main.js',
+                    name: 'io.cordova.hellocordova',
+                    displayName: 'HelloCordova',
+                    version: '1.0.0',
+                    description: 'A sample Apache Cordova application that responds to the deviceready event.',
+                    dependencies: { 'cordova-electron': '^1.0.2' },
+                    homepage: 'https://cordova.io',
+                    license: 'Apache-2.0',
+                    author: 'Apache Cordova Team'
+                }
+        };
 
-        it('should write package json object values from config xml.', () => {
-            const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
+        const packagePath = writeFileSyncSpy.calls.argsFor(0)[0];
+        expect(packagePath).toEqual(path.join('mock', 'www', 'package.json'));
 
-            packageJsonParser = new PackageJsonParser(locations.www).configure(cfg).write();
+        // get package json file content and remove white spaces
+        let packageFile = writeFileSyncSpy.calls.argsFor(0)[1];
 
-            expect(writeFileSyncSpy).toHaveBeenCalled();
+        // convert to remove white space
+        packageFile = packageFile.replace(/\s+/g, '');
+        packageJsonObj = JSON.stringify(packageJsonObj.package).replace(/\s/g, '');
+        expect(packageFile).toEqual(packageJsonObj);
 
-            // mock package JSON Object
-            let packageJsonObj = {
-                package:
-                    {
-                        main: 'cdv-electron-main.js',
-                        name: 'whatever',
-                        displayName: 'HelloWorld',
-                        version: '1.1.1',
-                        description: 'A sample Apache Cordova application.',
-                        homepage: 'http://cordova.io',
-                        license: 'Apache 2.0 License',
-                        author: 'Cordova Team'
-                    }
-            };
+        const packageFormat = writeFileSyncSpy.calls.argsFor(0)[2];
+        expect(packageFormat).toEqual('utf8');
+    });
 
-            const packagePath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(packagePath).toEqual(path.join('mock', 'www', 'package.json'));
+    it('should write package json object values from config xml.', () => {
+        const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
+        packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
 
-            // get package json file content and remove white spaces
-            let packageFile = writeFileSyncSpy.calls.argsFor(0)[1];
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson).write();
 
-            // convert to remove white space
-            packageFile = packageFile.replace(/\s+/g, '');
-            packageJsonObj = JSON.stringify(packageJsonObj.package).replace(/\s/g, '');
-            expect(packageFile).toEqual(packageJsonObj);
+        expect(writeFileSyncSpy).toHaveBeenCalled();
 
-            const packageFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(packageFormat).toEqual('utf8');
-        });
+        // mock package JSON Object
+        let packageJsonObj = {
+            package:
+                {
+                    main: 'cdv-electron-main.js',
+                    name: 'whatever',
+                    displayName: 'HelloWorld',
+                    version: '1.1.1',
+                    description: 'A sample Apache Cordova application.',
+                    dependencies: { 'cordova-electron': '^1.0.2' },
+                    homepage: 'http://cordova.io',
+                    license: 'Apache 2.0 License',
+                    author: 'Cordova Team'
+                }
+        };
+
+        const packagePath = writeFileSyncSpy.calls.argsFor(0)[0];
+        expect(packagePath).toEqual(path.join('mock', 'www', 'package.json'));
+
+        // get package json file content and remove white spaces
+        let packageFile = writeFileSyncSpy.calls.argsFor(0)[1];
+
+        // convert to remove white space
+        packageFile = packageFile.replace(/\s+/g, '');
+        packageJsonObj = JSON.stringify(packageJsonObj.package).replace(/\s/g, '');
+        expect(packageFile).toEqual(packageJsonObj);
+
+        const packageFormat = writeFileSyncSpy.calls.argsFor(0)[2];
+        expect(packageFormat).toEqual('utf8');
     });
 });
