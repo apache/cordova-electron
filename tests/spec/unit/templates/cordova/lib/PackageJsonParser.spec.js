@@ -63,7 +63,7 @@ describe('Testing PackageJsonParser.js:', () => {
             expect(packageJsonParser.package).toEqual(packageJsonObj);
         });
 
-        it('should return when config xml is not defined.', () => {
+        it('should return when config.xml file is not defined.', () => {
             packageJsonParser = new PackageJsonParser(locations.www).configure(undefined);
 
             // mock package JSON Object
@@ -72,7 +72,7 @@ describe('Testing PackageJsonParser.js:', () => {
             expect(packageJsonParser.package).toEqual(packageJsonObj);
         });
 
-        it('should set package json object values to default, when config xml is empty.', () => {
+        it('should set package json object values to default, when config.xml file is empty.', () => {
             packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty);
 
             // mock package JSON Object
@@ -93,7 +93,7 @@ describe('Testing PackageJsonParser.js:', () => {
             expect(packageJsonParser.package).toEqual(packageJsonObj.package);
         });
 
-        it('should read and set package json object values from config xml.', () => {
+        it('should read and set package json object values from config.xml file.', () => {
             packageJsonParser = new PackageJsonParser(locations.www).configure(cfg);
 
             // mock package JSON Object
@@ -107,14 +107,14 @@ describe('Testing PackageJsonParser.js:', () => {
                         description: 'A sample Apache Cordova application.',
                         homepage: 'http://cordova.io',
                         license: 'Apache 2.0 License',
-                        author: 'Cordova Team'
+                        author: { name: 'Cordova Team', email: 'dev@cordova.com' }
                     }
             };
 
             expect(packageJsonParser.package).toEqual(packageJsonObj.package);
         });
 
-        it('should write provided data when config xml is empty.', () => {
+        it('should write provided data when config.xml is empty.', () => {
             const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
             packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
 
@@ -152,7 +152,7 @@ describe('Testing PackageJsonParser.js:', () => {
             expect(packageFormat).toEqual('utf8');
         });
 
-        it('should write package json object values from config xml.', () => {
+        it('should write package json object values from config.xml file.', () => {
             const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
             packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
 
@@ -171,14 +171,14 @@ describe('Testing PackageJsonParser.js:', () => {
                         description: 'A sample Apache Cordova application.',
                         homepage: 'http://cordova.io',
                         license: 'Apache 2.0 License',
-                        author: 'Cordova Team'
+                        author: { name: 'CordovaTeam', email: 'dev@cordova.com' }
                     }
             };
 
             const packagePath = writeFileSyncSpy.calls.argsFor(0)[0];
             expect(packagePath).toEqual(path.join('mock', 'www', 'package.json'));
 
-            // get package json file content and remove white spaces
+            // get package.json file content and remove white spaces
             let packageFile = writeFileSyncSpy.calls.argsFor(0)[1];
 
             // convert to remove white space

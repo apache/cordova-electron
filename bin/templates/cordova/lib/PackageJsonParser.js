@@ -39,7 +39,14 @@ class PackageJsonParser {
             this.configureHomepage(config);
             this.configureLicense(config);
 
-            this.package.author = config.author() || 'Apache Cordova Team';
+            if (config.doc.find('author').attrib.email) {
+                this.package.author = {
+                    name: config.author() || 'Apache Cordova Team',
+                    email: config.doc.find('author').attrib.email
+                };
+            } else {
+                this.package.author = config.author() || 'Apache Cordova Team';
+            }
         }
 
         return this;
