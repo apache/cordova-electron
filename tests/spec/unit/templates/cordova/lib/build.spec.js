@@ -191,7 +191,7 @@ describe('Testing build.js:', () => {
             const platformConfig = {
                 mac: { package: ['package', 'package2'], arch: 'arch', signing: { debug: 'debug', release: 'release', store: 'store' } },
                 win: { package: ['package', 'package2'], arch: 'arch', signing: { debug: 'debug', release: 'release' } },
-                linux: { package: ['package', 'package2'], arch: 'arch' },
+                linux: { package: ['package', 'package2'], arch: 'arch', category: 'Game' },
                 darwin: {}
             };
             const buildConfig = {
@@ -233,7 +233,8 @@ describe('Testing build.js:', () => {
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
                 ],
-                icon: '${APP_INSTALLER_ICON}'
+                icon: '${APP_INSTALLER_ICON}',
+                category: 'Game'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);

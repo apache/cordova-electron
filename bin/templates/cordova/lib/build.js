@@ -106,6 +106,9 @@ class ElectronBuilder {
         // eslint-disable-next-line no-template-curly-in-string
         if (platform === 'mac') userBuildSettings.config[platform].type = '${BUILD_TYPE}';
 
+        // Only Linux has an application category (String). Default value - Utility.
+        if (platform === 'linux' && platformConfigs.category) userBuildSettings.config[platform].category = platformConfigs.category;
+
         if (platformConfigs.package) {
             platformConfigs.package.forEach((target) => {
                 if (target === 'mas') {
