@@ -32,17 +32,17 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
     - [Build a Project](#build-a-project)
   - [Customizing the Application's Icon](#customizing-the-applications-icon)
   - [Customizing the Application's Window Options](#customizing-the-applications-window-options)
-    - [How to set the window's default size?](#how-to-set-the-windows-default-size)
-    - [How to make the window not resizable?](#how-to-make-the-window-not-resizable)
-    - [How to make my window fullscreen?](#how-to-make-my-window-fullscreen)
-    - [How to support Node.js and Electron APIs?](#how-to-support-nodejs-and-electron-apis)
+    - [How to Set the Window's Default Size](#how-to-set-the-windows-default-size)
+    - [How to Disable the Window From Being Resizable](#how-to-disable-the-window-from-being-resizable)
+    - [How to Make the Window Fullscreen](#how-to-make-the-window-fullscreen)
+    - [How to Support Node.js and Electron APIs](#how-to-support-nodejs-and-electron-apis)
   - [Customizing the Electron's Main Process](#customizing-the-electrons-main-process)
   - [DevTools](#devtools)
   - [Build Configurations](#build-configurations)
     - [Default Build Configurations](#default-build-configurations)
     - [Customizing Build Configurations](#customizing-build-configurations)
       - [Adding a `package`](#adding-a-package)
-      - [Setting the package `arch`](#setting-the-package-arch)
+      - [Setting the Package `arch`](#setting-the-package-arch)
     - [Multi-Platform Build Support](#multi-platform-build-support)
   - [Signing Configurations](#signing-configurations)
     - [macOS Signing](#macos-signing)
@@ -54,70 +54,65 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
 
 ### Linux
 
-* **Python** version 2.7.x. It is recommended to check your Python version since some distributions like CentOS 6.x still use Python 2.6.x.
+- **Python** version 2.7.x. It is recommended to check your Python version since some distributions like CentOS 6.x still use Python 2.6.x.
 
 ### Mac
 
-* **Python** version 2.7.x with support for TLS 1.2.
+- **Python** version 2.7.x with support for TLS 1.2.
+- **Xcode**, the IDE for macOS, comes bundled with necessary software development tools to code signing and compiling native code for macOS. Version 8.2.1 or higher.
+- **RedHat Build Support**
+  - **Homebrew**, one of the available macOS package managers, is used for installing additional tools and dependencies. Homebrew will be needed to install RPM packaging dependencies. [**Brew Install Step**](https://brew.sh/)
+  - **RPM**, a standard package manager for multiple Linux distributions, is the tool used for creating the Linux RPM package. To install this tool, use the following [**Homebrew**](https://brew.sh/) command:
 
-* **Xcode**, the IDE for macOS, comes bundled with necessary software development tools to code signing and compiling native code for macOS. Version 8.2.1 or higher.
-
-* **RedHat Build Support**
-  * **Homebrew**, one of the available macOS package manager, is used for installing additional tools and dependencies. Homebrew will be needed to install RPM packaging dependencies. [**Brew Install Step**](https://brew.sh/)
-
-  * **RPM**, a standard package manager for multiple Linux distributions, is the tool used for creating the Linux RPM package. To install this tool, use the following [**Homebrew**](https://brew.sh/) command:
-
-    ```
-    $ brew install rpm
+    ```bash
+    brew install rpm
     ```
 
 ### Windows
 
-* **Python** version 2.7.10 or higher.
-
-* **PowerShell**, for Windows 7 users, must be at version 3.0 or greater for [app signing](https://www.electron.build/code-signing#windows).
-
-* **Debugging Tools** for Windows of Windows SDK 10.0.15063.468, if you plan on creating a full distribution.
+- **Python** version 2.7.10 or higher.
+- **PowerShell**, for Windows 7 users, must be at version 3.0 or greater for [app signing](https://www.electron.build/code-signing#windows).
+- **[Debugging Tools for Windows](https://docs.microsoft.com/en-us/windows-hardware/drivers/debugger/)** is a toolkit for enhancing debug capabilities. It is recommended to install with the **Windows SDK 10.0.15063.468**.
 
 ## Quick Start
 
 ### Create a Project
 
-```
-$ npm i -g cordova
-$ cordova create sampleApp
-$ cd sampleApp
-$ cordova platform add electron
+```bash
+npm i -g cordova
+cordova create sampleApp
+cd sampleApp
+cordova platform add electron
 ```
 
 _Notice: If using Cordova CLI prior to version 9.x, you will need to use the `cordova-electron` argument instead of `electron` for any command that requires the platform's name. For example:_
 
-```
-$ cordova platform add cordova-electron
-$ cordova run cordova-electron
+```bash
+cordova platform add cordova-electron
+cordova run cordova-electron
 ```
 
 ### Preview a Project
 
 It is not necessary to build the Electron application for previewing. Since the building process can be slow, it is recommended to pass in the `--nobuild` flag to disable the build process when previewing.
 
-```
-$ cordova run electron --nobuild
+```bash
+cordova run electron --nobuild
 ```
 
 ### Build a Project
 
 **Debug Builds**
 
-```
-$ cordova build electron
-$ cordova build electron --debug
+```bash
+cordova build electron
+cordova build electron --debug
 ```
 
 **Release Builds**
 
-```
-$ cordova build electron --release
+```bash
+cordova build electron --release
 ```
 
 ## Customizing the Application's Icon
@@ -132,7 +127,7 @@ _Notice: macOS does not display custom icons when using `cordova run`. It defaul
 
 ```xml
 <platform name="electron">
-  <icon src="res/electron/icon.png" />
+    <icon src="res/electron/icon.png" />
 </platform>
 ```
 
@@ -140,8 +135,8 @@ You can supply unique icons for the application and installer by setting the `ta
 
 ```xml
 <platform name="electron">
-  <icon src="res/electron/app.png" target="app" />
-  <icon src="res/electron/installer.png" target="installer" />
+    <icon src="res/electron/app.png" target="app" />
+    <icon src="res/electron/installer.png" target="installer" />
 </platform>
 ```
 
@@ -149,17 +144,17 @@ For devices that support high-DPI resolutions, such as Apple's Retina display, y
 
 For example, if the base image's filename `icon.png` and is the standard resolution, then `icon@2x.png` will be treated as a high-resolution image that with a DPI doubled from the base.
 
-* icon.png (256px x 256px)
-* icon@2x.png (512px x 512px)
+- icon.png (256px x 256px)
+- icon@2x.png (512px x 512px)
 
 If you want to support displays with different DPI densities at the same time, you can put images with different sizes in the same folder and use the filename without DPI suffixes. For example:
 
 ```xml
 <platform name="electron">
-  <icon src="res/electron/icon.png" />
-  <icon src="res/electron/icon@1.5x.png" />
-  <icon src="res/electron/icon@2x.png" />
-  <icon src="res/electron/icon@4x.png" target="installer" />
+    <icon src="res/electron/icon.png" />
+    <icon src="res/electron/icon@1.5x.png" />
+    <icon src="res/electron/icon@2x.png" />
+    <icon src="res/electron/icon@4x.png" target="installer" />
 </platform>
 ```
 
@@ -187,7 +182,7 @@ To override or set any BrowserWindow options, in this file the options are added
 }
 ```
 
-### How to set the window's default size?
+### How to Set the Window's Default Size
 
 By default, the `width` is set to **800** and the `height` set to **600**. This can be overridden by setting the `width` and `height` property.
 
@@ -202,7 +197,7 @@ By default, the `width` is set to **800** and the `height` set to **600**. This 
 }
 ```
 
-### How to make the window not resizable?
+### How to Disable the Window From Being Resizable
 
 Setting the `resizable` flag property, you can disable the user's ability to resize your application's window.
 
@@ -216,7 +211,7 @@ Setting the `resizable` flag property, you can disable the user's ability to res
 }
 ```
 
-### How to make my window fullscreen?
+### How to Make the Window Fullscreen
 
 Using the `fullscreen` flag property, you can force the application to launch in fullscreen.
 
@@ -230,19 +225,20 @@ Using the `fullscreen` flag property, you can force the application to launch in
 }
 ```
 
-### How to support Node.js and Electron APIs?
+### How to Support Node.js and Electron APIs
 
-Set the `nodeIntegration` flag property to true.  By default, this property flag is set to false to support popular libraries that insert symbols with the same names that Node.js and Electron already uses.
+Set the `nodeIntegration` flag property to `true`.  By default, this property flag is set to `false` to support popular libraries that insert symbols with the same names that Node.js and Electron already uses.
 
-> You can read more about this at Electron docs: [I can not use jQuery/RequireJS/Meteor/AngularJS in Electron
-](https://electronjs.org/docs/faq#i-can-not-use-jqueryrequirejsmeteorangularjs-in-electron).
+> You can read more about this at Electron docs: [I can not use jQuery/RequireJS/Meteor/AngularJS in Electron](https://electronjs.org/docs/faq#i-can-not-use-jqueryrequirejsmeteorangularjs-in-electron).
 
-**Example:**
+ **Example:**
 
 ```json
 {
     "browserWindow": {
-        "nodeIntegration": true
+        "webPreferences": {
+            "nodeIntegration": false
+        }
     }
 }
 ```
@@ -251,7 +247,7 @@ Set the `nodeIntegration` flag property to true.  By default, this property flag
 
 If it is necessary to customize the Electron's main process beyond the scope of the Electron's configuration settings, chances can be added directly to the `cdv-electron-main.js` file located in `{PROJECT_ROOT_DIR}/platform/electron/platform_www/`. This is the application's main process.
 
-> :warning:  However, it is not recommended to modify this file as the upgrade process for `cordova-electron` is to remove the old platform before adding the new version.
+> &#10071; However, it is not recommended to modify this file as the upgrade process for `cordova-electron` is to remove the old platform before adding the new version.
 
 ## DevTools
 
@@ -269,20 +265,20 @@ By default, with no additional configuration, `cordova build electron` will buil
 
 | Package | Arch  |
 | ------- | :---: |
-| tar.gz  | x64   |
+| tar.gz  |  x64  |
 
 **Mac**
 
 | Package | Arch  |
 | ------- | :---: |
-| dmg     | x64   |
-| zip     | x64   |
+| dmg     |  x64  |
+| zip     |  x64  |
 
 **Windows**
 
 | Package | Arch  |
 | ------- | :---: |
-| nsis    | x64   |
+| nsis    |  x64  |
 
 ### Customizing Build Configurations
 
@@ -290,9 +286,9 @@ If for any reason you would like to customize the build configurations, modifica
 
 **Example Config Structure**
 
-```
+```json
 {
-  "electron": {}
+    "electron": {}
 }
 ```
 
@@ -300,22 +296,23 @@ Since the Electron framework is for creating cross-platform applications, multip
 
 **Example Config Structure with Each Platform**
 
-```
+```json
 {
-  "electron": {
-    linux: {},
-    mac: {},
-    windows: {}
-  }
+    "electron": {
+        "linux": {},
+        "mac": {},
+        "windows": {}
+    }
 }
 ```
 
 Each OS node contains properties that are used to identify what package to generate and how to sign.
 
 **OS Properties:**
-* `package` is an array of package formats that will be generated.
-* `arch` is an array of architectures that each package is built for.
-* `signing` is an object that contains signing information. See [Signing Configurations](#signing-configurations) for more information.
+
+- `package` is an array of package formats that will be generated.
+- `arch` is an array of architectures that each package is built for.
+- `signing` is an object that contains signing information. See [Signing Configurations](#signing-configurations) for more information.
 
 Any properties that are undefined will fallback to default values.
 
@@ -325,108 +322,107 @@ The `package` property is an array list of packages to be outputted. If the prop
 
 The configuration example below will generate `tar.gz`, `dmg` and `zip` packages for macOS.
 
-```
+```json
 {
-  "electron": {
-    "mac": {
-      "package": [
-        "dmg",
-        "tar.gz",
-        "zip"
-      ]
+    "electron": {
+        "mac": {
+            "package": [
+                "dmg",
+                "tar.gz",
+                "zip"
+            ]
+        }
     }
-  }
 }
 ```
 
 **Available Packages by Operating System**
 
-| Package Type | Linux              | macOS              | Windows                               |
-| ------------ | :----------------: | :----------------: | :-----------------------------------: |
-| default      | -                  | `dmg`<br />`zip`   | -                                     |
-| dmg          | -                  | :white_check_mark: | -                                     |
-| mas          | -                  | :white_check_mark: | -                                     |
-| mas-dev      | :white_check_mark: | -                  | -                                     |
-| pkg          | -                  | :white_check_mark: | -                                     |
-| 7z           | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| zip          | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| tar.xz       | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| tar.lz       | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| tar.gz       | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| tar.bz2      | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| dir          | :white_check_mark: | :white_check_mark: | :white_check_mark:                    |
-| nsis         | -                  | -                  | :white_check_mark:                    |
-| nsis-web     | -                  | -                  | :white_check_mark:                    |
-| portable     | -                  | -                  | :white_check_mark:                    |
-| appx         | -                  | -                  | :white_check_mark: <sup>**[1]**</sup> |
-| msi          | -                  | -                  | :white_check_mark:                    |
-| AppImage     | :white_check_mark: | -                  | -                                     |
-| snap         | :white_check_mark: | -                  | -                                     |
-| deb          | :white_check_mark: | -                  | -                                     |
-| rpm          | :white_check_mark: | -                  | -                                     |
-| freebsd      | :white_check_mark: | -                  | -                                     |
-| pacman       | :white_check_mark: | -                  | -                                     |
-| p5p          | :white_check_mark: | -                  | -                                     |
-| apk          | :white_check_mark: | -                  | -                                     |
+| Package Type |  Linux   |      macOS       |           Windows           |
+| ------------ | :------: | :--------------: | :-------------------------: |
+| default      |    -     | `dmg`<br />`zip` |              -              |
+| dmg          |    -     |     &#10004;     |              -              |
+| mas          |    -     |     &#10004;     |              -              |
+| mas-dev      | &#10004; |        -         |              -              |
+| pkg          |    -     |     &#10004;     |              -              |
+| 7z           | &#10004; |     &#10004;     |          &#10004;           |
+| zip          | &#10004; |     &#10004;     |          &#10004;           |
+| tar.xz       | &#10004; |     &#10004;     |          &#10004;           |
+| tar.lz       | &#10004; |     &#10004;     |          &#10004;           |
+| tar.gz       | &#10004; |     &#10004;     |          &#10004;           |
+| tar.bz2      | &#10004; |     &#10004;     |          &#10004;           |
+| dir          | &#10004; |     &#10004;     |          &#10004;           |
+| nsis         |    -     |        -         |          &#10004;           |
+| nsis-web     |    -     |        -         |          &#10004;           |
+| portable     |    -     |        -         |          &#10004;           |
+| appx         |    -     |        -         | &#10004; <sup>**[1]**</sup> |
+| msi          |    -     |        -         |          &#10004;           |
+| AppImage     | &#10004; |        -         |              -              |
+| snap         | &#10004; |        -         |              -              |
+| deb          | &#10004; |        -         |              -              |
+| rpm          | &#10004; |        -         |              -              |
+| freebsd      | &#10004; |        -         |              -              |
+| pacman       | &#10004; |        -         |              -              |
+| p5p          | &#10004; |        -         |              -              |
+| apk          | &#10004; |        -         |              -              |
 
-* **[1]** Only Window 10 can build AppX packages.
+- **[1]** Only Window 10 can build AppX packages.
 
-#### Setting the package `arch`
+#### Setting the Package `arch`
 
 The `arch` property is an array list of architectures that each package is built for. When the property is defined, the default arch is not used unless added.
 
-> :warning:  Not all architectures are available for every operating system. Please review the [Electron Releases](https://github.com/electron/electron/releases/) to identify valid combinations. For example, macOS (Darwin) only supports x64.
+> &#10071;  Not all architectures are available for every operating system. Please review the [Electron Releases](https://github.com/electron/electron/releases/) to identify valid combinations. For example, macOS (Darwin) only supports x64.
 
 **Available Arch**
-* ia32
-* x64
-* armv71
-* arm64
 
+- ia32
+- x64
+- armv71
+- arm64
 
 The example above will generate an `x64` `dmg` package.
 
-```
+```json
 {
-  "electron": {
-    "mac": {
-      "package": [
-        "dmg"
-      ],
-      "arch": ["x64"]
+    "electron": {
+        "mac": {
+            "package": [ "dmg" ],
+            "arch": [ "x64" ]
+        }
     }
-  }
 }
 ```
 
 ### Multi-Platform Build Support
 
-> :warning: Not all platforms support this feature and may have limitations.
+> &#10071; Not all platforms support this feature and may have limitations.
 
 Building for multiple platforms on a single operating system may possible but has limitations. It is recommended that the builder's operating system (host OS) matches with the platform that is being built.
 
 The matrix below shows each host OS and for which platforms they are capable of building applications.
 
-| Host <sup>**[1]**</sup> | Linux              | Mac                | Window                       |
-| ----------------------- | :----------------: | :----------------: | :--------------------------: |
-| Linux                   | :white_check_mark: |                    | :warning: <sup>**[2]**</sup> |
-| Mac <sup>**[3]**</sup>  | :white_check_mark: | :white_check_mark: | :warning: <sup>**[2]**</sup> |
-| Window                  |                    |                    | :white_check_mark:           |
+| Host <sup>**[1]**</sup> |       Linux        |        Mac         |           Window            |
+| ----------------------- | :----------------: | :----------------: | :-------------------------: |
+| Linux                   | :white_check_mark: |                    | &#10071; <sup>**[2]**</sup> |
+| Mac <sup>**[3]**</sup>  | :white_check_mark: | :white_check_mark: | &#10071; <sup>**[2]**</sup> |
+| Window                  |                    |                    |     :white_check_mark:      |
 
 **Limitations:**
-* **[1]** If the app contains native dependency, it can only be compiled on the targeted platform.
-* **[2]** Linux and macOS are unable to build Windows Appx packages for Windows Store.
-* **[3]** [All required system dependencies, except rpm, will be downloaded automatically on demand. RPM can be installed with brew. (macOS Sierra 10.12+)](https://www.electron.build/multi-platform-build#macos)
+
+- **[1]** If the app contains native dependency, it can only be compiled on the targeted platform.
+- **[2]** Linux and macOS are unable to build Windows Appx packages for Windows Store.
+- **[3]** [All required system dependencies, except rpm, will be downloaded automatically on demand. RPM can be installed with brew. (macOS Sierra 10.12+)](https://www.electron.build/multi-platform-build#macos)
 
 The example below enables multi-platform build for all OS and uses the default build configurations.
 
-```
+```json
 {
-  "electron": {
-    "linux": {},
-    "mac": {},
-    "windows": {}
-  }
+    "electron": {
+        "linux": {},
+        "mac": {},
+        "windows": {}
+    }
 }
 ```
 
@@ -434,36 +430,35 @@ The example below enables multi-platform build for all OS and uses the default b
 
 ### macOS Signing
 
-
 There are three types of signing targets. (`debug`, `release`, and `store`). Each section has the following properties:
 
-| key                                                                                                                                                 | description                                                                                                                       |
-| --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| entitlements                                                                                                                                        | String path value to entitlements file.                                                                                           |
-| entitlementsInherit                                                                                                                                 | String path value to the entitlements file which inherits the security settings.                                                  |
-| identity                                                                                                                                            | String value of the name of the certificate.                                                                                      |
-| [requirements](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/RequirementLang/RequirementLang.html) | String path value of requirements file. <br /><br />:warning: This is not available for the `mas` (store) signing configurations. |
-| provisioningProfile                                                                                                                                 | String path value of the provisioning profile.                                                                                    |
+| key                                                                                                                                                 | description                                                                                                                      |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| entitlements                                                                                                                                        | String path value to entitlements file.                                                                                          |
+| entitlementsInherit                                                                                                                                 | String path value to the entitlements file which inherits the security settings.                                                 |
+| identity                                                                                                                                            | String value of the name of the certificate.                                                                                     |
+| [requirements](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/RequirementLang/RequirementLang.html) | String path value of requirements file. <br /><br />&#10071; This is not available for the `mas` (store) signing configurations. |
+| provisioningProfile                                                                                                                                 | String path value of the provisioning profile.                                                                                   |
 
 **Example Config:**
 
-```
+```json
 {
-  "electron": {
-    "mac": {
-      "package": [
-        "dmg",
-        "mas",
-        "mas-dev",
-      ],
-      "signing": {
-        "release": {
-          "identity": "APACHE CORDOVA (TEAMID)",
-          "provisioningProfile": "release.mobileprovision"
+    "electron": {
+        "mac": {
+            "package": [
+                "dmg",
+                "mas",
+                "mas-dev"
+            ],
+            "signing": {
+                "release": {
+                    "identity": "APACHE CORDOVA (TEAMID)",
+                    "provisioningProfile": "release.mobileprovision"
+                }
+            }
         }
-      }
     }
-  }
 }
 ```
 
@@ -474,25 +469,26 @@ Using the example config above, let's go over some use cases to better understan
 
 **Use Case 1:**
 
-```
-$ cordova build electron --debug
+```bash
+cordova build electron --debug
 ```
 
 The command above will:
-* Generate a `dmg` build and `mas-dev` build using the `debug` signing configurations.
-* Ignore the `mas` target package.
+
+- Generate a `dmg` build and `mas-dev` build using the `debug` signing configurations.
+- Ignore the `mas` target package.
 
 *Use Case 2:*
 
-```
-$ cordova build electron --release
+```bash
+cordova build electron --release
 ```
 
 The command above will:
-* Generate a `dmg` build using the `release` config.
-* Generate a `mas` build using the `store` config.
-* Ignore the `mas-dev` target package.
 
+- Generate a `dmg` build using the `release` config.
+- Generate a `mas` build using the `store` config.
+- Ignore the `mas-dev` target package.
 
 ### Windows Signing
 
@@ -502,28 +498,26 @@ The signing information is comprised of two types. (`debug`, `release`). Each se
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
 | certificateFile           | String path to the certificate file.                                                                                                                 |
 | certificatePassword       | String value of the certificate file's password.<br /><br />**Alternative**: The password can be set on the environment variable `CSC_KEY_PASSWORD`. |
-| certificateSubjectName    | String value of the signing certificate's subject.<br /><br />:warning: Required for EV Code Signing and requires Windows                            |
-| certificateSha1           | String value of the SHA1 hash of the signing certificate.<br /><br />:warning: Requires Windows                                                      |
-| signingHashAlgorithms     | Collection of singing algorithms to be used. (`sha1`, `sha256`)<br /><br />:warning: AppX builds only support `sha256`                               |
+| certificateSubjectName    | String value of the signing certificate's subject.<br /><br />&#10071; Required for EV Code Signing and requires Windows                             |
+| certificateSha1           | String value of the SHA1 hash of the signing certificate.<br /><br />&#10071; Requires Windows                                                       |
+| signingHashAlgorithms     | Collection of singing algorithms to be used. (`sha1`, `sha256`)<br /><br />&#10071; AppX builds only support `sha256`                                |
 | additionalCertificateFile | String path to the additional certificate files.                                                                                                     |
 
 **Example Config:**
 
-```
+```json
 {
-  "electron": {
-    "windows": {
-      "package": [
-        "nsis"
-      ],
-      "signing": {
-        "release": {
-          "certificateFile": "path_to_files",
-          "certificatePassword": "password"
+    "electron": {
+        "windows": {
+            "package": [ "nsis" ],
+            "signing": {
+                "release": {
+                    "certificateFile": "path_to_files",
+                    "certificatePassword": "password"
+                }
+            }
         }
-      }
     }
-  }
 }
 ```
 
