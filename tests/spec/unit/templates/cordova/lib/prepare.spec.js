@@ -234,8 +234,8 @@ describe('Testing prepare.js:', () => {
                         return configPath === defaultConfigPathMock;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -290,8 +290,8 @@ describe('Testing prepare.js:', () => {
                         if (configPath.includes('fail_test_path')) return false;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -335,8 +335,8 @@ describe('Testing prepare.js:', () => {
                         if (configPath.includes('pass_test_path')) return true;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -381,8 +381,8 @@ describe('Testing prepare.js:', () => {
                         return configPath === ownConfigPathMock;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -438,8 +438,8 @@ describe('Testing prepare.js:', () => {
                         return configPath !== ownConfigPathMock && configPath !== defaultConfigPathMock;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -494,8 +494,8 @@ describe('Testing prepare.js:', () => {
                         return srcManifestPath === srcManifestPathMock;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -549,8 +549,8 @@ describe('Testing prepare.js:', () => {
                         return srcManifestPath !== srcManifestPathMock;
                     },
                     copySync: copySyncSpy,
-                    readFileSync: function (path) {
-                        if (path === 'TMP_PROJECT_ROOT/package.json') {
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
