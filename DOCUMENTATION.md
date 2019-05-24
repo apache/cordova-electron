@@ -61,7 +61,7 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
 - **Python** version 2.7.x with support for TLS 1.2.
 - **Xcode**, the IDE for macOS, comes bundled with necessary software development tools to code signing and compiling native code for macOS. Version 8.2.1 or higher.
 - **RedHat Build Support**
-  - **Homebrew**, one of the available macOS package managers, is used for installing additional tools and dependencies. Homebrew will be needed to install RPM packaging dependencies. [**Brew Install Step**](https://brew.sh/)
+  - **Homebrew**, one of the available macOS package managers, is used for installing additional tools and dependencies. Homebrew is needed to install RPM packaging dependencies. [**Brew Install Step**](https://brew.sh/)
   - **RPM**, a standard package manager for multiple Linux distributions, is the tool used for creating the Linux RPM package. To install this tool, use the following [**Homebrew**](https://brew.sh/) command:
 
     ```bash
@@ -338,33 +338,33 @@ The configuration example below will generate `tar.gz`, `dmg` and `zip` packages
 
 **Available Packages by Operating System**
 
-| Package Type |  Linux   |      macOS       |           Windows           |
-| ------------ | :------: | :--------------: | :-------------------------: |
-| default      |    -     | `dmg`<br />`zip` |              -              |
-| dmg          |    -     |     &#10004;     |              -              |
-| mas          |    -     |     &#10004;     |              -              |
-| mas-dev      | &#10004; |        -         |              -              |
-| pkg          |    -     |     &#10004;     |              -              |
-| 7z           | &#10004; |     &#10004;     |          &#10004;           |
-| zip          | &#10004; |     &#10004;     |          &#10004;           |
-| tar.xz       | &#10004; |     &#10004;     |          &#10004;           |
-| tar.lz       | &#10004; |     &#10004;     |          &#10004;           |
-| tar.gz       | &#10004; |     &#10004;     |          &#10004;           |
-| tar.bz2      | &#10004; |     &#10004;     |          &#10004;           |
-| dir          | &#10004; |     &#10004;     |          &#10004;           |
-| nsis         |    -     |        -         |          &#10004;           |
-| nsis-web     |    -     |        -         |          &#10004;           |
-| portable     |    -     |        -         |          &#10004;           |
-| appx         |    -     |        -         | &#10004; <sup>**[1]**</sup> |
-| msi          |    -     |        -         |          &#10004;           |
-| AppImage     | &#10004; |        -         |              -              |
-| snap         | &#10004; |        -         |              -              |
-| deb          | &#10004; |        -         |              -              |
-| rpm          | &#10004; |        -         |              -              |
-| freebsd      | &#10004; |        -         |              -              |
-| pacman       | &#10004; |        -         |              -              |
-| p5p          | &#10004; |        -         |              -              |
-| apk          | &#10004; |        -         |              -              |
+| Package Type |  Linux  |      macOS       |          Windows           |
+| ------------ | :-----: | :--------------: | :------------------------: |
+| default      |    -    | `dmg`<br />`zip` |             -              |
+| dmg          |    -    |     &#9989;      |             -              |
+| mas          |    -    |     &#9989;      |             -              |
+| mas-dev      | &#9989; |        -         |             -              |
+| pkg          |    -    |     &#9989;      |             -              |
+| 7z           | &#9989; |     &#9989;      |          &#9989;           |
+| zip          | &#9989; |     &#9989;      |          &#9989;           |
+| tar.xz       | &#9989; |     &#9989;      |          &#9989;           |
+| tar.lz       | &#9989; |     &#9989;      |          &#9989;           |
+| tar.gz       | &#9989; |     &#9989;      |          &#9989;           |
+| tar.bz2      | &#9989; |     &#9989;      |          &#9989;           |
+| dir          | &#9989; |     &#9989;      |          &#9989;           |
+| nsis         |    -    |        -         |          &#9989;           |
+| nsis-web     |    -    |        -         |          &#9989;           |
+| portable     |    -    |        -         |          &#9989;           |
+| appx         |    -    |        -         | &#9989; <sup>**[1]**</sup> |
+| msi          |    -    |        -         |          &#9989;           |
+| AppImage     | &#9989; |        -         |             -              |
+| snap         | &#9989; |        -         |             -              |
+| deb          | &#9989; |        -         |             -              |
+| rpm          | &#9989; |        -         |             -              |
+| freebsd      | &#9989; |        -         |             -              |
+| pacman       | &#9989; |        -         |             -              |
+| p5p          | &#9989; |        -         |             -              |
+| apk          | &#9989; |        -         |             -              |
 
 - **[1]** Only Window 10 can build AppX packages.
 
@@ -402,11 +402,11 @@ Building for multiple platforms on a single operating system may possible but ha
 
 The matrix below shows each host OS and for which platforms they are capable of building applications.
 
-| Host <sup>**[1]**</sup> |       Linux        |        Mac         |           Window            |
-| ----------------------- | :----------------: | :----------------: | :-------------------------: |
-| Linux                   | :white_check_mark: |                    | &#10071; <sup>**[2]**</sup> |
-| Mac <sup>**[3]**</sup>  | :white_check_mark: | :white_check_mark: | &#10071; <sup>**[2]**</sup> |
-| Window                  |                    |                    |     :white_check_mark:      |
+| Host <sup>**[1]**</sup> |  Linux  |   Mac   |           Window            |
+| ----------------------- | :-----: | :-----: | :-------------------------: |
+| Linux                   | &#9989; |         | &#10071; <sup>**[2]**</sup> |
+| Mac <sup>**[3]**</sup>  | &#9989; | &#9989; | &#10071; <sup>**[2]**</sup> |
+| Window                  |         |         |           &#9989;           |
 
 **Limitations:**
 
