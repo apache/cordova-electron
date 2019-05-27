@@ -54,6 +54,8 @@ module.exports.prepare = function (cordovaProject, options) {
     this.parser.update_www(cordovaProject, this.locations);
     // Update icons
     updateIcons(cordovaProject, this.locations);
+    // Update splash screens
+    updateSplashScreens(cordovaProject, this.config, this.locations);
 
     // Copy or Create manifest.json
     const srcManifestPath = path.join(cordovaProject.locations.www, 'manifest.json');
@@ -90,6 +92,71 @@ module.exports.prepare = function (cordovaProject, options) {
 };
 
 /**
+ * Update Electron Splash Screen image.
+ */
+function updateSplashScreens (cordovaProject, config, locations) {
+    const splashScreens = cordovaProject.projectConfig.getSplashScreens('electron');
+
+    // Skip if there are no splash screens defined in config.xml
+    if (!splashScreens.length) {
+        events.emit('verbose', 'This app does not have splash screens defined.');
+        return;
+    }
+
+    const splashScreen = prepareSplashScreens(splashScreens);
+    const resourceMap = createResourceMap(cordovaProject, locations, splashScreen);
+
+    updatePathToSplashScreen(config, locations, resourceMap);
+
+    events.emit('verbose', 'Updating splash screens');
+    copyResources(cordovaProject.root, resourceMap);
+}
+
+/**
+ *  Get splashScreen image. Choose only one image, if the user provided multiple.
+ */
+function prepareSplashScreens (splashScreens) {
+    let splashScreen;
+    // choose one icon for a target
+    const chooseOne = (defaultSplash, splash) => {
+        events.emit('verbose', `Found extra splash screen image: ${defaultSplash.src} and ignoring in favor of ${splash.src}.`);
+
+        defaultSplash = splash;
+
+        return defaultSplash;
+    };
+
+    // iterate over remaining icon elements to find the icons for the app and installer
+    for (let i = 0; i < splashScreens.length; i++) {
+        let image = splashScreens[i];
+        image.extension = path.extname(image.src);
+
+        splashScreen = splashScreen ? chooseOne(splashScreen, image) : image;
+    }
+
+    return { splashScreen };
+}
+
+/**
+ *  Update path to Splash Screen in the config.xml
+ */
+function updatePathToSplashScreen (config, locations, resourceMap) {
+    const elementKeys = Object.keys(resourceMap[0]);
+    const splashScreenPath = resourceMap[0][elementKeys];
+
+    const splash = config.doc.find('splash');
+    const preferences = config.doc.findall('preference');
+
+    splash.attrib.src = path.relative(locations.www, splashScreenPath);
+    for (let i = 0; i < preferences.length; i++) {
+        if (preferences[i].attrib.name === 'SplashScreen') {
+            preferences[i].attrib.value = splash.attrib.src;
+        }
+    }
+    config.write();
+}
+
+/**
  * Update Electron App and Installer icons.
  */
 function updateIcons (cordovaProject, locations) {
@@ -107,7 +174,7 @@ function updateIcons (cordovaProject, locations) {
     const resourceMap = createResourceMap(cordovaProject, locations, choosenIcons);
 
     events.emit('verbose', 'Updating icons');
-    copyIcons(cordovaProject.root, resourceMap);
+    copyResources(cordovaProject.root, resourceMap);
 }
 
 /**
@@ -231,15 +298,15 @@ function findHighResIcons (icons) {
 }
 
 /**
- * Map selected icons to the approporiate target directory and name.
+ * Map resources to the appropriate target directory and name.
  */
-function createResourceMap (cordovaProject, locations, icons) {
+function createResourceMap (cordovaProject, locations, resources) {
     let resourceMap = [];
 
-    for (const key in icons) {
-        const icon = icons[key];
+    for (const key in resources) {
+        const resource = resources[key];
 
-        if (!icon) {
+        if (!resource) {
             continue;
         }
 
@@ -247,27 +314,31 @@ function createResourceMap (cordovaProject, locations, icons) {
         switch (key) {
         case 'customIcon':
             // Copy icon for the App
-            targetPath = path.join(locations.www, 'img', `app${icon.extension}`);
-            resourceMap.push(mapIconResources(cordovaProject.root, icon.src, targetPath));
+            targetPath = path.join(locations.www, 'img', `app${resource.extension}`);
+            resourceMap.push(mapResources(cordovaProject.root, resource.src, targetPath));
             // Copy icon for the Installer
-            targetPath = path.join(locations.buildRes, `installer${icon.extension}`);
-            resourceMap.push(mapIconResources(cordovaProject.root, icon.src, targetPath));
+            targetPath = path.join(locations.buildRes, `installer${resource.extension}`);
+            resourceMap.push(mapResources(cordovaProject.root, resource.src, targetPath));
             break;
         case 'appIcon':
-            targetPath = path.join(locations.www, 'img', `app${icon.extension}`);
-            resourceMap.push(mapIconResources(cordovaProject.root, icon.src, targetPath));
+            targetPath = path.join(locations.www, 'img', `app${resource.extension}`);
+            resourceMap.push(mapResources(cordovaProject.root, resource.src, targetPath));
             break;
         case 'installerIcon':
-            targetPath = path.join(locations.buildRes, `installer${icon.extension}`);
-            resourceMap.push(mapIconResources(cordovaProject.root, icon.src, targetPath));
+            targetPath = path.join(locations.buildRes, `installer${resource.extension}`);
+            resourceMap.push(mapResources(cordovaProject.root, resource.src, targetPath));
             break;
         case 'highResIcons':
-            for (const key in icon) {
-                const highResIcon = icon[key];
+            for (const key in resource) {
+                const highResIcon = resource[key];
                 targetPath = path.join(locations.www, 'img', 'icon');
                 targetPath += highResIcon.suffix === '1x' ? highResIcon.extension : `@${highResIcon.suffix}${highResIcon.extension}`;
-                resourceMap.push(mapIconResources(cordovaProject.root, highResIcon.src, targetPath));
+                resourceMap.push(mapResources(cordovaProject.root, highResIcon.src, targetPath));
             }
+            break;
+        case 'splashScreen':
+            targetPath = path.join(locations.www, `.cdv`, `splashScreen${resource.extension}`);
+            resourceMap.push(mapResources(cordovaProject.root, resource.src, targetPath));
             break;
         }
     }
@@ -277,7 +348,7 @@ function createResourceMap (cordovaProject, locations, icons) {
 /**
  * Get a map containing resources of a specified name (or directory) to the target directory.
  */
-function mapIconResources (rootDir, sourcePath, targetPath) {
+function mapResources (rootDir, sourcePath, targetPath) {
     let pathMap = {};
     shell.ls(path.join(rootDir, sourcePath)).forEach(() => {
         pathMap[sourcePath] = targetPath;
@@ -286,9 +357,9 @@ function mapIconResources (rootDir, sourcePath, targetPath) {
 }
 
 /**
- * Copy icons to the target destination according to the resource map.
+ * Copy resources to the target destination according to the resource map.
  */
-function copyIcons (rootDir, resourceMap) {
+function copyResources (rootDir, resourceMap) {
     resourceMap.forEach(element => {
         const elementKeys = Object.keys(element);
 
