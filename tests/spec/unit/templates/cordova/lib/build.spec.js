@@ -748,7 +748,7 @@ describe('Testing build.js:', () => {
         it('should append package top-level key options.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
-                mac: { package: ['pkg', { 'dmg': { 'format': 'UDZO' } }], arch: 'arch', signing: 'signing' }
+                mac: { package: ['pkg', { dmg: { format: 'UDZO' } }], arch: 'arch', signing: 'signing' }
             };
             const buildConfig = {
                 electron: platformConfig,
@@ -786,7 +786,7 @@ describe('Testing build.js:', () => {
             };
 
             const expectedDmgOptions = {
-                'format': 'UDZO'
+                format: 'UDZO'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
@@ -798,7 +798,7 @@ describe('Testing build.js:', () => {
         it('should append package top-level key nested options.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
-                mac: { package: ['pkg', { 'dmg': { 'format': { 'UDZO': '' } } }], arch: 'arch', signing: 'signing' }
+                mac: { package: ['pkg', { dmg: { format: { UDZO: '' } } }], arch: 'arch', signing: 'signing' }
             };
             const buildConfig = {
                 electron: platformConfig,
@@ -836,7 +836,7 @@ describe('Testing build.js:', () => {
             };
 
             const expectedDmgOptions = {
-                'format': { 'UDZO': '' }
+                format: { UDZO: '' }
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
