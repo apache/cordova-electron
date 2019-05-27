@@ -702,7 +702,7 @@ describe('Testing build.js:', () => {
         it('should not append package top-level key options if object is empty.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
-                mac: { package: ['pkg', { }], arch: 'arch', signing: 'signing' }
+                mac: { package: ['pkg', { dmg: { } }], arch: 'arch', signing: 'signing' }
             };
             const buildConfig = {
                 electron: platformConfig,
@@ -733,7 +733,7 @@ describe('Testing build.js:', () => {
             const expectedMac = {
                 target: [
                     { target: 'pkg', arch: 'arch' },
-                    { target: { }, arch: 'arch' }
+                    { target: 'dmg', arch: 'arch' }
                 ],
                 type: '${BUILD_TYPE}',
                 icon: '${APP_INSTALLER_ICON}'
