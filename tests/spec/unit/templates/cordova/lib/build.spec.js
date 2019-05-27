@@ -699,7 +699,7 @@ describe('Testing build.js:', () => {
             expect(electronBuilder.userBuildSettings.config.win).toEqual(expectedWin);
         });
 
-        it('should not append package top-level key options if object is empty.', () => {
+        it('should append package top-level key options if the object is empty.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 mac: { package: ['pkg', { dmg: { } }], arch: 'arch', signing: 'signing' }
@@ -740,7 +740,7 @@ describe('Testing build.js:', () => {
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
-            expect(electronBuilder.userBuildSettings.config.dmg).toEqual(undefined);
+            expect(electronBuilder.userBuildSettings.config.dmg).toEqual({ });
             expect(electronBuilder.userBuildSettings.config.linux).toEqual(undefined);
             expect(electronBuilder.userBuildSettings.config.windows).toEqual(undefined);
         });
