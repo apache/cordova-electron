@@ -46,7 +46,7 @@ class PackageJsonParser {
 \t- ${cordovaDependencies.join('\n\t- ')}
 
 It is recommended that all Cordova packages are defined as "devDependencies" in the "package.json" file. It is safe to move them manually.
-Note: Defined package as a dependency will be bundled with the application and can increase the built application's size greatly.
+Packages defined as a dependency will be bundled with the application and can increase the built application's size.
 `);
             }
 
