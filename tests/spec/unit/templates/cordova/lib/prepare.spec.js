@@ -524,7 +524,7 @@ describe('Testing prepare.js:', () => {
 
             // The emit message was.
             const actual = emitSpy.calls.argsFor(0)[1];
-            const expected = 'This app does not have splashScreens defined';
+            const expected = 'This app does not have splash screens defined.';
             expect(actual).toEqual(expected);
         });
 
