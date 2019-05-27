@@ -111,6 +111,13 @@ class ElectronBuilder {
                 if (target === 'mas') {
                     userBuildSettings.config['mas'] = {};
                 }
+
+                if (typeof target === 'object' && Object.keys(target).length !== 0) {
+                    const targetKey = Object.keys(target)[0];
+                    userBuildSettings.config[targetKey] = target[targetKey];
+                    target = targetKey;
+                }
+
                 /**
                  * The target of arch values are not validated as electron-builder will handle this.
                  * If the arch value is missing, 64-bit will be defaulted.
