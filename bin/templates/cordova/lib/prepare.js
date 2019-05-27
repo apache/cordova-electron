@@ -99,7 +99,7 @@ function updateSplashScreens (cordovaProject, config, locations) {
 
     // Skip if there are no splash screens defined in config.xml
     if (!splashScreens.length) {
-        events.emit('verbose', 'This app does not have splashScreens defined');
+        events.emit('verbose', 'This app does not have splash screens defined.');
         return;
     }
 
