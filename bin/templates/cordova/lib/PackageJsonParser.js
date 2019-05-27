@@ -45,7 +45,7 @@ class PackageJsonParser {
                 events.emit('warn', `The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.
 \t- ${cordovaDependencies.join('\n\t- ')}
 
-It is recommended that all Cordova packages are defined as "devDependencies" and is safe to be moved manually.
+It is recommended that all Cordova packages are defined as "devDependencies" in the "package.json" file. It is safe to move them manually.
 Note: Defined package as a dependency will be bundled with the application and can increase the built application's size greatly.
 `);
             }
