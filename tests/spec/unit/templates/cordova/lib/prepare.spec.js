@@ -57,9 +57,9 @@ const defaultMockProjectPackageJson = `{
 }`;
 
 const cordovaProjectDefault = {
-    root: 'mock',
+    root: 'MOCK_PROJECT_ROOT',
     projectConfig: {
-        path: path.join('mock', 'config.xml'),
+        path: path.join('MOCK_PROJECT_ROOT', 'config.xml'),
         cdvNamespacePrefix: 'cdv',
         doc: {
             getroot: function () {
@@ -88,10 +88,10 @@ const cordovaProjectDefault = {
         }
     },
     locations: {
-        buildRes: path.join('mock', 'build-res'),
-        www: path.join('mock', 'www'),
-        configXml: path.join('mock', 'config.xml'),
-        platformRootDir: path.join('mock', 'platform_www')
+        buildRes: path.join('MOCK_PROJECT_ROOT', 'build-res'),
+        www: path.join('MOCK_PROJECT_ROOT', 'www'),
+        configXml: path.join('MOCK_PROJECT_ROOT', 'config.xml'),
+        platformRootDir: path.join('MOCK_PROJECT_ROOT', 'platform_www')
     }
 };
 
@@ -235,7 +235,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -252,7 +252,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -291,7 +291,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -308,7 +308,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = (name, platform) => 'fail_test_path';
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
@@ -336,7 +336,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -353,7 +353,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = (name, platform) => 'pass_test_path';
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
@@ -382,7 +382,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -399,7 +399,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -439,7 +439,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -456,7 +456,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -495,7 +495,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -512,7 +512,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -550,7 +550,7 @@ describe('Testing prepare.js:', () => {
                     },
                     copySync: copySyncSpy,
                     readFileSync: function (filePath) {
-                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
                         }
                     }
@@ -567,7 +567,7 @@ describe('Testing prepare.js:', () => {
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
+                prepare.prepare.call(api, cordovaProject, { }, api);
 
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
@@ -713,7 +713,7 @@ describe('Testing prepare.js:', () => {
         it('should update splash screen location in config.xml', () => {
             const resourceMap = [
                 {
-                    [path.join('res', 'electron', 'splash.png')]: path.join('mock', 'www', '.cdv', 'splashScreen.png')
+                    [path.join('res', 'electron', 'splash.png')]: path.join('MOCK_PROJECT_ROOT', 'www', '.cdv', 'splashScreen.png')
                 }
             ];
 
@@ -723,7 +723,7 @@ describe('Testing prepare.js:', () => {
             const splashScreenPath = resourceMap[0][elementKeys];
             const splashScreenRelativePath = path.relative(locations.www, splashScreenPath);
 
-            expect(path.join('mock', 'www', '.cdv', 'splashScreen.png')).toEqual(splashScreenPath);
+            expect(path.join('MOCK_PROJECT_ROOT', 'www', '.cdv', 'splashScreen.png')).toEqual(splashScreenPath);
             expect(path.join('.cdv', 'splashScreen.png')).toEqual(splashScreenRelativePath);
         });
     });
@@ -1405,8 +1405,8 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { [path.join('res', 'logo.png')]: path.join('mock', 'www', 'img', 'app.png') },
-                { [path.join('res', 'logo.png')]: path.join('mock', 'build-res', 'installer.png') }
+                { [path.join('res', 'logo.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'app.png') },
+                { [path.join('res', 'logo.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -1430,7 +1430,7 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('mock', 'build-res', 'installer.png') }
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -1461,8 +1461,8 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { [path.join('res', 'electron', 'cordova.png')]: path.join('mock', 'www', 'img', 'app.png') },
-                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('mock', 'build-res', 'installer.png') }
+                { [path.join('res', 'electron', 'cordova.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'app.png') },
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -1493,11 +1493,11 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('mock', 'www', 'img', 'icon@1.5x.png') },
-                { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('mock', 'www', 'img', 'icon@2x.png') },
-                { [path.join('res', 'electron', 'cordova@4x.png')]: path.join('mock', 'www', 'img', 'icon@4x.png') },
-                { [path.join('res', 'electron', 'cordova@8x.png')]: path.join('mock', 'www', 'img', 'icon@8x.png') },
-                { [path.join('res', 'electron', 'cordova.png')]: path.join('mock', 'www', 'img', 'icon.png') }
+                { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@1.5x.png') },
+                { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@2x.png') },
+                { [path.join('res', 'electron', 'cordova@4x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@4x.png') },
+                { [path.join('res', 'electron', 'cordova@8x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@8x.png') },
+                { [path.join('res', 'electron', 'cordova.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -1534,12 +1534,12 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('mock', 'build-res', 'installer.png') },
-                { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('mock', 'www', 'img', 'icon@1.5x.png') },
-                { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('mock', 'www', 'img', 'icon@2x.png') },
-                { [path.join('res', 'electron', 'cordova@4x.png')]: path.join('mock', 'www', 'img', 'icon@4x.png') },
-                { [path.join('res', 'electron', 'cordova@8x.png')]: path.join('mock', 'www', 'img', 'icon@8x.png') },
-                { [path.join('res', 'electron', 'cordova.png')]: path.join('mock', 'www', 'img', 'icon.png') }
+                { [path.join('res', 'electron', 'cordova_512.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') },
+                { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@1.5x.png') },
+                { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@2x.png') },
+                { [path.join('res', 'electron', 'cordova@4x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@4x.png') },
+                { [path.join('res', 'electron', 'cordova@8x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@8x.png') },
+                { [path.join('res', 'electron', 'cordova.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon.png') }
             ];
 
             expect(expected).toEqual(actual);
@@ -1560,7 +1560,7 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
 
             const expected = [
-                { [path.join('res', 'electron', 'splash.png')]: path.join('mock', 'www', '.cdv', 'splashScreen.png') }
+                { [path.join('res', 'electron', 'splash.png')]: path.join('MOCK_PROJECT_ROOT', 'www', '.cdv', 'splashScreen.png') }
             ];
 
             expect(expected).toEqual(actual);
