@@ -191,7 +191,7 @@ describe('Testing build.js:', () => {
             const platformConfig = {
                 mac: { package: ['package', 'package2'], arch: 'arch', signing: { debug: 'debug', release: 'release', store: 'store' } },
                 win: { package: ['package', 'package2'], arch: 'arch', signing: { debug: 'debug', release: 'release' } },
-                linux: { package: ['package', 'package2'], arch: 'arch' },
+                linux: { package: ['package', 'package2'], arch: 'arch', category: 'Game' },
                 darwin: {}
             };
             const buildConfig = {
@@ -233,7 +233,8 @@ describe('Testing build.js:', () => {
                     { target: 'package', arch: 'arch' },
                     { target: 'package2', arch: 'arch' }
                 ],
-                icon: '${APP_INSTALLER_ICON}'
+                icon: '${APP_INSTALLER_ICON}',
+                category: 'Game'
             };
 
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
@@ -697,6 +698,152 @@ describe('Testing build.js:', () => {
             expect(electronBuilder.userBuildSettings.config.mac).toEqual(undefined);
             expect(electronBuilder.userBuildSettings.config.linux).toEqual(undefined);
             expect(electronBuilder.userBuildSettings.config.win).toEqual(expectedWin);
+        });
+
+        it('should append package top-level key options if the object is empty.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                mac: { package: ['pkg', { dmg: { } }], arch: 'arch', signing: 'signing' }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedMac = {
+                target: [
+                    { target: 'pkg', arch: 'arch' },
+                    { target: 'dmg', arch: 'arch' }
+                ],
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
+            };
+
+            expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
+            expect(electronBuilder.userBuildSettings.config.dmg).toEqual({ });
+            expect(electronBuilder.userBuildSettings.config.linux).toEqual(undefined);
+            expect(electronBuilder.userBuildSettings.config.windows).toEqual(undefined);
+        });
+
+        it('should append package top-level key options.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                mac: { package: ['pkg', { dmg: { format: 'UDZO' } }], arch: 'arch', signing: 'signing' }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedMac = {
+                target: [
+                    { target: 'pkg', arch: 'arch' },
+                    { target: 'dmg', arch: 'arch' }
+                ],
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
+            };
+
+            const expectedDmgOptions = {
+                format: 'UDZO'
+            };
+
+            expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
+            expect(electronBuilder.userBuildSettings.config.dmg).toEqual(expectedDmgOptions);
+            expect(electronBuilder.userBuildSettings.config.linux).toEqual(undefined);
+            expect(electronBuilder.userBuildSettings.config.windows).toEqual(undefined);
+        });
+
+        it('should append package top-level key nested options.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                mac: { package: ['pkg', { dmg: { format: { UDZO: '' } } }], arch: 'arch', signing: 'signing' }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedMac = {
+                target: [
+                    { target: 'pkg', arch: 'arch' },
+                    { target: 'dmg', arch: 'arch' }
+                ],
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}'
+            };
+
+            const expectedDmgOptions = {
+                format: { UDZO: '' }
+            };
+
+            expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
+            expect(electronBuilder.userBuildSettings.config.dmg).toEqual(expectedDmgOptions);
+            expect(electronBuilder.userBuildSettings.config.linux).toEqual(undefined);
+            expect(electronBuilder.userBuildSettings.config.windows).toEqual(undefined);
         });
 
         it('should fetchPlatformDefaults true.', () => {

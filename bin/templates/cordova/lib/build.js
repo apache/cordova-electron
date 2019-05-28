@@ -106,11 +106,21 @@ class ElectronBuilder {
         // eslint-disable-next-line no-template-curly-in-string
         if (platform === 'mac') userBuildSettings.config[platform].type = '${BUILD_TYPE}';
 
+        // Only Linux has an application category (String). Default value - Utility.
+        if (platform === 'linux' && platformConfigs.category) userBuildSettings.config[platform].category = platformConfigs.category;
+
         if (platformConfigs.package) {
             platformConfigs.package.forEach((target) => {
                 if (target === 'mas') {
                     userBuildSettings.config['mas'] = {};
                 }
+
+                if (typeof target === 'object' && Object.keys(target).length !== 0) {
+                    const targetKey = Object.keys(target)[0];
+                    userBuildSettings.config[targetKey] = target[targetKey];
+                    target = targetKey;
+                }
+
                 /**
                  * The target of arch values are not validated as electron-builder will handle this.
                  * If the arch value is missing, 64-bit will be defaulted.
@@ -238,7 +248,6 @@ class ElectronBuilder {
         // const isDevelopment = false;
         const packageJson = require(path.join(this.api.locations.www, 'package.json'));
         const userConfig = {
-            APP_AUTHOR: packageJson.author,
             APP_ID: packageJson.name,
             APP_TITLE: packageJson.displayName,
             APP_INSTALLER_ICON: 'installer.png',
