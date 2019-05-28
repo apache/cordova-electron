@@ -122,7 +122,7 @@ describe('PackageJsonParser class', () => {
                     dependencies: { 'cordova-electron': '^1.0.2' },
                     homepage: 'http://cordova.io',
                     license: 'Apache 2.0 License',
-                    author: 'Cordova Team'
+                    author: { name: 'Cordova Team', email: 'dev@cordova.com' }
                 }
         };
 
@@ -210,7 +210,7 @@ describe('PackageJsonParser class', () => {
                     dependencies: { 'cordova-electron': '^1.0.2' },
                     homepage: 'http://cordova.io',
                     license: 'Apache 2.0 License',
-                    author: 'Cordova Team'
+                    author: { name: 'Cordova Team', email: 'dev@cordova.com' }
                 }
         };
 
