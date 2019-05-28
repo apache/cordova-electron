@@ -41,6 +41,21 @@ function mockGetImageItem (data) {
     }, data);
 }
 
+const defaultMockProjectPackageJson = `{
+    "name": "io.cordova.electronTest",
+    "displayName": "electronTest",
+    "version": "1.0.0",
+    "description": "A Sample Apache Cordova Electron Application.",
+    "author": "Apache Cordova Team",
+    "license": "Apache-2.0",
+    "dependencies": { "cordova-electron": "^1.0.2" },
+    "devDependencies": {},
+    "cordova": { 
+        "plugins": {},
+        "platforms": ["electron"]
+    }
+}`;
+
 const cordovaProjectDefault = {
     root: 'mock',
     projectConfig: {
@@ -83,7 +98,9 @@ const cordovaProjectDefault = {
 const locationsDefault = cordovaProjectDefault.locations;
 
 let fakeParserConstructorSpy;
-let fakeParserConfigureSpy;
+let fakeManifestJsonParserConfigureSpy;
+let fakePackageJsonParserConfigureSpy;
+let fakeSettingJsonParserConfigureSpy;
 let fakeParserWriteSpy;
 let fakeConfigParserConstructorSpy;
 let fakeConfigParserWriteSpy;
@@ -97,7 +114,11 @@ let updateSplashScreensFake;
 
 function createSpies () {
     fakeParserConstructorSpy = jasmine.createSpy('fakeParserConstructorSpy');
-    fakeParserConfigureSpy = jasmine.createSpy('fakeParserConfigureSpy');
+
+    fakeManifestJsonParserConfigureSpy = jasmine.createSpy('fakeManifestJsonParserConfigureSpy');
+    fakePackageJsonParserConfigureSpy = jasmine.createSpy('fakePackageJsonParserConfigureSpy');
+    fakeSettingJsonParserConfigureSpy = jasmine.createSpy('fakeSettingJsonParserConfigureSpy');
+
     fakeParserWriteSpy = jasmine.createSpy('fakeParserWriteSpy');
 
     fakeConfigParserConstructorSpy = jasmine.createSpy('fakeConfigParserConstructorSpy');
@@ -136,12 +157,29 @@ class FakeParser {
     constructor () {
         fakeParserConstructorSpy();
     }
-    configure (options, userElectronFile) {
-        fakeParserConfigureSpy(options, userElectronFile);
-        return this;
-    }
     write () {
         fakeParserWriteSpy();
+        return this;
+    }
+}
+
+class FakeManifestJsonParser extends FakeParser {
+    configure (configXmlParser) {
+        fakeManifestJsonParserConfigureSpy(configXmlParser);
+        return this;
+    }
+}
+
+class FakePackageJsonParser extends FakeParser {
+    configure (configXmlParser, projectPackageJson) {
+        fakePackageJsonParserConfigureSpy(configXmlParser, projectPackageJson);
+        return this;
+    }
+}
+
+class FakeSettingJsonParser extends FakeParser {
+    configure (options, userElectronFile) {
+        fakeSettingJsonParserConfigureSpy(options, userElectronFile);
         return this;
     }
 }
@@ -195,7 +233,12 @@ describe('Testing prepare.js:', () => {
                     existsSync: function (configPath) {
                         return configPath === defaultConfigPathMock;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -203,13 +246,13 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -217,7 +260,9 @@ describe('Testing prepare.js:', () => {
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
                 expect(fakeParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
@@ -244,7 +289,12 @@ describe('Testing prepare.js:', () => {
                         if (configPath === defaultConfigPathMock) return true;
                         if (configPath.includes('fail_test_path')) return false;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -252,16 +302,18 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = (name, platform) => 'fail_test_path';
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
-                const actual = fakeParserConfigureSpy.calls.argsFor(2)[1];
+                expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
+                const actual = fakeSettingJsonParserConfigureSpy.calls.argsFor(0)[1];
                 expect(actual).toEqual(undefined);
             });
         });
@@ -282,7 +334,12 @@ describe('Testing prepare.js:', () => {
                         if (configPath === defaultConfigPathMock) return true;
                         if (configPath.includes('pass_test_path')) return true;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -290,16 +347,18 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = (name, platform) => 'pass_test_path';
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
-                const actual = fakeParserConfigureSpy.calls.argsFor(2)[1];
+                expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
+                const actual = fakeSettingJsonParserConfigureSpy.calls.argsFor(0)[1];
                 expect(actual).toContain('pass_test_path');
             });
         });
@@ -321,7 +380,12 @@ describe('Testing prepare.js:', () => {
                     existsSync: function (configPath) {
                         return configPath === ownConfigPathMock;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -329,13 +393,13 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -343,7 +407,9 @@ describe('Testing prepare.js:', () => {
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
                 expect(fakeParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
@@ -371,7 +437,12 @@ describe('Testing prepare.js:', () => {
                     existsSync: function (configPath) {
                         return configPath !== ownConfigPathMock && configPath !== defaultConfigPathMock;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -379,13 +450,13 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -393,7 +464,9 @@ describe('Testing prepare.js:', () => {
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
                 expect(fakeParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeManifestJsonParserConfigureSpy).not.toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
@@ -420,7 +493,12 @@ describe('Testing prepare.js:', () => {
                     existsSync: function (srcManifestPath) {
                         return srcManifestPath === srcManifestPathMock;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -428,13 +506,13 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
                 expect(copySyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock);
                 expect(mergeXmlSpy).toHaveBeenCalled();
@@ -442,7 +520,9 @@ describe('Testing prepare.js:', () => {
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
                 expect(fakeParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeManifestJsonParserConfigureSpy).not.toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 
@@ -468,7 +548,12 @@ describe('Testing prepare.js:', () => {
                     existsSync: function (srcManifestPath) {
                         return srcManifestPath !== srcManifestPathMock;
                     },
-                    copySync: copySyncSpy
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('TMP_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
                 });
 
                 // override classes and methods called in modules.export.prepare
@@ -476,20 +561,22 @@ describe('Testing prepare.js:', () => {
                 prepare.__set__('xmlHelpers', xmlHelpersMock);
                 prepare.__set__('updateIcons', updateIconsFake);
                 prepare.__set__('updateSplashScreens', updateSplashScreensFake);
-                prepare.__set__('ManifestJsonParser', FakeParser);
-                prepare.__set__('PackageJsonParser', FakeParser);
-                prepare.__set__('SettingJsonParser', FakeParser);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
 
                 cordovaProject.projectConfig.getPlatformPreference = () => undefined;
 
-                prepare.prepare.call(api, cordovaProject, {}, api);
+                prepare.prepare.call(api, cordovaProject, { projectRoot: 'TMP_PROJECT_ROOT' }, api);
 
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
                 expect(fakeParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
-                expect(fakeParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
 

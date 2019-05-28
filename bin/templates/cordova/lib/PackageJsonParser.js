@@ -19,6 +19,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
+const { events } = require('cordova-common');
 
 class PackageJsonParser {
     constructor (wwwDir) {
@@ -29,12 +30,27 @@ class PackageJsonParser {
         };
     }
 
-    configure (config) {
+    configure (config, projectPackageJson) {
         if (config) {
             this.package.name = config.packageName() || 'io.cordova.hellocordova';
             this.package.displayName = config.name() || 'HelloCordova';
             this.package.version = config.version() || '1.0.0';
             this.package.description = config.description() || 'A sample Apache Cordova application that responds to the deviceready event.';
+
+            const cordovaDependencies = Object.keys(projectPackageJson.dependencies)
+                .filter((npmPackage) => /^cordova(?!-plugin)-/.test(npmPackage));
+
+            // If Cordova dependencies are detected in "dependencies" of "package.json" warn for potential app package bloating
+            if (cordovaDependencies.length) {
+                events.emit('warn', `The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.
+\t- ${cordovaDependencies.join('\n\t- ')}
+
+It is recommended that all Cordova packages are defined as "devDependencies" in the "package.json" file. It is safe to move them manually.
+Packages defined as a dependency will be bundled with the application and can increase the built application's size.
+`);
+            }
+
+            this.package.dependencies = projectPackageJson.dependencies;
 
             this.configureHomepage(config);
             this.configureLicense(config);
