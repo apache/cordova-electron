@@ -37,6 +37,8 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
     - [How to Make the Window Fullscreen](#how-to-make-the-window-fullscreen)
     - [How to Support Node.js and Electron APIs](#how-to-support-nodejs-and-electron-apis)
   - [Customizing the Electron's Main Process](#customizing-the-electrons-main-process)
+  - [Bundling Node Modules](#bundling-node-modules)
+    - [Cordova Package Handling](#cordova-package-handling)
   - [DevTools](#devtools)
   - [Build Configurations](#build-configurations)
     - [Default Build Configurations](#default-build-configurations)
@@ -248,6 +250,33 @@ Set the `nodeIntegration` flag property to `true`.  By default, this property fl
 If it is necessary to customize the Electron's main process beyond the scope of the Electron's configuration settings, chances can be added directly to the `cdv-electron-main.js` file located in `{PROJECT_ROOT_DIR}/platform/electron/platform_www/`. This is the application's main process.
 
 > &#10071; However, it is not recommended to modify this file as the upgrade process for `cordova-electron` is to remove the old platform before adding the new version.
+
+## Bundling Node Modules
+
+Supporting node modules with your application is possible by bundling them with your app. Installing modules, with npm, as a dependency of the Cordova project will automatically bundle them with your app.
+
+Below, is example instructions on how to bundle and enable the use of `lodash`.
+
+1. Create a project using the steps from "[Create a Project](#create-a-project)".
+2. Install `lodash`
+
+   ```bash
+   npm i -S loash
+   ```
+
+3. Enable Node.js support by following the "[How to Support Node.js and Electron APIs](#how-to-support-nodejs-and-electron-apis)"
+4. Import `lodash` in your application using `require`
+
+    ```javascript
+    const _ = require('lodash');
+    ```
+
+### Cordova Package Handling
+
+By default, all Cordova packages are currently installed as `dependencies` of the project.
+
+It is recommended that all Cordova packages are defined as `devDependencies` in the `package.json` file. It is safe to move them manually.
+Packages defined as a dependency will be bundled with the application and can increase the built application's size.
 
 ## DevTools
 
