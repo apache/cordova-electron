@@ -132,10 +132,14 @@ describe('PackageJsonParser class', () => {
     it('should warn that cordova-electron is defined as dependency.', () => {
         packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson);
 
-        const actual = emitSpy.calls.argsFor(0)[1];
-        const expectedPartial = 'The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.';
-
         expect(emitSpy).toHaveBeenCalled();
+
+        let actual = emitSpy.calls.argsFor(0)[1];
+        let expectedPartial = '[Cordova Electron] The built package size may be larger than necessary.';
+        expect(actual).toContain(expectedPartial);
+
+        actual = emitSpy.calls.argsFor(1)[1];
+        expectedPartial = '[Cordova Electron] The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.';
         expect(actual).toContain(expectedPartial);
         expect(actual).toContain('cordova-electron');
     });

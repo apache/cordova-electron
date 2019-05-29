@@ -42,7 +42,9 @@ class PackageJsonParser {
 
             // If Cordova dependencies are detected in "dependencies" of "package.json" warn for potential app package bloating
             if (cordovaDependencies.length) {
-                events.emit('warn', `The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.
+                events.emit('warn', '[Cordova Electron] The built package size may be larger than necessary. Please run with --verbose for more details.');
+
+                events.emit('verbose', `[Cordova Electron] The following Cordova package(s) were detected as "dependencies" in the projects "package.json" file.
 \t- ${cordovaDependencies.join('\n\t- ')}
 
 It is recommended that all Cordova packages are defined as "devDependencies" in the "package.json" file. It is safe to move them manually.
