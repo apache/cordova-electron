@@ -18,12 +18,12 @@
 */
 
 const electron = require('electron');
-const proc = require('child_process');
+const execa = require('execa');
 const path = require('path');
 
 module.exports.run = (args) => {
     const pathToMain = path.resolve(__dirname, '..', '..', 'www', 'cdv-electron-main.js');
-    const child = proc.spawn(electron, [pathToMain]);
+    const child = execa(electron, [pathToMain]);
 
     child.on('close', (code) => {
         process.exit(code);

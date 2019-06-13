@@ -23,23 +23,21 @@ const run = rewire('../../../../../../bin/templates/cordova/lib/run');
 
 describe('Run', () => {
     describe('run export method', () => {
-        it('should spawn electron with cdv-electron-main.js.', () => {
-            const spawnSpy = jasmine.createSpy('spawn');
+        it('should run electron with cdv-electron-main.js.', () => {
+            const execaSpy = jasmine.createSpy('execa');
             const onSpy = jasmine.createSpy('on');
             const expectedPathToMain = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'www', 'cdv-electron-main.js');
 
             run.__set__('electron', 'electron-require');
             spyOn(process, 'exit');
 
-            run.__set__('proc', {
-                spawn: spawnSpy.and.returnValue({
-                    on: onSpy.and.callThrough()
-                })
-            });
+            run.__set__('execa', execaSpy.and.returnValue({
+                on: onSpy.and.callThrough()
+            }));
 
             run.run();
 
-            expect(spawnSpy).toHaveBeenCalledWith('electron-require', [expectedPathToMain]);
+            expect(execaSpy).toHaveBeenCalledWith('electron-require', [expectedPathToMain]);
             expect(onSpy).toHaveBeenCalled();
             expect(process.exit).not.toHaveBeenCalled();
 
