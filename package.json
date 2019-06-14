@@ -40,8 +40,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "jasmine": "^3.4.0",
     "nyc": "^14.1.1",
-    "rewire": "^4.0.1",
-    "tmp": "^0.0.33"
+    "rewire": "^4.0.1"
   },
   "author": "Apache Software Foundation",
   "contributors": [
