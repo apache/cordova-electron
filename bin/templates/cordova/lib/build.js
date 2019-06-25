@@ -148,11 +148,11 @@ class ElectronBuilder {
         }
 
         if (platformConfigs.signing) {
-            this.__appendUserSingning(platform, platformConfigs.signing, userBuildSettings);
+            this.__appendUserSigning(platform, platformConfigs.signing, userBuildSettings);
         }
     }
 
-    __appendUserSingning (platform, signingConfigs, userBuildSettings) {
+    __appendUserSigning (platform, signingConfigs, userBuildSettings) {
         if (platform === 'linux') {
             events.emit('warn', `The provided signing information for the Linux platform is ignored. Linux does not support signing.`);
             return this;
@@ -160,18 +160,18 @@ class ElectronBuilder {
 
         const config = this.isDevelopment ? signingConfigs.debug : signingConfigs.release;
         if (platform === 'mac' && config) {
-            this.__appendMacUserSingning(config, userBuildSettings.config.mac);
+            this.__appendMacUserSigning(config, userBuildSettings.config.mac);
         }
 
         const masConfig = this.isDevelopment ? null : (signingConfigs.store || null);
         if (platform === 'mac' && masConfig) {
             // Requirements is not available for mas.
             if (masConfig.requirements) delete masConfig.requirements;
-            this.__appendMacUserSingning(masConfig, userBuildSettings.config.mas);
+            this.__appendMacUserSigning(masConfig, userBuildSettings.config.mas);
         }
 
         if (platform === 'win' && config) {
-            this.__appendWindowsUserSingning(config, userBuildSettings.config.win);
+            this.__appendWindowsUserSigning(config, userBuildSettings.config.win);
         }
     }
 
@@ -183,7 +183,7 @@ class ElectronBuilder {
         );
     }
 
-    __appendMacUserSingning (config, buildConfigs) {
+    __appendMacUserSigning (config, buildConfigs) {
         if (config.identity || process.env.CSC_LINK || process.env.CSC_NAME) buildConfigs.identity = config.identity || process.env.CSC_LINK || process.env.CSC_NAME;
 
         const entitlements = config.entitlements;
@@ -215,7 +215,7 @@ class ElectronBuilder {
         }
     }
 
-    __appendWindowsUserSingning (config, buildConfigs) {
+    __appendWindowsUserSigning (config, buildConfigs) {
         const certificateFile = config.certificateFile;
         if (certificateFile && fs.existsSync(certificateFile)) {
             buildConfigs.certificateFile = certificateFile;
