@@ -846,6 +846,323 @@ describe('Testing build.js:', () => {
             expect(electronBuilder.userBuildSettings.config.windows).toEqual(undefined);
         });
 
+        it('should set overridable per platform options.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                mac: {
+                    package: ['package', 'package2'],
+                    arch: 'arch',
+                    appId: 'com.test.app',
+                    artifactName: '${productName}-${version}.${ext}',
+                    compression: 'normal',
+                    files: [
+                        'test/files/file1',
+                        'test/files/file2'
+                    ],
+                    extraResources: [
+                        'test/resources/file1',
+                        'test/resources/file2'
+                    ],
+                    extraFiles: [
+                        'test/extra/files/file1',
+                        'test/extra/files/file2'
+                    ],
+                    asar: false,
+                    fileAssociations: [
+                        {
+                            ext: 'png',
+                            name: 'PNG'
+                        }
+                    ],
+                    forceCodeSigning: false,
+                    electronUpdaterCompatibility: '>=2.15',
+                    publish: ['github', 'bintray'],
+                    detectUpdateChannel: false,
+                    generateUpdatesFilesForAllChannels: false
+                }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedMac = {
+                target: [
+                    { target: 'package', arch: 'arch' },
+                    { target: 'package2', arch: 'arch' }
+                ],
+                type: '${BUILD_TYPE}',
+                icon: '${APP_INSTALLER_ICON}',
+                appId: 'com.test.app',
+                artifactName: '${productName}-${version}.${ext}',
+                compression: 'normal',
+                files: [
+                    'test/files/file1',
+                    'test/files/file2'
+                ],
+                extraResources: [
+                    'test/resources/file1',
+                    'test/resources/file2'
+                ],
+                extraFiles: [
+                    'test/extra/files/file1',
+                    'test/extra/files/file2'
+                ],
+                asar: false,
+                fileAssociations: [
+                    {
+                        ext: 'png',
+                        name: 'PNG'
+                    }
+                ],
+                forceCodeSigning: false,
+                electronUpdaterCompatibility: '>=2.15',
+                publish: ['github', 'bintray'],
+                detectUpdateChannel: false,
+                generateUpdatesFilesForAllChannels: false
+            };
+
+            expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
+        });
+
+        it('should set top-level macOS specific.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                mac: {
+                    package: ['package', 'package2'],
+                    arch: 'arch',
+                    category: 'public.app-category.developer-tools',
+                    icon: 'build/icon.icns',
+                    bundleVersion: 'CFBundleVersion',
+                    bundleShortVersion: 'CFBundleShortVersionString',
+                    darkModeSupport: true,
+                    helperBundleId: '${appBundleIdentifier}.helper',
+                    extendInfo: 'Info.plist',
+                    binaries: [
+                        'test/binaries/file1',
+                        'test/binaries/file2'
+                    ],
+                    minimumSystemVersion: '10.0.10',
+                    electronLanguages: [
+                        'en',
+                        'jp',
+                        'ru'
+                    ],
+                    extraDistFiles: [
+                        'test/extraDist/file1',
+                        'test/extraDist/file2'
+                    ]
+                }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedMac = {
+                target: [
+                    { target: 'package', arch: 'arch' },
+                    { target: 'package2', arch: 'arch' }
+                ],
+                type: '${BUILD_TYPE}',
+                category: 'public.app-category.developer-tools',
+                icon: 'build/icon.icns',
+                bundleVersion: 'CFBundleVersion',
+                bundleShortVersion: 'CFBundleShortVersionString',
+                darkModeSupport: true,
+                helperBundleId: '${appBundleIdentifier}.helper',
+                extendInfo: 'Info.plist',
+                binaries: [
+                    'test/binaries/file1',
+                    'test/binaries/file2'
+                ],
+                minimumSystemVersion: '10.0.10',
+                electronLanguages: [
+                    'en',
+                    'jp',
+                    'ru'
+                ],
+                extraDistFiles: [
+                    'test/extraDist/file1',
+                    'test/extraDist/file2'
+                ]
+            };
+
+            expect(electronBuilder.userBuildSettings.config.mac).toEqual(expectedMac);
+        });
+
+        it('should set top-level Windows specific.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                windows: {
+                    package: ['package', 'package2'],
+                    arch: 'arch',
+                    icon: 'build/icon.icns',
+                    legalTrademarks: 'trademarks and registered trademarks',
+                    rfc3161TimeStampServer: 'http://timestamp.comodoca.com/rfc3161',
+                    timeStampServer: 'http://timestamp.verisign.com/scripts/timstamp.dll',
+                    publisherName: 'publisher name',
+                    verifyUpdateCodeSignature: true,
+                    requestedExecutionLevel: 'asInvoker',
+                    signAndEditExecutable: true,
+                    signDlls: false
+                }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedWindows = {
+                target: [
+                    { target: 'package', arch: 'arch' },
+                    { target: 'package2', arch: 'arch' }
+                ],
+                icon: 'build/icon.icns',
+                legalTrademarks: 'trademarks and registered trademarks',
+                rfc3161TimeStampServer: 'http://timestamp.comodoca.com/rfc3161',
+                timeStampServer: 'http://timestamp.verisign.com/scripts/timstamp.dll',
+                publisherName: 'publisher name',
+                verifyUpdateCodeSignature: true,
+                requestedExecutionLevel: 'asInvoker',
+                signAndEditExecutable: true,
+                signDlls: false
+            };
+
+            expect(electronBuilder.userBuildSettings.config.win).toEqual(expectedWindows);
+        });
+
+        it('should set top-level Linux specific.', () => {
+            // mock platformConfig, buildConfig and buildOptions Objects
+            const platformConfig = {
+                linux: {
+                    package: ['package', 'package2'],
+                    arch: 'arch',
+                    maintainer: 'maintainer',
+                    vendor: 'vendor',
+                    executableName: 'productName',
+                    icon: 'path to icon set directory or one png file',
+                    synopsis: 'short description',
+                    description: 'description',
+                    category: 'Utility',
+                    mimeTypes: [
+                        'type1',
+                        'type2'
+                    ],
+                    desktop: 'desktop file entries'
+                }
+            };
+            const buildConfig = {
+                electron: platformConfig,
+                author: 'Apache',
+                name: 'Guy',
+                displayName: 'HelloWorld',
+                APP_BUILD_DIR: api.locations.build,
+                APP_BUILD_RES_DIR: api.locations.buildRes,
+                APP_WWW_DIR: api.locations.www
+            };
+
+            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+
+            // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
+            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+            build.__set__({ require: requireSpy });
+
+            const __validateUserPlatformBuildSettingsSpy = jasmine.createSpy('__validateUserPlatformBuildSettings').and.returnValue(true);
+            build.__set__({ __validateUserPlatformBuildSettings: __validateUserPlatformBuildSettingsSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api).configureUserBuildSettings();
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(requireSpy).toHaveBeenCalled();
+
+            const expectedLinux = {
+                target: [
+                    { target: 'package', arch: 'arch' },
+                    { target: 'package2', arch: 'arch' }
+                ],
+                maintainer: 'maintainer',
+                vendor: 'vendor',
+                executableName: 'productName',
+                icon: 'path to icon set directory or one png file',
+                synopsis: 'short description',
+                description: 'description',
+                category: 'Utility',
+                mimeTypes: [
+                    'type1',
+                    'type2'
+                ],
+                desktop: 'desktop file entries'
+            };
+
+            expect(electronBuilder.userBuildSettings.config.linux).toEqual(expectedLinux);
+        });
+
         it('should fetchPlatformDefaults true.', () => {
             // mock buildOptions Objecet and platformFile path
             const buildOptions = { debug: true, buildConfig: 'build.xml', argv: [] };
