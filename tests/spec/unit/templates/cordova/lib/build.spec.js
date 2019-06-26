@@ -879,7 +879,7 @@ describe('Testing build.js:', () => {
             expect(function () { electronBuilder.fetchPlatformDefaults('name'); }).toThrow(new Error('Your platform "name" is not supported as a default target platform for Electron.'));
         });
 
-        it('should __appendUserSingning linux signing.', () => {
+        it('should __appendUserSigning linux signing.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 linux: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release' } }
@@ -901,7 +901,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendUserSingning('linux', platformConfig.linux.signing, buildOptions);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendUserSigning('linux', platformConfig.linux.signing, buildOptions);
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(emitSpy).toHaveBeenCalled();
@@ -910,7 +910,7 @@ describe('Testing build.js:', () => {
             expect(actual).toEqual(expected);
         });
 
-        it('should __appendUserSingning mac with masconfig.', () => {
+        it('should __appendUserSigning mac with masconfig.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 mac: { package: ['package', 'package2'], signing: { store: { requirements: 'requirements' } } }
@@ -933,7 +933,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendUserSingning('mac', platformConfig.mac.signing, buildOptions);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendUserSigning('mac', platformConfig.mac.signing, buildOptions);
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(buildOptions.buildConfig.electron.mac.signing.store.requirements).toBe(undefined);
@@ -961,12 +961,12 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendUserSingning('win', platformConfig, buildOptions);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendUserSigning('win', platformConfig, buildOptions);
 
             expect(existsSyncSpy).toHaveBeenCalled();
         });
 
-        it('should set buildConfigs __appendMacUserSingning when files exist.', () => {
+        it('should set buildConfigs __appendMacUserSigning when files exist.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 darwin: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: { requirements: 'requirements' } } }
@@ -999,7 +999,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendMacUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendMacUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(buildConfig.identity).toEqual(config.identity);
@@ -1009,7 +1009,7 @@ describe('Testing build.js:', () => {
             expect(buildConfig.provisioningProfile).toEqual(config.provisioningProfile);
         });
 
-        it('should emit warning when in __appendMacUserSingning when files does not exist and set identity to process env link.', () => {
+        it('should emit warning when in __appendMacUserSigning when files does not exist and set identity to process env link.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 darwin: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: { requirements: 'requirements' } } }
@@ -1044,7 +1044,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendMacUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendMacUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(emitSpy).toHaveBeenCalled();
@@ -1072,7 +1072,7 @@ describe('Testing build.js:', () => {
             expect(actualProvisioningProfile).toContain(expectedProvisioningProfiles);
         });
 
-        it('should emit warning when in __appendMacUserSingning when files does not exist and set identity to process env name.', () => {
+        it('should emit warning when in __appendMacUserSigning when files does not exist and set identity to process env name.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 darwin: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: { requirements: 'requirements' } } }
@@ -1107,7 +1107,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendMacUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendMacUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(emitSpy).toHaveBeenCalled();
@@ -1135,7 +1135,7 @@ describe('Testing build.js:', () => {
             expect(actualProvisioningProfile).toContain(expectedProvisioningProfiles);
         });
 
-        it('should set buildConfigs in __appendWindowsUserSingning for windows singning when files exist.', () => {
+        it('should set buildConfigs in __appendWindowsUserSigning for windows singning when files exist.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 windows: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: 'requirements' } }
@@ -1169,7 +1169,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
 
@@ -1181,7 +1181,7 @@ describe('Testing build.js:', () => {
             expect(buildConfig.additionalCertificateFile).toEqual(config.additionalCertificateFile);
         });
 
-        it('should set buildConfigs in __appendWindowsUserSingning for windows singning when files exist, but certificate password does not.', () => {
+        it('should set buildConfigs in __appendWindowsUserSigning for windows singning when files exist, but certificate password does not.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 windows: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: 'requirements' } }
@@ -1217,7 +1217,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
 
@@ -1229,7 +1229,7 @@ describe('Testing build.js:', () => {
             expect(buildConfig.additionalCertificateFile).toEqual(config.additionalCertificateFile);
         });
 
-        it('should set buildConfigs in __appendWindowsUserSingning for windows singning when files exist, but certificate and process env password does not.', () => {
+        it('should set buildConfigs in __appendWindowsUserSigning for windows singning when files exist, but certificate and process env password does not.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 windows: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: 'requirements' } }
@@ -1262,7 +1262,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
 
@@ -1274,7 +1274,7 @@ describe('Testing build.js:', () => {
             expect(buildConfig.additionalCertificateFile).toEqual(config.additionalCertificateFile);
         });
 
-        it('should set buildConfigs in __appendWindowsUserSingning for windows singning when files does not exist.', () => {
+        it('should set buildConfigs in __appendWindowsUserSigning for windows singning when files does not exist.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
                 windows: { package: ['package', 'package2'], signing: { debug: 'debug', release: 'release', store: 'requirements' } }
@@ -1308,7 +1308,7 @@ describe('Testing build.js:', () => {
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
             build.__set__('fs', { existsSync: existsSyncSpy });
 
-            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSingning(config, buildConfig);
+            electronBuilder = new ElectronBuilder(buildOptions, api).__appendWindowsUserSigning(config, buildConfig);
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(emitSpy).toHaveBeenCalled();
