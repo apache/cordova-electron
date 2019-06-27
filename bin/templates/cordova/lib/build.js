@@ -79,6 +79,12 @@ class ElectronBuilder {
                     platformConfigs,
                     userBuildSettings
                 );
+
+                this.___overridablePerPlatformOptions(
+                    (platform === 'windows' ? 'win' : platform),
+                    platformConfigs,
+                    userBuildSettings
+                );
             }
 
             this.userBuildSettings = userBuildSettings;
@@ -105,9 +111,6 @@ class ElectronBuilder {
         // Only macOS has a build type distinction. (development or distribution)
         // eslint-disable-next-line no-template-curly-in-string
         if (platform === 'mac') userBuildSettings.config[platform].type = '${BUILD_TYPE}';
-
-        // Only Linux has an application category (String). Default value - Utility.
-        if (platform === 'linux' && platformConfigs.category) userBuildSettings.config[platform].category = platformConfigs.category;
 
         if (platformConfigs.package) {
             platformConfigs.package.forEach((target) => {
@@ -149,6 +152,68 @@ class ElectronBuilder {
 
         if (platformConfigs.signing) {
             this.__appendUserSigning(platform, platformConfigs.signing, userBuildSettings);
+        }
+    }
+
+    ___overridablePerPlatformOptions (platform, platformConfigs, userBuildSettings) {
+        const PLATFORM_TOP_LEVEL_OPTIONS = {
+            allPlatforms: [
+                'appId',
+                'artifactName',
+                'asar',
+                'compression',
+                'detectUpdateChannel',
+                'electronUpdaterCompatibility',
+                'extraFiles',
+                'extraResources',
+                'fileAssociations',
+                'files',
+                'forceCodeSigning',
+                'generateUpdatesFilesForAllChannels',
+                'icon',
+                'publish'
+            ],
+            linux: [
+                'category',
+                'description',
+                'desktop',
+                'executableName',
+                'maintainer',
+                'mimeTypes',
+                'synopsis',
+                'vendor'
+            ],
+            mac: [
+                'binaries',
+                'bundleShortVersion',
+                'bundleVersion',
+                'category',
+                'darkModeSupport',
+                'electronLanguages',
+                'extendInfo',
+                'extraDistFiles',
+                'helperBundleId',
+                'minimumSystemVersion'
+            ],
+            win: [
+                'legalTrademarks',
+                'publisherName',
+                'requestedExecutionLevel',
+                'rfc3161TimeStampServer',
+                'signAndEditExecutable',
+                'signDlls',
+                'timeStampServer',
+                'verifyUpdateCodeSignature'
+            ]
+        };
+
+        for (let option in platformConfigs) {
+            if (
+                PLATFORM_TOP_LEVEL_OPTIONS['allPlatforms'].includes(option)
+                || PLATFORM_TOP_LEVEL_OPTIONS[platform].includes(option)
+            ) {
+                userBuildSettings.config[platform][option] = platformConfigs[option];
+            }
         }
     }
 
