@@ -19,13 +19,15 @@
     under the License.
 */
 
-/*
-    Returns the VERSION of CordovaLib used.
-    Note: it does not work if the --shared option was used to create the project.
-*/
+let VERSION = 'version undefined';
 
-// Coho updates this line
-const VERSION = '1.0.0-dev';
+try {
+    const platformPkgPath = require.resolve('cordova-electron/package.json');
+    const platformPkg = require(platformPkgPath) || null;
+    VERSION = platformPkg.version || VERSION;
+} catch (e) {
+    // Do nothing.
+}
 
 module.exports.version = VERSION;
 
