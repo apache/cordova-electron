@@ -1,5 +1,5 @@
 // Platform: electron
-// 2d56086c34734d34c97200246645543b7b3a91cc
+// 4f6abd672e0362767fd4b6fe0b477b1e4c25e1e1
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -19,7 +19,7 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '1.1.0-dev';
+var PLATFORM_VERSION_BUILD_LABEL = '1.2.0-dev';
 // file: src/scripts/require.js
 
 var require;
@@ -70,7 +70,7 @@ var define;
     };
 
     define = function (id, factory) {
-        if (modules[id]) {
+        if (Object.prototype.hasOwnProperty.call(modules, id)) {
             throw 'module ' + id + ' already defined';
         }
 
@@ -205,8 +205,8 @@ var cordova = {
      * @return object
      */
     getOriginalHandlers: function () {
-        return {'document': {'addEventListener': m_document_addEventListener, 'removeEventListener': m_document_removeEventListener},
-            'window': {'addEventListener': m_window_addEventListener, 'removeEventListener': m_window_removeEventListener}};
+        return { 'document': { 'addEventListener': m_document_addEventListener, 'removeEventListener': m_document_removeEventListener },
+            'window': { 'addEventListener': m_window_addEventListener, 'removeEventListener': m_window_removeEventListener } };
     },
     /**
      * Method to fire event from native code
@@ -341,9 +341,38 @@ var typeMap = {
 };
 
 function extractParamName (callee, argIndex) {
-    return (/.*?\((.*?)\)/).exec(callee)[1].split(', ')[argIndex];
+    return (/\(\s*([^)]*?)\s*\)/).exec(callee)[1].split(/\s*,\s*/)[argIndex];
 }
 
+/**
+ * Checks the given arguments' types and throws if they are not as expected.
+ *
+ * `spec` is a string where each character stands for the required type of the
+ * argument at the same position. In other words: the character at `spec[i]`
+ * specifies the required type for `args[i]`. The characters in `spec` are the
+ * first letter of the required type's name. The supported types are:
+ *
+ *     Array, Date, Number, String, Function, Object
+ *
+ * Lowercase characters specify arguments that must not be `null` or `undefined`
+ * while uppercase characters allow those values to be passed.
+ *
+ * Finally, `*` can be used to allow any type at the corresponding position.
+ *
+ * @example
+ * function foo (arr, opts) {
+ *     // require `arr` to be an Array and `opts` an Object, null or undefined
+ *     checkArgs('aO', 'my.package.foo', arguments);
+ *     // ...
+ * }
+ * @param {String} spec - the type specification for `args` as described above
+ * @param {String} functionName - full name of the callee.
+ * Used in the error message
+ * @param {Array|arguments} args - the arguments to be checked against `spec`
+ * @param {Function} [opt_callee=args.callee] - the recipient of `args`.
+ * Used to extract parameter names for the error message
+ * @throws {TypeError} if args do not satisfy spec
+ */
 function checkArgs (spec, functionName, args, opt_callee) {
     if (!moduleExports.enableChecks) {
         return;
@@ -834,7 +863,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-electron/cordova-js-src/confighelper.js
+// file: /Users/erisu/release/cordova/cordova-electron/cordova-js-src/confighelper.js
 define("cordova/confighelper", function(require, exports, module) {
 
 let config;
@@ -907,7 +936,7 @@ exports.readConfig = readConfig;
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-electron/cordova-js-src/exec.js
+// file: /Users/erisu/release/cordova/cordova-electron/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /* global require, module, console */
@@ -1255,7 +1284,7 @@ exports.reset();
 
 });
 
-// file: /Users/erisu/git/apache/cordova/cordova-electron/cordova-js-src/platform.js
+// file: /Users/erisu/release/cordova/cordova-electron/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
