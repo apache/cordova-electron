@@ -1,6 +1,6 @@
 {
   "name": "cordova-electron",
-  "version": "1.1.0-dev",
+  "version": "1.1.0",
   "description": "electron apps as a target for cordova developers",
   "main": "bin/templates/cordova/Api.js",
   "bin": "bin/create",
