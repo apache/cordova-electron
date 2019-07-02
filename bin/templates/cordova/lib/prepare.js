@@ -170,10 +170,14 @@ function updateIcons (cordovaProject, locations) {
         return;
     }
 
-    checkIconsAttributes(icons);
+    const filteredIcons = icons.filter(icon => checkIconsAttributes(icon));
 
-    const choosenIcons = prepareIcons(icons);
-    const resourceMap = createResourceMap(cordovaProject, locations, choosenIcons);
+    if (!filteredIcons.length) {
+        throw new CordovaError('No icon match the required size. Please ensure that ".png" icon is at least 512x512 and has a src attribute.');
+    }
+
+    const chosenIcons = prepareIcons(filteredIcons);
+    const resourceMap = createResourceMap(cordovaProject, locations, chosenIcons);
 
     events.emit('verbose', 'Updating icons');
     copyResources(cordovaProject.root, resourceMap);
@@ -182,27 +186,11 @@ function updateIcons (cordovaProject, locations) {
 /**
  * Check if all required attributes are set.
  */
-function checkIconsAttributes (icons) {
-    let errorMissingAttributes = [];
-    let errorWrongSize = [];
-    let errorMessage = [];
-    icons.forEach(icon => {
-        if (!icon.src) {
-            errorMissingAttributes.push(icon.target ? icon.target : 'size=' + (icon.height || icon.width));
-        }
-        if ((icon.height && icon.width) < 512 && (icon.height && icon.width) !== undefined) {
-            errorWrongSize.push(icon.target === 'installer' ? `for target: ${icon.target}` : `given: width=${icon.width} height=${icon.height}`);
-        }
-    });
-    if (errorMissingAttributes.length > 0) {
-        errorMessage.push(`One of the following attributes are set but missing the other for the target: ${errorMissingAttributes}. Please ensure that all required attributes are defined.`);
-    }
-    if (errorWrongSize.length > 0) {
-        errorMessage.push(`Size of icon does not match required size ${errorWrongSize}. Please ensure that .png icon for is at least 512x512.`);
-    }
-    if (errorMessage.length > 0) {
-        throw new CordovaError(errorMessage);
-    }
+function checkIconsAttributes (icon) {
+    if (((icon.height && icon.width) >= 512 || (icon.height && icon.width) === undefined) && icon.src) return true;
+
+    events.emit('info', `The following${icon.target ? ' ' + icon.target : ''} icon with a size of width=${icon.width} height=${icon.height} does not meet the requirements and will be ignored.`);
+    return false;
 }
 
 /**
