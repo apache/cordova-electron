@@ -41,12 +41,15 @@ function createWindow () {
     const browserWindowOpts = Object.assign({}, cdvElectronSettings.browserWindow, { icon: appIcon });
     mainWindow = new BrowserWindow(browserWindowOpts);
 
-    // and load the index.html of the app.
-    // TODO: possibly get this data from config.xml
-    mainWindow.loadURL(`file://${__dirname}/index.html`);
-    mainWindow.webContents.on('did-finish-load', function () {
-        mainWindow.webContents.send('window-id', mainWindow.id);
-    });
+    // Load a local HTML file or a remote URL.
+    const loadURLOpts = Object.assign({}, cdvElectronSettings.browserWindowInstance.loadURL.options);
+    if (!cdvElectronSettings.browserWindowInstance.loadURL.type || cdvElectronSettings.browserWindowInstance.loadURL.type === 'remote') {
+        mainWindow.loadURL(cdvElectronSettings.browserWindowInstance.loadURL.url, loadURLOpts);
+    } else if (cdvElectronSettings.browserWindowInstance.loadURL.type === 'local') {
+        mainWindow.loadURL(`file://${__dirname}/${cdvElectronSettings.browserWindowInstance.loadURL.url}`, loadURLOpts);
+    } else {
+        mainWindow.loadURL(`file://${__dirname}/index.html`);
+    }
 
     // Open the DevTools.
     if (cdvElectronSettings.browserWindow.webPreferences.devTools) {

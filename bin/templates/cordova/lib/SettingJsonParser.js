@@ -27,15 +27,29 @@ class SettingJsonParser {
         this.package = require(this.path);
     }
 
-    configure (config, userElectronSettingsPath) {
+    configure (config, options, userElectronSettingsPath) {
+        // Set loadURL path from config.xml.
+        const url = config.doc.find('content').attrib.src;
+        if (url) {
+            this.package.browserWindowInstance = {
+                loadURL: {
+                    url: url
+                }
+            };
+
+            if (!url.includes('://')) {
+                this.package.browserWindowInstance.loadURL.type = 'local';
+            }
+        }
+
         // Apply user settings ontop of defaults.
         if (userElectronSettingsPath) {
             const userElectronSettings = require(userElectronSettingsPath);
             this.package = deepMerge(this.package, userElectronSettings);
         }
 
-        if (config) {
-            this.package.browserWindow.webPreferences.devTools = !config.release;
+        if (options) {
+            this.package.browserWindow.webPreferences.devTools = !options.release;
         }
 
         return this;

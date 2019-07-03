@@ -86,7 +86,7 @@ module.exports.prepare = function (cordovaProject, options) {
 
     // update Electron settings in .json file
     (new SettingJsonParser(this.locations.www))
-        .configure(options.options, userElectronSettingsPath)
+        .configure(this.config, options.options, userElectronSettingsPath)
         .write();
 
     // update project according to config.xml changes.

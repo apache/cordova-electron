@@ -20,6 +20,14 @@
 const rewire = require('rewire');
 const path = require('path');
 
+const ConfigParser = require('cordova-common').ConfigParser;
+
+const FIXTURES = path.join(__dirname, '..', '..', '..', '..', 'fixtures');
+
+// Create a real config object before mocking out everything.
+const cfg = new ConfigParser(path.join(FIXTURES, 'test-config-1.xml'));
+const cfgEmpty = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
+
 describe('Testing SettingJsonParser.js:', () => {
     let SettingJsonParser;
     let locations;
@@ -67,7 +75,7 @@ describe('Testing SettingJsonParser.js:', () => {
             expect(settingJsonParser.package).toEqual({});
         });
 
-        it('should use default when users settings files does not exist, but set devTools value from options', () => {
+        it('should use default when users settings files does not exist and config.xml is empty, but set devTools value from options', () => {
             options = { options: { release: true, argv: [] } };
 
             SettingJsonParser.__set__('require', (file) => {
@@ -86,7 +94,7 @@ describe('Testing SettingJsonParser.js:', () => {
                 return require(file);
             });
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, false);
+            settingJsonParser = new SettingJsonParser(locations.www).configure(cfgEmpty, options.options, false);
 
             expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(false);
             expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(true);
@@ -111,7 +119,7 @@ describe('Testing SettingJsonParser.js:', () => {
                 return require(file);
             });
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, false);
+            settingJsonParser = new SettingJsonParser(locations.www).configure(cfg, options.options, false);
 
             expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(true);
             expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(true);
@@ -147,7 +155,7 @@ describe('Testing SettingJsonParser.js:', () => {
                 return require(file);
             });
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, 'LOAD_MY_FAKE_DATA');
+            settingJsonParser = new SettingJsonParser(locations.www).configure(cfg, options.options, 'LOAD_MY_FAKE_DATA');
 
             expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(true);
             expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(false);
@@ -177,14 +185,14 @@ describe('Testing SettingJsonParser.js:', () => {
                 return require(file);
             });
 
-            settingJsonParser = new SettingJsonParser(locations.www).configure(options.options, 'LOAD_MY_FAKE_DATA').write();
+            settingJsonParser = new SettingJsonParser(locations.www).configure(cfg, options.options, 'LOAD_MY_FAKE_DATA').write();
 
             expect(writeFileSyncSpy).toHaveBeenCalled();
 
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
             settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual(`{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}}}`);
+            expect(settingsFile).toEqual(`{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}},"browserWindowInstance":{"loadURL":{"url":"index.html","type":"local"}}}`);
 
             const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
             expect(settingsFormat).toEqual('utf8');
