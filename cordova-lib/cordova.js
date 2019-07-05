@@ -18,7 +18,7 @@
  specific language governing permissions and limitations
  under the License.
 */
-;(function() {
+;(function(nodejsRequire) {
 var PLATFORM_VERSION_BUILD_LABEL = '1.2.0-dev';
 // file: src/scripts/require.js
 
@@ -51,7 +51,12 @@ var define;
 
     require = function (id) {
         if (!modules[id]) {
-            throw 'module ' + id + ' not found';
+            // use original nodejs require if modules not existing in codova
+            if(nodejsRequire){
+                return nodejsRequire(id);
+            }else{
+                throw 'module ' + id + ' not found';
+            }
         } else if (id in inProgressModules) {
             var cycle = requireStack.slice(inProgressModules[id]).join('->') + '->' + id;
             throw 'Cycle in require graph: ' + cycle;
@@ -1610,4 +1615,4 @@ window.cordova = require('cordova');
 
 require('cordova/init');
 
-})();
+})(require);
