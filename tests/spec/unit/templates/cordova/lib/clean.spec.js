@@ -23,19 +23,16 @@ const clean = rewire('../../../../../../bin/templates/cordova/lib/clean');
 describe('Clean', () => {
     describe('run export method', () => {
         it('should stop process when requirement check fails.', () => {
-            // get original
-            const _process = clean.__get__('process');
-
             // create spies
             const logSpy = jasmine.createSpy('log');
-            const exitSpy = jasmine.createSpy('exit');
 
             // set spies
             clean.__set__('console', { error: logSpy });
             clean.__set__('check_reqs', {
                 run: jasmine.createSpy('run').and.returnValue(false)
             });
-            clean.__set__('process', { exit: exitSpy });
+
+            spyOn(process, 'exit');
 
             // run test
             clean.run();
@@ -44,10 +41,7 @@ describe('Clean', () => {
             const expectedLog = 'Please make sure you meet the software requirements in order to clean an electron cordova project';
 
             expect(logArgs).toContain(expectedLog);
-            expect(exitSpy).toHaveBeenCalledWith(2);
-
-            // Reset
-            clean.__set__('process', _process);
+            expect(process.exit).toHaveBeenCalledWith(2);
         });
 
         it('should not find previous build dir and not attempt to remove.', () => {

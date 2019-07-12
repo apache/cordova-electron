@@ -43,6 +43,7 @@ describe('Testing build.js:', () => {
             ElectronBuilder = build.__get__('ElectronBuilder');
 
             build.__set__({ require: requireSpy });
+            spyOn(process, 'env');
 
             emitSpy = jasmine.createSpy('emit');
             build.__set__('events', { emit: emitSpy });
@@ -1355,7 +1356,7 @@ describe('Testing build.js:', () => {
             };
 
             // set process.env.CSC_LINK
-            build.__set__('process', Object.assign({}, { env: { CSC_LINK: 'csc_link' } }));
+            process.env.CSC_LINK = 'csc_link';
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
@@ -1418,7 +1419,7 @@ describe('Testing build.js:', () => {
             };
 
             // set process.env.CSC_NAME
-            build.__set__('process', Object.assign({}, { env: { CSC_NAME: 'csc_name' } }));
+            process.env.CSC_NAME = 'csc_name';
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
@@ -1528,7 +1529,7 @@ describe('Testing build.js:', () => {
             };
 
             // set process.env.CSC_KEY_PASSWORD
-            build.__set__('process', Object.assign({}, { env: { CSC_KEY_PASSWORD: 'csc_key_password' } }));
+            process.env.CSC_KEY_PASSWORD = 'csc_key_password';
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -1645,7 +1646,6 @@ describe('Testing build.js:', () => {
             const expectedAdditionalCertificateFile = 'The provided addition certificate file does not exist';
             expect(actualAdditionalCertificateFile).toContain(expectedAdditionalCertificateFile);
         });
-
         it('should call build method.', () => {
             // mock buildOptions Objecet
             const buildOptions = { debug: true, buildConfig: 'build.xml', argv: [] };
