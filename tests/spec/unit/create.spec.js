@@ -28,7 +28,7 @@ const tmpDir = path.join(__dirname, '../../../temp');
 const createScriptPath = path.join(cordova_bin, 'create');
 const create = rewire(path.join(cordova_bin, 'lib', 'create'));
 
-function createAndBuild (projectname, projectid) {
+function createAndVerify (projectname, projectid) {
     let return_code = 0;
 
     // remove existing folder
@@ -53,14 +53,32 @@ function createAndBuild (projectname, projectid) {
     expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'run'))).toBe(true);
     expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'version'))).toBe(true);
 
-    // // build the project
-    command = util.format('"%s/cordova/build"', path.join(tmpDir, projectname));
-
-    return_code = shell.exec(command, { silent: true }).code;
-    expect(return_code).toBe(0);
-
     // clean-up
     fs.removeSync(tmpDir);
+}
+
+function createAndValidateProjectDirName (projectname, projectid) {
+    // remove existing folder
+    fs.removeSync(tmpDir);
+    fs.ensureDirSync(tmpDir);
+
+    const projectPath = path.join(tmpDir, projectname);
+
+    const _fs = create.__get__('fs');
+    create.__set__('fs', {
+        ensureDirSync: _fs.ensureDirSync,
+        existsSync: path => !(path === projectPath),
+        copySync: () => true
+    });
+
+    create.createProject(projectPath, projectname, projectid, projectname)
+        .then(() => {
+            // expects the project name to be the directory name.
+            expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
+
+            fs.removeSync(tmpDir);
+            create.__set__('fs', _fs);
+        });
 }
 
 describe('create', () => {
@@ -68,46 +86,53 @@ describe('create', () => {
         expect(fs.existsSync(createScriptPath)).toBe(true);
     });
 
+    it('create project and check for bin files', () => {
+        const projectname = 'testcreate';
+        const projectid = 'com.test.app1';
+
+        createAndVerify(projectname, projectid);
+    });
+
     it('create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
 
-        createAndBuild(projectname, projectid);
+        createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with ascii name, and spaces', () => {
         const projectname = 'test create';
         const projectid = 'com.test.app2';
 
-        createAndBuild(projectname, projectid);
+        createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with unicode name, no spaces', () => {
         const projectname = '応応応応用用用用';
         const projectid = 'com.test.app3';
 
-        createAndBuild(projectname, projectid);
+        createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with unicode name, and spaces', () => {
         const projectname = '応応応応 用用用用';
         const projectid = 'com.test.app4';
 
-        createAndBuild(projectname, projectid);
+        createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with ascii+unicode name, no spaces', () => {
         const projectname = '応応応応hello用用用用';
         const projectid = 'com.test.app5';
 
-        createAndBuild(projectname, projectid);
+        createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
 
-        createAndBuild(projectname, projectid);
+        createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('should stop creating project when project destination already exists', () => {
