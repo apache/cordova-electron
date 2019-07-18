@@ -71,7 +71,7 @@ function createAndValidateProjectDirName (projectname, projectid) {
         copySync: () => true
     });
 
-    create.createProject(projectPath, projectname, projectid, projectname)
+    return create.createProject(projectPath, projectname, projectid, projectname)
         .then(() => {
             // expects the project name to be the directory name.
             expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
@@ -97,42 +97,42 @@ describe('create', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
 
-        createAndValidateProjectDirName(projectname, projectid);
+        return createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with ascii name, and spaces', () => {
         const projectname = 'test create';
         const projectid = 'com.test.app2';
 
-        createAndValidateProjectDirName(projectname, projectid);
+        return createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with unicode name, no spaces', () => {
         const projectname = '応応応応用用用用';
         const projectid = 'com.test.app3';
 
-        createAndValidateProjectDirName(projectname, projectid);
+        return createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with unicode name, and spaces', () => {
         const projectname = '応応応応 用用用用';
         const projectid = 'com.test.app4';
 
-        createAndValidateProjectDirName(projectname, projectid);
+        return createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with ascii+unicode name, no spaces', () => {
         const projectname = '応応応応hello用用用用';
         const projectid = 'com.test.app5';
 
-        createAndValidateProjectDirName(projectname, projectid);
+        return createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
 
-        createAndValidateProjectDirName(projectname, projectid);
+        return createAndValidateProjectDirName(projectname, projectid);
     });
 
     it('should stop creating project when project destination already exists', () => {
