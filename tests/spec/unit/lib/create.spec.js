@@ -40,9 +40,8 @@ describe('create', () => {
     function createAndValidateProjectDirName (projectname, projectid) {
         const projectPath = path.join(tmpDir, projectname);
 
-        const _fs = create.__get__('fs');
         create.__set__('fs', {
-            ensureDirSync: _fs.ensureDirSync,
+            ensureDirSync: fs.ensureDirSync,
             existsSync: path => path !== projectPath,
             copySync: () => true
         });
@@ -50,9 +49,7 @@ describe('create', () => {
         return create.createProject(projectPath, projectname, projectid, projectname)
             .then(() => {
                 // expects the project name to be the directory name.
-                expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
-
-                create.__set__('fs', _fs);
+                expect(fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
             });
     }
 
@@ -99,7 +96,6 @@ describe('create', () => {
     });
 
     it('should stop creating project when project destination already exists', () => {
-        const _fs = create.__get__('fs');
         create.__set__('fs', {
             existsSync: jasmine.createSpy('existsSync').and.returnValue(true)
         });
@@ -110,8 +106,6 @@ describe('create', () => {
         expect(() => {
             create.createProject(tmpDir, projectname, projectid, projectname);
         }).toThrowError(/destination already exists/);
-
-        create.__set__('fs', _fs);
     });
 
     it('should stop creating project when requirement check fails', () => {
