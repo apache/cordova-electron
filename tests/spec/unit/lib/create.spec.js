@@ -27,10 +27,6 @@ const tmpDir = path.join(rootDir, 'temp');
 const create = rewire(path.join(rootDir, 'lib/create'));
 
 function createAndValidateProjectDirName (projectname, projectid) {
-    // remove existing folder
-    fs.removeSync(tmpDir);
-    fs.ensureDirSync(tmpDir);
-
     const projectPath = path.join(tmpDir, projectname);
 
     const _fs = create.__get__('fs');
@@ -45,12 +41,19 @@ function createAndValidateProjectDirName (projectname, projectid) {
             // expects the project name to be the directory name.
             expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
 
-            fs.removeSync(tmpDir);
             create.__set__('fs', _fs);
         });
 }
 
 describe('create', () => {
+    beforeEach(() => {
+        fs.removeSync(tmpDir);
+        fs.ensureDirSync(tmpDir);
+    });
+    afterAll(() => {
+        fs.removeSync(tmpDir);
+    });
+
     it('create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
@@ -125,8 +128,5 @@ describe('create', () => {
         create.createProject(tmpDir, projectname, projectid, projectname);
 
         expect(emitSpy).toHaveBeenCalledWith('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
-
-        // clean-up
-        fs.removeSync(tmpDir);
     });
 });
