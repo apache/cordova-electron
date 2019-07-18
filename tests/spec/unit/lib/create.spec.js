@@ -56,6 +56,18 @@ describe('create', () => {
             });
     }
 
+    it('creates a project that has the expected files', () => {
+        const projectname = 'testcreate';
+        const projectid = 'com.test.app1';
+        const projectPath = path.join(tmpDir, projectname);
+
+        return create.createProject(projectPath, projectname, projectid).then(() => {
+            for (const filePath of ['build-res', 'cordova/Api.js', 'cordova/version']) {
+                expect(fs.existsSync(path.join(projectPath, filePath))).toBe(true);
+            }
+        });
+    });
+
     it('create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
