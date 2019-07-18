@@ -155,6 +155,17 @@ describe('PackageJsonParser class', () => {
         expect(emitSpy).not.toHaveBeenCalled();
     });
 
+    it('should not set package dependencies when project dependencies is missing.', () => {
+        let mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
+        delete mockProjectPackageJson.dependencies;
+
+        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, mockProjectPackageJson);
+
+        expect(emitSpy).not.toHaveBeenCalled();
+        expect(packageJsonParser.package.dependencies).not.toBeDefined();
+    });
+
     it('should write provided data when config xml is empty.', () => {
         const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
         packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
