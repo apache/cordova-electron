@@ -17,23 +17,26 @@
     under the License.
 */
 
+const os = require('os');
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
 
 const rootDir = path.resolve(__dirname, '../../../..');
-const tmpDir = path.join(rootDir, 'temp');
+
+function makeTempDir () {
+    const dir = path.join(os.tmpdir(), 'cordova-electron-test-');
+    return fs.realpathSync(fs.mkdtempSync(dir));
+}
 
 describe('create', () => {
-    let create;
+    let create, tmpDir;
 
     beforeEach(() => {
         create = rewire(path.join(rootDir, 'lib/create'));
-
-        fs.removeSync(tmpDir);
-        fs.ensureDirSync(tmpDir);
+        tmpDir = makeTempDir();
     });
-    afterAll(() => {
+    afterEach(() => {
         fs.removeSync(tmpDir);
     });
 
