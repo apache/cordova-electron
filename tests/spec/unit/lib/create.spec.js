@@ -24,35 +24,37 @@ const rewire = require('rewire');
 const rootDir = path.resolve(__dirname, '../../../..');
 const tmpDir = path.join(rootDir, 'temp');
 
-const create = rewire(path.join(rootDir, 'lib/create'));
-
-function createAndValidateProjectDirName (projectname, projectid) {
-    const projectPath = path.join(tmpDir, projectname);
-
-    const _fs = create.__get__('fs');
-    create.__set__('fs', {
-        ensureDirSync: _fs.ensureDirSync,
-        existsSync: path => path !== projectPath,
-        copySync: () => true
-    });
-
-    return create.createProject(projectPath, projectname, projectid, projectname)
-        .then(() => {
-            // expects the project name to be the directory name.
-            expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
-
-            create.__set__('fs', _fs);
-        });
-}
-
 describe('create', () => {
+    let create;
+
     beforeEach(() => {
+        create = rewire(path.join(rootDir, 'lib/create'));
+
         fs.removeSync(tmpDir);
         fs.ensureDirSync(tmpDir);
     });
     afterAll(() => {
         fs.removeSync(tmpDir);
     });
+
+    function createAndValidateProjectDirName (projectname, projectid) {
+        const projectPath = path.join(tmpDir, projectname);
+
+        const _fs = create.__get__('fs');
+        create.__set__('fs', {
+            ensureDirSync: _fs.ensureDirSync,
+            existsSync: path => path !== projectPath,
+            copySync: () => true
+        });
+
+        return create.createProject(projectPath, projectname, projectid, projectname)
+            .then(() => {
+                // expects the project name to be the directory name.
+                expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
+
+                create.__set__('fs', _fs);
+            });
+    }
 
     it('create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
