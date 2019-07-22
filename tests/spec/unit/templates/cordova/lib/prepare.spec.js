@@ -754,12 +754,10 @@ describe('Testing prepare.js:', () => {
             expect(actual).toEqual(expected);
         });
 
-        it('should update icons.', () => {
+        it('should not update icons when required attributes are undefined.', () => {
             const updateIcons = prepare.__get__('updateIcons');
 
             // create spies
-            const checkIconsAttributesSpy = jasmine.createSpy('checkIconsAttributes');
-            prepare.__set__('checkIconsAttributes', checkIconsAttributesSpy);
             const prepareIconsSpy = jasmine.createSpy('prepareIcons');
             prepare.__set__('prepareIcons', prepareIconsSpy);
             const createResourceMapSpy = jasmine.createSpy('createResourceMap');
@@ -772,13 +770,42 @@ describe('Testing prepare.js:', () => {
                 return [icon];
             };
 
+            expect(() => {
+                updateIcons(cordovaProject, locations);
+            }).toThrow(
+                new CordovaError('No icon match the required size. Please ensure that ".png" icon is at least 512x512 and has a src attribute.')
+            );
+
+            expect(emitSpy).toHaveBeenCalled();
+            expect(prepareIconsSpy).not.toHaveBeenCalled();
+            expect(createResourceMapSpy).not.toHaveBeenCalled();
+            expect(copyResourcesSpy).not.toHaveBeenCalled();
+        });
+
+        it('should update icons when required attributes are defined.', () => {
+            const updateIcons = prepare.__get__('updateIcons');
+
+            // create spies
+            const prepareIconsSpy = jasmine.createSpy('prepareIcons');
+            prepare.__set__('prepareIcons', prepareIconsSpy);
+            const createResourceMapSpy = jasmine.createSpy('createResourceMap');
+            prepare.__set__('createResourceMap', createResourceMapSpy);
+            const copyResourcesSpy = jasmine.createSpy('copyResources');
+            prepare.__set__('copyResources', copyResourcesSpy);
+
+            cordovaProject.projectConfig.getIcons = () => {
+                const icon = mockGetImageItem({
+                    src: path.join('res', 'electron', 'cordova_512.png')
+                });
+
+                return [icon];
+            };
+
             updateIcons(cordovaProject, locations);
 
-            // The emit was called
-            expect(emitSpy).toHaveBeenCalled();
-            expect(checkIconsAttributesSpy).toHaveBeenCalled();
             expect(prepareIconsSpy).toHaveBeenCalled();
             expect(createResourceMapSpy).toHaveBeenCalled();
+            expect(emitSpy).toHaveBeenCalled();
             expect(copyResourcesSpy).toHaveBeenCalled();
 
             // The emit message was.
@@ -796,7 +823,7 @@ describe('Testing prepare.js:', () => {
             checkIconsAttributes = prepare.__get__('checkIconsAttributes');
         });
 
-        it('should detect icons with missing src and throw an error with size=undefined in message.', () => {
+        it('should not emit info message.', () => {
             const icons = [
                 mockGetImageItem({
                     src: path.join('res', 'electron', 'cordova_512.png'),
@@ -805,28 +832,31 @@ describe('Testing prepare.js:', () => {
                 })
             ];
 
-            expect(() => {
-                checkIconsAttributes(icons);
-            }).not.toThrow(
-                new CordovaError()
-            );
+            icons.forEach(icon => {
+                checkIconsAttributes(icon);
+
+                expect(emitSpy).not.toHaveBeenCalled();
+            });
         });
 
-        it('should detect icons with missing src and throw an error with size=undefined in message.', () => {
+        it('should detect icons with missing src and emit info message.', () => {
             const icons = [
                 mockGetImageItem({
                     src: ''
                 })
             ];
 
-            expect(() => {
-                checkIconsAttributes(icons);
-            }).toThrow(
-                new CordovaError('One of the following attributes are set but missing the other for the target: size=undefined. Please ensure that all required attributes are defined.')
-            );
+            icons.forEach(icon => {
+                checkIconsAttributes(icon);
+
+                // The emit message was.
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'The following icon with a size of width=undefined height=undefined does not meet the requirements and will be ignored.';
+                expect(actual).toEqual(expected);
+            });
         });
 
-        it('should detect icons with missing src, but defined size and throw an error with size in message.', () => {
+        it('should detect icons with missing src, but defined size and emit info message.', () => {
             const icons = [
                 mockGetImageItem({
                     src: '',
@@ -835,14 +865,17 @@ describe('Testing prepare.js:', () => {
                 })
             ];
 
-            expect(() => {
-                checkIconsAttributes(icons);
-            }).toThrow(
-                new CordovaError('One of the following attributes are set but missing the other for the target: size=512. Please ensure that all required attributes are defined.')
-            );
+            icons.forEach(icon => {
+                checkIconsAttributes(icon);
+
+                // The emit message was.
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'The following icon with a size of width=512 height=512 does not meet the requirements and will be ignored.';
+                expect(actual).toEqual(expected);
+            });
         });
 
-        it('should detect icons with target set, but missing src and throw an error with target in message.', () => {
+        it('should detect icons with target set, but missing src and emit info message.', () => {
             const icons = [
                 mockGetImageItem({
                     src: '',
@@ -850,14 +883,17 @@ describe('Testing prepare.js:', () => {
                 })
             ];
 
-            expect(() => {
-                checkIconsAttributes(icons);
-            }).toThrow(
-                new CordovaError('One of the following attributes are set but missing the other for the target: installer. Please ensure that all required attributes are defined.')
-            );
+            icons.forEach(icon => {
+                checkIconsAttributes(icon);
+
+                // The emit message was
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'The following installer icon with a size of width=undefined height=undefined does not meet the requirements and will be ignored.';
+                expect(actual).toEqual(expected);
+            });
         });
 
-        it('should detect icons with wrong size defined and throw an error with and sizes in message.', () => {
+        it('should detect icons with wrong size defined and emit info message.', () => {
             const icons = [
                 mockGetImageItem({
                     src: path.join('res', 'electron', 'cordova_512.png'),
@@ -866,14 +902,17 @@ describe('Testing prepare.js:', () => {
                 })
             ];
 
-            expect(() => {
-                checkIconsAttributes(icons);
-            }).toThrow(
-                new CordovaError('Size of icon does not match required size given: width=256 height=512. Please ensure that .png icon for is at least 512x512.')
-            );
+            icons.forEach(icon => {
+                checkIconsAttributes(icon);
+
+                // The emit message was.
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'The following icon with a size of width=256 height=512 does not meet the requirements and will be ignored.';
+                expect(actual).toEqual(expected);
+            });
         });
 
-        it('should detect icons with wrong size defined for the installer and throw an error with target and sizes in message.', () => {
+        it('should detect icons with wrong size defined for the installer and emit info message.', () => {
             const icons = [
                 mockGetImageItem({
                     src: path.join('res', 'electron', 'cordova_512.png'),
@@ -883,11 +922,14 @@ describe('Testing prepare.js:', () => {
                 })
             ];
 
-            expect(() => {
-                checkIconsAttributes(icons);
-            }).toThrow(
-                new CordovaError('Size of icon does not match required size for target: installer. Please ensure that .png icon for is at least 512x512.')
-            );
+            icons.forEach(icon => {
+                checkIconsAttributes(icon);
+
+                // The emit message was.
+                const actual = emitSpy.calls.argsFor(0)[1];
+                const expected = 'The following installer icon with a size of width=256 height=256 does not meet the requirements and will be ignored.';
+                expect(actual).toEqual(expected);
+            });
         });
     });
 
