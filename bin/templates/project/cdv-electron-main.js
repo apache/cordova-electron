@@ -42,14 +42,11 @@ function createWindow () {
     mainWindow = new BrowserWindow(browserWindowOpts);
 
     // Load a local HTML file or a remote URL.
-    const loadURLOpts = Object.assign({}, cdvElectronSettings.browserWindowInstance.loadURL.options);
-    if (!cdvElectronSettings.browserWindowInstance.loadURL.type || cdvElectronSettings.browserWindowInstance.loadURL.type === 'remote') {
-        mainWindow.loadURL(cdvElectronSettings.browserWindowInstance.loadURL.url, loadURLOpts);
-    } else if (cdvElectronSettings.browserWindowInstance.loadURL.type === 'local') {
-        mainWindow.loadURL(`file://${__dirname}/${cdvElectronSettings.browserWindowInstance.loadURL.url}`, loadURLOpts);
-    } else {
-        mainWindow.loadURL(`file://${__dirname}/index.html`);
-    }
+    const cdvUrl = cdvElectronSettings.browserWindowInstance.loadURL.url;
+    const loadUrl = cdvUrl.includes('://') ? cdvUrl : `file://${__dirname}/${cdvUrl}`;
+    const loadUrlOpts = Object.assign({}, cdvElectronSettings.browserWindowInstance.loadURL.options);
+
+    mainWindow.loadURL(loadUrl, loadUrlOpts);
 
     // Open the DevTools.
     if (cdvElectronSettings.browserWindow.webPreferences.devTools) {

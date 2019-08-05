@@ -28,19 +28,15 @@ class SettingJsonParser {
     }
 
     configure (config, options, userElectronSettingsPath) {
-        // Set loadURL path from config.xml.
-        const url = config.doc.find('content').attrib.src;
-        if (url) {
-            this.package.browserWindowInstance = {
-                loadURL: {
-                    url: url
-                }
-            };
+        // Set loadURL path from config.xml or fallback to index.html
+        const contentNode = config.doc.find('content');
+        const contentSrc = (contentNode && contentNode.attrib.src) || 'index.html';
 
-            if (!url.includes('://')) {
-                this.package.browserWindowInstance.loadURL.type = 'local';
+        this.package.browserWindowInstance = {
+            loadURL: {
+                url: contentSrc
             }
-        }
+        };
 
         // Apply user settings ontop of defaults.
         if (userElectronSettingsPath) {

@@ -192,7 +192,7 @@ describe('Testing SettingJsonParser.js:', () => {
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
             settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual(`{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}},"browserWindowInstance":{"loadURL":{"url":"index.html","type":"local"}}}`);
+            expect(settingsFile).toEqual(`{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}},"browserWindowInstance":{"loadURL":{"url":"index.html"}}}`);
 
             const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
             expect(settingsFormat).toEqual('utf8');

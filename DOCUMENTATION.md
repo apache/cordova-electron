@@ -251,6 +251,7 @@ Set the `nodeIntegration` flag property to `true`.  By default, this property fl
 Objects created with `new BrowserWindow` have instance methods, one of such is `loadURL`.
 
 By default, `loadURL` loads a local HTML file which should be defined in `config.xml` under `content` tag.
+The `content` tag value can be a remote address (e.g. `http://`) or a path to a local HTML file using the `file://` protocol.
 
 However, it is also possible to override this option in the Electron settings file.
 
@@ -258,13 +259,12 @@ However, it is also possible to override this option in the Electron settings fi
 
 #### Load a local HTML file using relative path to the `{project_dir}/www` folder
 
-To load a local HTML file, place your HTML file in the `{project_dir}/www` folder, set `loadURL.type` to `remote` and define desired to load HTML file in the Electron settings file.
+To load a local HTML file, place your HTML file in the `{project_dir}/www` folder and define desired to load HTML file in the Electron settings file.
 
  **Example**
 ```json
   "browserWindowInstance": {
     "loadURL": {
-      "type": "local",
       "url": "custom.html"
     }
   }
@@ -272,7 +272,7 @@ To load a local HTML file, place your HTML file in the `{project_dir}/www` folde
 
 #### Load a local HTML using full path
 
-To load a local HTML file using full path, place your HTML file in the anywhere you would like folder and define a full path to the HTML file in the Electron settings file.
+To load a local HTML file using full path, define a full path to the HTML file in the Electron settings file.
 
  **Example**
 ```json
@@ -283,17 +283,16 @@ To load a local HTML file using full path, place your HTML file in the anywhere 
   }
 ```
 
-> Do not set `loadURL.type` to `local` in this case. We interpret `loadURL.type` of `local` as a file path relative to the `{project_dir}/www` folder.
+
 
 #### Load a remote URL
 
-To load a remote URL, set `loadURL.type` to `remote` (optional) and define desired to load `url` in the Electron settings file.
+To load a remote address, define desired to load `url` in the Electron settings file.
 
  **Example**
 ```json
   "browserWindowInstance": {
     "loadURL": {
-      "type": "remote",
       "url": "https://cordova.apache.org"
     }
   }
@@ -305,7 +304,6 @@ It is also possible to supply an optional `options` object.
 ```json
   "browserWindowInstance": {
     "loadURL": {
-      "type": "remote",
       "url": "https://cordova.apache.org",
       "options": {
         "extraHeaders": "Content-Type: text/html"
