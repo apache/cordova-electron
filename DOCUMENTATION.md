@@ -253,13 +253,13 @@ Objects created with `new BrowserWindow` have instance methods, one of such is `
 By default, `loadURL` loads a local HTML file which should be defined in `config.xml` under `content` tag.
 The `content` tag value can be a remote address (e.g. `http://`) or a path to a local HTML file using the `file://` protocol.
 
-However, it is also possible to override this option in the Electron settings file.
+For Cordova Electron only: It is possible to override this option from the Electron settings file which additionally provides more options.
 
 > Learn more about [loadURL - BrowserWindow Instance Method](https://electronjs.org/docs/api/browser-window#winloadurlurl-options).
 
-#### Load a local HTML file using relative path to the `{project_dir}/www` folder
+#### Load a local HTML file using relative path from the `{project_dir}/www` directory
 
-To load a local HTML file, place your HTML file in the `{project_dir}/www` folder and define desired to load HTML file in the Electron settings file.
+To override the local HTML file, place your HTML file anywhere in the `{project_dir}/www` directory and define the path in the Electron settings file.
 
  **Example**
 ```json
@@ -272,7 +272,7 @@ To load a local HTML file, place your HTML file in the `{project_dir}/www` folde
 
 #### Load a local HTML using full path
 
-To load a local HTML file using full path, define a full path to the HTML file in the Electron settings file.
+To override the local HTML file using a full path, define the location of the local HTML file in the Electron settings file.
 
  **Example**
 ```json
@@ -287,7 +287,7 @@ To load a local HTML file using full path, define a full path to the HTML file i
 
 #### Load a remote URL
 
-To load a remote address, define desired to load `url` in the Electron settings file.
+To load a remote address, define the `url` in the Electron settings file.
 
  **Example**
 ```json
@@ -298,7 +298,7 @@ To load a remote address, define desired to load `url` in the Electron settings 
   }
 ```
 
-It is also possible to supply an optional `options` object.
+It is also possible to supply additional parameters using the [optional] `options` argument.
 
  **Example**
 ```json
