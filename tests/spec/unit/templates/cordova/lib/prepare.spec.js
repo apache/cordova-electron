@@ -157,6 +157,7 @@ class FakeParser {
     constructor () {
         fakeParserConstructorSpy();
     }
+
     write () {
         fakeParserWriteSpy();
         return this;
@@ -1073,7 +1074,7 @@ describe('Testing prepare.js:', () => {
                 width: 512,
                 height: 512
             });
-            const icons = [ app, installer ];
+            const icons = [app, installer];
 
             const actual = prepareIcons(icons);
             const expected = {
@@ -1111,7 +1112,7 @@ describe('Testing prepare.js:', () => {
                 width: 512,
                 height: 512
             });
-            const icons = [ app1, app2, installer, installer2 ];
+            const icons = [app1, app2, installer, installer2];
 
             let actual = prepareIcons(icons);
             let expected = {
@@ -1142,7 +1143,7 @@ describe('Testing prepare.js:', () => {
             const highRes40 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
             const highRes80 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
-            const icons = [ highRes10, highRes15, highRes20, highRes40, highRes80 ];
+            const icons = [highRes10, highRes15, highRes20, highRes40, highRes80];
 
             const actual = prepareIcons(icons);
             const expected = {
@@ -1174,7 +1175,7 @@ describe('Testing prepare.js:', () => {
             const highRes40 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
             const highRes80 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
-            const icons = [ installer, highRes10, highRes15, highRes20, highRes40, highRes80 ];
+            const icons = [installer, highRes10, highRes15, highRes20, highRes40, highRes80];
 
             const actual = prepareIcons(icons);
             const expected = {
@@ -1276,7 +1277,7 @@ describe('Testing prepare.js:', () => {
                 width: 512,
                 height: 512
             });
-            const icons = [ app, installer ];
+            const icons = [app, installer];
 
             const actual = findHighResIcons(icons);
             const expected = {
@@ -1306,7 +1307,7 @@ describe('Testing prepare.js:', () => {
                 width: 512,
                 height: 512
             });
-            const icons = [ app, installer, installer2 ];
+            const icons = [app, installer, installer2];
 
             const actual = findHighResIcons(icons);
             const expected = {
@@ -1323,7 +1324,7 @@ describe('Testing prepare.js:', () => {
             const highRes40 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
             const highRes80 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
-            const icons = [ highRes15, highRes20, highRes40, highRes80 ];
+            const icons = [highRes15, highRes20, highRes40, highRes80];
 
             expect(() => {
                 findHighResIcons(icons);
@@ -1339,7 +1340,7 @@ describe('Testing prepare.js:', () => {
             const highRes40 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
             const highRes80 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
-            const icons = [ highRes10, highRes15, highRes20, highRes40, highRes80 ];
+            const icons = [highRes10, highRes15, highRes20, highRes40, highRes80];
 
             const actual = findHighResIcons(icons);
             const expected = {
@@ -1369,7 +1370,7 @@ describe('Testing prepare.js:', () => {
             const highRes40 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
             const highRes80 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@8x.png') });
 
-            const icons = [ installer, highRes10, highRes15, highRes20, highRes40, highRes80 ];
+            const icons = [installer, highRes10, highRes15, highRes20, highRes40, highRes80];
 
             const actual = findHighResIcons(icons);
             const expected = {
@@ -1393,7 +1394,7 @@ describe('Testing prepare.js:', () => {
             const highRes40 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@4x.png') });
             const highRes80 = mockGetImageItem({ src: path.join('res', 'electron', 'cordova@8x.png'), target: 'installer' });
 
-            const icons = [ highRes10, highRes15, highRes20, highRes40, highRes80 ];
+            const icons = [highRes10, highRes15, highRes20, highRes40, highRes80];
 
             const actual = findHighResIcons(icons);
             const expected = {
@@ -1435,7 +1436,7 @@ describe('Testing prepare.js:', () => {
                 src: path.join('res', 'logo.png'),
                 platform: undefined
             });
-            let data = {
+            const data = {
                 customIcon: Object.assign(icon, { extension: '.png' }),
                 appIcon: undefined,
                 installerIcon: undefined,
@@ -1593,7 +1594,7 @@ describe('Testing prepare.js:', () => {
                 src: path.join('res', 'electron', 'splash.png'),
                 platform: 'electron'
             });
-            let data = {
+            const data = {
                 splashScreen: Object.assign(icon, { extension: '.png' })
             };
 

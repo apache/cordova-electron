@@ -37,7 +37,7 @@ describe('Parser class', () => {
         it('should have valid electron project and set path', () => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
 
             expect(parser.path).toBe(mockProjectPath);
         });
@@ -49,7 +49,7 @@ describe('Parser class', () => {
         it('should return a resolved promise.', () => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
             const actual = parser.update_from_config();
 
             expect(typeof actual).toBe(typeof Promise.resolve());
@@ -62,7 +62,7 @@ describe('Parser class', () => {
         it('should return the projects www dir path.', () => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
             const actual = parser.www_dir();
 
             expect(actual).toBe(path.join(mockProjectPath, 'www'));
@@ -90,7 +90,7 @@ describe('Parser class', () => {
                 mergeAndUpdateDir: mergeAndUpdateDirSpy
             });
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
 
             const cordovaProject = {
                 root: 'mock',
@@ -113,12 +113,12 @@ describe('Parser class', () => {
             let expectedEmit = 'Found "merges/electron" folder. Copying its contents into the electron project.';
             expect(actualEmit).toBe(expectedEmit);
 
-            let expectedSourceDirs = [
+            const expectedSourceDirs = [
                 'www',
                 path.join('..', mockProjectPath, 'platform_www'),
                 path.join('merges', 'electron')
             ];
-            let expectedTargetDir = path.join('..', mockProjectPath, 'www');
+            const expectedTargetDir = path.join('..', mockProjectPath, 'www');
             actualEmit = emitSpy.calls.argsFor(1)[1];
             expectedEmit = `Merging and updating files from [${expectedSourceDirs.join(', ')}] to ${expectedTargetDir}`;
             expect(actualEmit).toBe(expectedEmit);
@@ -144,7 +144,7 @@ describe('Parser class', () => {
                 mergeAndUpdateDir: mergeAndUpdateDirSpy
             });
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
 
             const cordovaProject = {
                 root: 'mock',
@@ -167,11 +167,11 @@ describe('Parser class', () => {
             let expectedEmit = 'Found "merges/electron" folder. Copying its contents into the electron project.';
             expect(actualEmit).not.toBe(expectedEmit);
 
-            let expectedSourceDirs = [
+            const expectedSourceDirs = [
                 'www',
                 path.join('..', mockProjectPath, 'platform_www')
             ];
-            let expectedTargetDir = path.join('..', mockProjectPath, 'www');
+            const expectedTargetDir = path.join('..', mockProjectPath, 'www');
             actualEmit = emitSpy.calls.argsFor(0)[1];
             expectedEmit = `Merging and updating files from [${expectedSourceDirs.join(', ')}] to ${expectedTargetDir}`;
             expect(actualEmit).toBe(expectedEmit);
@@ -186,7 +186,7 @@ describe('Parser class', () => {
         it('should return the projects config.xml file path.', () => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
             const actual = parser.config_xml();
 
             expect(actual).toBe(path.join(mockProjectPath, 'config.xml'));
@@ -204,7 +204,7 @@ describe('Parser class', () => {
 
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
 
-            let parser = new Parser(mockProjectPath);
+            const parser = new Parser(mockProjectPath);
 
             parser.update_project().then(() => {
                 expect(fsCopySyncSpy).toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe('Parser class', () => {
             logFileOp(msg);
 
             // The emit message was.
-            let actualEmit = emitSpy.calls.argsFor(0)[1];
+            const actualEmit = emitSpy.calls.argsFor(0)[1];
             expect(emitSpy).toHaveBeenCalled();
             expect(actualEmit).toBe(`  ${msg}`);
         });

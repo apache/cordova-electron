@@ -58,7 +58,7 @@ class Parser {
         const platform_www = path.join(this.path, 'platform_www');
         const my_www = this.www_dir();
         // add cordova www and platform_www to sourceDirs
-        let sourceDirs = [
+        const sourceDirs = [
             path.relative(cordovaProject.root, cordovaProject.locations.www),
             path.relative(cordovaProject.root, platform_www)
         ];

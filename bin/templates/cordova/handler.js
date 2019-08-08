@@ -101,7 +101,7 @@ module.exports = {
             events.emit('verbose', 'resource-file.uninstall is not supported for electron');
         }
     },
-    'framework': {
+    framework: {
         install: (obj, plugin_dir, project_dir, plugin_id, options) => {
             events.emit('verbose', 'framework.install is not supported for electron');
         },
