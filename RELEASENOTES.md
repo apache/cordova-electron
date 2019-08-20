@@ -19,6 +19,14 @@
 
 ## Release Notes for Cordova Electron
 
+### 1.1.1 (Aug 20, 2019)
+
+* [GH-94](https://github.com/apache/cordova-electron/pull/94) chore: rebuilt `package-lock.json` for audit fix
+* [GH-79](https://github.com/apache/cordova-electron/pull/79) fix: filter icons only matching requirements
+* [GH-89](https://github.com/apache/cordova-electron/pull/89) fix: prepare missing dependencies failure
+* [GH-86](https://github.com/apache/cordova-electron/pull/86) refactor: improve create test spec speed
+* [GH-85](https://github.com/apache/cordova-electron/pull/85) fix: use `spyOn` for process global var
+
 ### 1.1.0 (Jun 28, 2019)
 
 * [GH-77](https://github.com/apache/cordova-electron/pull/77) fix: display correct package version in CLI
