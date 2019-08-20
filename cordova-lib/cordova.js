@@ -1,5 +1,5 @@
 // Platform: electron
-// 4f6abd672e0362767fd4b6fe0b477b1e4c25e1e1
+// 74fdba8b327b2a13b4366dd141b52def96d4cb56
 /*
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -8,9 +8,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
      http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -19,9 +19,8 @@
  under the License.
 */
 ;(function() {
-var PLATFORM_VERSION_BUILD_LABEL = '1.1.0';
+var PLATFORM_VERSION_BUILD_LABEL = '1.1.1';
 // file: src/scripts/require.js
-
 var require;
 var define;
 
@@ -863,7 +862,7 @@ module.exports = channel;
 
 });
 
-// file: /Users/erisu/release/cordova/cordova-electron/cordova-js-src/confighelper.js
+// file: ../cordova-electron/cordova-js-src/confighelper.js
 define("cordova/confighelper", function(require, exports, module) {
 
 let config;
@@ -936,7 +935,7 @@ exports.readConfig = readConfig;
 
 });
 
-// file: /Users/erisu/release/cordova/cordova-electron/cordova-js-src/exec.js
+// file: ../cordova-electron/cordova-js-src/exec.js
 define("cordova/exec", function(require, exports, module) {
 
 /* global require, module, console */
@@ -1284,7 +1283,7 @@ exports.reset();
 
 });
 
-// file: /Users/erisu/release/cordova/cordova-electron/cordova-js-src/platform.js
+// file: ../cordova-electron/cordova-js-src/platform.js
 define("cordova/platform", function(require, exports, module) {
 
 module.exports = {
@@ -1607,7 +1606,6 @@ utils.alert = function (msg) {
 
 window.cordova = require('cordova');
 // file: src/scripts/bootstrap.js
-
 require('cordova/init');
 
 })();
