@@ -178,8 +178,8 @@ class FakePackageJsonParser extends FakeParser {
 }
 
 class FakeSettingJsonParser extends FakeParser {
-    configure (options, userElectronFile) {
-        fakeSettingJsonParserConfigureSpy(options, userElectronFile);
+    configure (configXmlParser, options, userElectronFile) {
+        fakeSettingJsonParserConfigureSpy(configXmlParser, options, userElectronFile);
         return this;
     }
 }
@@ -272,7 +272,7 @@ describe('Testing prepare.js:', () => {
             });
         });
 
-        it('should get user supplied Electron settings overide path from config.xml but iggnore for incorrect path.', () => {
+        it('should get user supplied Electron settings overide path from config.xml but ignore for incorrect path.', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
@@ -358,7 +358,7 @@ describe('Testing prepare.js:', () => {
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
-                const actual = fakeSettingJsonParserConfigureSpy.calls.argsFor(0)[1];
+                const actual = fakeSettingJsonParserConfigureSpy.calls.argsFor(0)[2];
                 expect(actual).toContain('pass_test_path');
             });
         });

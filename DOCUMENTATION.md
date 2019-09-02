@@ -174,13 +174,14 @@ Working with a Cordova project, it is recommended to create an Electron settings
 </platform>
 ```
 
-To override or set any BrowserWindow options, in this file the options are added to the  `browserWindow` property.
+To override or set any BrowserWindow options or supply arguments to the loadURL method (BrowserWindow instance method), in this file the options are added to the `browserWindow` or `browserWindowInstance` property accordingly.
 
 **Example `res/electron/settings.json`:**
 
 ```json
 {
-    "browserWindow": { ... }
+    "browserWindow": { ... },
+    "browserWindowInstance": { ... }
 }
 ```
 
@@ -244,6 +245,74 @@ Set the `nodeIntegration` flag property to `true`.  By default, this property fl
     }
 }
 ```
+
+### Customizing BrowserWindow Instance Method
+
+Objects created with `new BrowserWindow` have instance methods, one of such is `loadURL`.
+
+By default, `loadURL` loads a local HTML file which should be defined in `config.xml` under `content` tag.
+The `content` tag value can be a remote address (e.g. `http://`) or a path to a local HTML file using the `file://` protocol.
+
+For Cordova Electron only: It is possible to override this option from the Electron settings file which additionally provides more options.
+
+> Learn more about [loadURL - BrowserWindow Instance Method](https://electronjs.org/docs/api/browser-window#winloadurlurl-options).
+
+#### Load a local HTML file using relative path from the `{project_dir}/www` directory
+
+To override the local HTML file, place your HTML file anywhere in the `{project_dir}/www` directory and define the path in the Electron settings file.
+
+ **Example**
+```json
+  "browserWindowInstance": {
+    "loadURL": {
+      "url": "custom.html"
+    }
+  }
+```
+
+#### Load a local HTML using full path
+
+To override the local HTML file using a full path, define the location of the local HTML file in the Electron settings file.
+
+ **Example**
+```json
+  "browserWindowInstance": {
+    "loadURL": {
+      "url": "file://{full_path}/index.html"
+    }
+  }
+```
+
+
+
+#### Load a remote URL
+
+To load a remote address, define the `url` in the Electron settings file.
+
+ **Example**
+```json
+  "browserWindowInstance": {
+    "loadURL": {
+      "url": "https://cordova.apache.org"
+    }
+  }
+```
+
+It is also possible to supply additional parameters using the [optional] `options` argument.
+
+ **Example**
+```json
+  "browserWindowInstance": {
+    "loadURL": {
+      "url": "https://cordova.apache.org",
+      "options": {
+        "extraHeaders": "Content-Type: text/html"
+      }
+    }
+  }
+```
+
+> For more information refer to [Electron documentation](https://electronjs.org/docs/api/browser-window#winloadurlurl-options).
 
 ## Customizing the Electron's Main Process
 
