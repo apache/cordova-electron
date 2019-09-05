@@ -19,16 +19,8 @@
     under the License.
 */
 
-let VERSION = 'version undefined';
+const CordovaElectron = require('cordova-electron');
 
-try {
-    const platformPkgPath = require.resolve('cordova-electron/package.json');
-    const platformPkg = require(platformPkgPath) || null;
-    VERSION = platformPkg.version || VERSION;
-} catch (e) {
-    // Do nothing.
-}
+module.exports.version = CordovaElectron.getVersion();
 
-module.exports.version = VERSION;
-
-if (!module.parent) console.log(VERSION);
+if (!module.parent) console.log(CordovaElectron.getVersion());

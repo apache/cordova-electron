@@ -107,17 +107,23 @@ describe('Api class', () => {
         });
     });
 
+    describe('module.exports.getVersion method', () => {
+        it('should return version if coming from installed platform.', () => {
+            const customRequire = () => ({ version: '1.0.0' });
+            customRequire.resolve = () => true;
+            Api.__set__('require', customRequire);
+
+            const actual = Api.getVersion();
+            const expected = '1.0.0';
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('getPlatformInfo method', () => {
-        beforeEach(() => {
-            // Mocking require that is called to get version.
-            Api.__set__('require', () => '1.0.0');
-        });
-
-        afterEach(() => {
-            Api.__set__('require', apiRequire);
-        });
-
         it('should return object containing platform information', () => {
+            const _pkgVersion = process.env.npm_package_version;
+            process.env.npm_package_version = '1.0.0';
+
             const actual = api.getPlatformInfo();
             const expected = {
                 locations: mockExpectedLocations,
@@ -127,6 +133,8 @@ describe('Api class', () => {
                 projectConfig: undefined
             };
             expect(actual).toEqual(expected);
+
+            process.env.npm_package_version = _pkgVersion;
         });
     });
 

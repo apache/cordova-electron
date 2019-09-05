@@ -84,7 +84,7 @@ class Api {
             locations: this.locations,
             root: this.root,
             name: this.platform,
-            version: require('./version'),
+            version: module.exports.getVersion(),
             projectConfig: this.config
         };
     }
@@ -359,3 +359,15 @@ Api.createPlatform = (dest, config, options, events) => {
 };
 
 module.exports = Api;
+module.exports.getVersion = () => {
+    try {
+        const platformPkgPath = require.resolve('cordova-electron/package.json');
+        const platformPkg = require(platformPkgPath);
+        return platformPkg.version;
+    } catch (e) {
+        // It should not reach here unless coming from `npm t`
+    }
+
+    // If we reach here, its coming from `npm t`
+    return process.env.npm_package_version || 'version undefined';
+};

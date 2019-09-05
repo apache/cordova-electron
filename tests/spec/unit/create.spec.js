@@ -20,34 +20,10 @@
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
-const execa = require('execa');
 
 const cordova_bin = path.join(__dirname, '../../../bin');// is this the same on all platforms?
 const tmpDir = path.join(__dirname, '../../../temp');
-const createScriptPath = path.join(cordova_bin, 'create');
 const create = rewire(path.join(cordova_bin, 'lib', 'create'));
-
-function createAndVerify (projectname, projectid) {
-    // remove existing folder
-    fs.removeSync(tmpDir);
-    fs.ensureDirSync(tmpDir);
-
-    const tempProjectDir = path.join(tmpDir, projectname);
-    const projectCreateProcess = execa.sync(createScriptPath, [tempProjectDir, projectid, projectname]);
-    expect(projectCreateProcess.exitCode).toBe(0);
-
-    // created project has scripts in the cordova folder
-    // build, clean, log, run, version
-    const tempCordovaScriptsPath = path.join(tempProjectDir, 'cordova');
-    expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'build'))).toBe(true);
-    expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'clean'))).toBe(true);
-    expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'log'))).toBe(true);
-    expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'run'))).toBe(true);
-    expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'version'))).toBe(true);
-
-    // clean-up
-    fs.removeSync(tmpDir);
-}
 
 function createAndValidateProjectDirName (projectname, projectid) {
     // remove existing folder
@@ -74,17 +50,6 @@ function createAndValidateProjectDirName (projectname, projectid) {
 }
 
 describe('create', () => {
-    it('has a create script in bin/cordova', () => {
-        expect(fs.existsSync(createScriptPath)).toBe(true);
-    });
-
-    it('create project and check for bin files', () => {
-        const projectname = 'testcreate';
-        const projectid = 'com.test.app1';
-
-        createAndVerify(projectname, projectid);
-    });
-
     it('create project with ascii name, no spaces', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
