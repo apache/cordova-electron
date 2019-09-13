@@ -236,8 +236,8 @@ describe('Api class', () => {
                     itemType: 'js-module',
                     name: 'testmodule',
                     src: 'www/plugin.js',
-                    clobbers: [ 'ModulePlugin.clobbers' ],
-                    merges: [ 'ModulePlugin.merges' ],
+                    clobbers: ['ModulePlugin.clobbers'],
+                    merges: ['ModulePlugin.merges'],
                     runs: true
                 }];
             },
@@ -369,7 +369,7 @@ describe('Api class', () => {
 
         it('asset plugin', () => {
             fs.ensureDirSync(path.resolve(testProjectDir, 'www', 'js'));
-            writeJson(path.resolve(testProjectDir, 'www', 'js', 'sample.json'), { 'title': 'sample' });
+            writeJson(path.resolve(testProjectDir, 'www', 'js', 'sample.json'), { title: 'sample' });
             return api.removePlugin({
                 id: 'empty_plugin',
                 dir: pluginFixture,
@@ -410,8 +410,8 @@ describe('Api class', () => {
                         itemType: 'js-module',
                         name: 'testmodule',
                         src: 'www/plugin.js',
-                        clobbers: [ 'ModulePlugin.clobbers' ],
-                        merges: [ 'ModulePlugin.merges' ],
+                        clobbers: ['ModulePlugin.clobbers'],
+                        merges: ['ModulePlugin.merges'],
                         runs: true
                     }];
                 },

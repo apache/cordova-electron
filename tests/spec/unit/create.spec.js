@@ -36,7 +36,7 @@ function createAndVerify (projectname, projectid) {
     fs.ensureDirSync(tmpDir);
 
     // create the project
-    let command = util.format('"%s" "%s/%s" "%s" "%s"', createScriptPath, tmpDir, projectname, projectid, projectname);
+    const command = util.format('"%s" "%s/%s" "%s" "%s"', createScriptPath, tmpDir, projectname, projectid, projectname);
 
     return_code = shell.exec(command).code;
     expect(return_code).toBe(0);

@@ -146,7 +146,7 @@ describe('PackageJsonParser class', () => {
 
     it('should not warn that cordova-electron is defined as dev dependency.', () => {
         // Fix defaultMockProjectPackageJson where cordova-* is devDependency
-        let mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
         mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
         mockProjectPackageJson.dependencies = {};
 
@@ -156,7 +156,7 @@ describe('PackageJsonParser class', () => {
     });
 
     it('should not set package dependencies when project dependencies is missing.', () => {
-        let mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
         mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
         delete mockProjectPackageJson.dependencies;
 

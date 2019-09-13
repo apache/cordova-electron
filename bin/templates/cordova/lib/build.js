@@ -139,7 +139,7 @@ class ElectronBuilder {
              * If the arch value is identified, we will update each default package with the correct arch.
              */
             const platformDefaults = this.fetchPlatformDefaults(PLATFORM_MAPPING[platform]);
-            let platformTargetPackages = platformDefaults.config[platform].target;
+            const platformTargetPackages = platformDefaults.config[platform].target;
 
             if (platformConfigs.arch) {
                 platformTargetPackages.forEach((pkg, i) => {
@@ -207,7 +207,7 @@ class ElectronBuilder {
             ]
         };
 
-        for (let option in platformConfigs) {
+        for (const option in platformConfigs) {
             if (
                 PLATFORM_TOP_LEVEL_OPTIONS['allPlatforms'].includes(option)
                 || PLATFORM_TOP_LEVEL_OPTIONS[platform].includes(option)

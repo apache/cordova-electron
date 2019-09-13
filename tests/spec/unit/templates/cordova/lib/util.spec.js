@@ -22,14 +22,14 @@ const util = require('../../../../../../bin/templates/cordova/lib/util');
 describe('Testing util.js:', () => {
     describe('deepMerge method', () => {
         it('should deep merge objects and arrays.', () => {
-            const mergeTo = { foo: 'bar', abc: [ 1, 2, 3 ] };
-            const mergeWith = { food: 'candy', abc: [ 5 ] };
+            const mergeTo = { foo: 'bar', abc: [1, 2, 3] };
+            const mergeWith = { food: 'candy', abc: [5] };
 
             const actual = util.deepMerge(mergeTo, mergeWith);
             const expected = {
                 foo: 'bar',
                 food: 'candy',
-                abc: [ 1, 2, 3, 5 ]
+                abc: [1, 2, 3, 5]
             };
 
             expect(actual).toEqual(expected);
