@@ -92,7 +92,7 @@ describe('Testing ManifestJsonParser.js:', () => {
                 display: 'standalone',
                 orientation: 'any',
                 start_url: undefined,
-                icons: [ ]
+                icons: []
             };
 
             expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
@@ -112,7 +112,7 @@ describe('Testing ManifestJsonParser.js:', () => {
                 version: 'whatever',
                 description: 'A sample Apache Cordova application.',
                 author: 'Cordova Team',
-                icons: [ { src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' } ]
+                icons: [{ src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' }]
             };
             expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
         });
@@ -132,7 +132,7 @@ describe('Testing ManifestJsonParser.js:', () => {
                 version: 'whatever',
                 description: 'A sample Apache Cordova application.',
                 author: 'Cordova Team',
-                icons: [ ]
+                icons: []
             };
             expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
         });
@@ -176,7 +176,7 @@ describe('Testing ManifestJsonParser.js:', () => {
                 background_color: '#FFF',
                 display: 'standalone',
                 orientation: 'any',
-                icons: [ ]
+                icons: []
             };
 
             const manifestPath = writeFileSyncSpy.calls.argsFor(0)[0];
@@ -217,7 +217,7 @@ describe('Testing ManifestJsonParser.js:', () => {
                 version: 'whatever',
                 description: 'A sample Apache Cordova application.',
                 author: 'Cordova Team',
-                icons: [ { src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' } ]
+                icons: [{ src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' }]
             };
 
             const manifestPath = writeFileSyncSpy.calls.argsFor(0)[0];

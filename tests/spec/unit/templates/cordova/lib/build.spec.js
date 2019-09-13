@@ -381,9 +381,9 @@ describe('Testing build.js:', () => {
         it('should set configureUserBuildSettings for all 3 platforms without package.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
-                mac: { arch: [ 'arch1', 'arch2' ], signing: { debug: 'debug', release: 'release', store: 'store' } },
-                windows: { arch: [ 'arch1', 'arch2' ], signing: { debug: 'debug', release: 'release' } },
-                linux: { arch: [ 'arch1', 'arch2' ] }
+                mac: { arch: ['arch1', 'arch2'], signing: { debug: 'debug', release: 'release', store: 'store' } },
+                windows: { arch: ['arch1', 'arch2'], signing: { debug: 'debug', release: 'release' } },
+                linux: { arch: ['arch1', 'arch2'] }
             };
 
             const buildConfig = {
@@ -425,7 +425,7 @@ describe('Testing build.js:', () => {
                         target: [
                             {
                                 target: 'tar.gz',
-                                arch: [ 'arch1', 'arch2' ]
+                                arch: ['arch1', 'arch2']
                             }
                         ]
                     },
@@ -435,11 +435,11 @@ describe('Testing build.js:', () => {
                         target: [
                             {
                                 target: 'dmg',
-                                arch: [ 'arch1', 'arch2' ]
+                                arch: ['arch1', 'arch2']
                             },
                             {
                                 target: 'zip',
-                                arch: [ 'arch1', 'arch2' ]
+                                arch: ['arch1', 'arch2']
                             }
                         ]
                     },
@@ -448,7 +448,7 @@ describe('Testing build.js:', () => {
                         target: [
                             {
                                 target: 'nsis',
-                                arch: [ 'arch1', 'arch2' ]
+                                arch: ['arch1', 'arch2']
                             }
                         ]
                     }
@@ -520,16 +520,16 @@ describe('Testing build.js:', () => {
 
             const expectedMac = {
                 target: [
-                    { target: 'package', arch: [ 'x64' ] },
-                    { target: 'package2', arch: [ 'x64' ] }
+                    { target: 'package', arch: ['x64'] },
+                    { target: 'package2', arch: ['x64'] }
                 ],
                 type: '${BUILD_TYPE}',
                 icon: '${APP_INSTALLER_ICON}'
             };
             const expectedLinux = {
                 target: [
-                    { target: 'package', arch: [ 'x64' ] },
-                    { target: 'package2', arch: [ 'x64' ] }
+                    { target: 'package', arch: ['x64'] },
+                    { target: 'package2', arch: ['x64'] }
                 ],
                 icon: '${APP_INSTALLER_ICON}'
             };
@@ -1666,7 +1666,7 @@ describe('Testing build.js:', () => {
         it('should have called configure and build.', () => {
             const api = new Api(null);
             const platformConfig = {
-                mac: { arch: [ 'x64' ] }
+                mac: { arch: ['x64'] }
             };
             const buildConfig = {
                 electron: platformConfig,
@@ -1735,7 +1735,7 @@ describe('Testing build.js:', () => {
 
     describe('Module exports help', () => {
         it('should display help usage.', () => {
-            let help = build.__get__('module.exports.help');
+            const help = build.__get__('module.exports.help');
 
             const argv = { binPath: 'bin' };
 

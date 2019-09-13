@@ -130,7 +130,7 @@ function prepareSplashScreens (splashScreens) {
 
     // iterate over remaining icon elements to find the icons for the app and installer
     for (let i = 0; i < splashScreens.length; i++) {
-        let image = splashScreens[i];
+        const image = splashScreens[i];
         image.extension = path.extname(image.src);
 
         splashScreen = splashScreen ? chooseOne(splashScreen, image) : image;
@@ -220,7 +220,7 @@ function prepareIcons (icons) {
     // iterate over remaining icon elements to find the icons for the app and installer
     for (let i = 0; i < remainingIcons.length; i++) {
         // if (fs.existsSync(icons[i].src)) {
-        let icon = remainingIcons[i];
+        const icon = remainingIcons[i];
         const size = icon.width || icon.height;
         icon.extension = path.extname(icon.src);
 
@@ -254,7 +254,7 @@ function findHighResIcons (icons) {
             : false
     );
 
-    let highResIcons = icons.filter(icon => {
+    const highResIcons = icons.filter(icon => {
         if (icon.src.includes('@')) {
             const extension = path.extname(icon.src);
             const suffix = icon.src.split('@').pop().slice(0, -extension.length);
@@ -291,7 +291,7 @@ function findHighResIcons (icons) {
  * Map resources to the appropriate target directory and name.
  */
 function createResourceMap (cordovaProject, locations, resources) {
-    let resourceMap = [];
+    const resourceMap = [];
 
     for (const key in resources) {
         const resource = resources[key];
@@ -339,7 +339,7 @@ function createResourceMap (cordovaProject, locations, resources) {
  * Get a map containing resources of a specified name (or directory) to the target directory.
  */
 function mapResources (rootDir, sourcePath, targetPath) {
-    let pathMap = {};
+    const pathMap = {};
     shell.ls(path.join(rootDir, sourcePath)).forEach(() => {
         pathMap[sourcePath] = targetPath;
     });

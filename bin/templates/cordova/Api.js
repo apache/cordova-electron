@@ -237,15 +237,15 @@ class Api {
      *   should be written to.
      */
     _addModulesInfo (platform, plugin, targetDir) {
-        let installedModules = this._platformJson.root.modules || [];
+        const installedModules = this._platformJson.root.modules || [];
 
         const installedPaths = installedModules.map((installedModule) => installedModule.file);
 
-        let modulesToInstall = plugin.getJsModules(platform)
+        const modulesToInstall = plugin.getJsModules(platform)
             .filter((moduleToInstall) => installedPaths.indexOf(moduleToInstall.file) === -1)
             .map((moduleToInstall) => {
                 const moduleName = plugin.id + '.' + (moduleToInstall.name || moduleToInstall.src.match(/([^\/]+)\.js/)[1]);
-                let obj = {
+                const obj = {
                     file: ['plugins', plugin.id, moduleToInstall.src].join('/'),
                     id: moduleName,
                     pluginId: plugin.id
@@ -348,8 +348,8 @@ Api.updatePlatform = () => Promise.resolve();
 Api.createPlatform = function (dest, config, options, events) {
     events = setupEvents(events);
 
-    let name = config ? config.name() : 'HelloCordova';
-    let id = config ? config.packageName() : 'io.cordova.hellocordova';
+    const name = config ? config.name() : 'HelloCordova';
+    const id = config ? config.packageName() : 'io.cordova.hellocordova';
 
     try {
         // we create the project using our scripts in this platform
