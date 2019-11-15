@@ -39,13 +39,11 @@ const execProxy = require('cordova/exec/proxy');
  * @param {String[]} [args]     Zero or more arguments to pass to the method
  */
 module.exports = function (success, fail, service, action, args) {
-
     var proxy = execProxy.get(service, action);
 
     args = args || [];
 
     if (proxy) {
-
         var callbackId = service + cordova.callbackId++;
 
         if (typeof success === 'function' || typeof fail === 'function') {
@@ -92,12 +90,10 @@ module.exports = function (success, fail, service, action, args) {
                 });
             };
             proxy(onSuccess, onError, args);
-
         } catch (e) {
             console.log('Exception calling native with command :: ' + service + ' :: ' + action + ' ::exception=' + e);
         }
     } else {
-
         console.log('Error: exec proxy not found for :: ' + service + ' :: ' + action);
 
         if (typeof fail === 'function') {

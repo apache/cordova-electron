@@ -174,9 +174,9 @@ class Api {
                     .remove_plugin_changes(plugin, /* is_top_level= */true)
                     .save_all();
 
-                var targetDir = uninstallOptions.usePlatformWww ?
-                    this.getPlatformInfo().locations.platformWww :
-                    this.getPlatformInfo().locations.www;
+                var targetDir = uninstallOptions.usePlatformWww
+                    ? this.getPlatformInfo().locations.platformWww
+                    : this.getPlatformInfo().locations.www;
 
                 this._removeModulesInfo(plugin, targetDir);
                 // Remove stale plugin directory
@@ -192,9 +192,9 @@ class Api {
             if (!installer) {
                 this.events.emit('warn', `Unrecognized type "${type}"`);
             } else {
-                const wwwDest = options.usePlatformWww ?
-                    this.getPlatformInfo().locations.platformWww :
-                    this.handler.www_dir(this.root);
+                const wwwDest = options.usePlatformWww
+                    ? this.getPlatformInfo().locations.platformWww
+                    : this.handler.www_dir(this.root);
                 if (type === 'asset') {
                     installer.install(item, plugin_dir, wwwDest);
                 } else if (type === 'js-module') {
@@ -213,16 +213,15 @@ class Api {
             if (!installer) {
                 this.events.emit('warn', `electron plugin uninstall: unrecognized type, skipping : ${type}`);
             } else {
-                const wwwDest = options.usePlatformWww ?
-                    this.getPlatformInfo().locations.platformWww :
-                    this.handler.www_dir(this.root);
+                const wwwDest = options.usePlatformWww
+                    ? this.getPlatformInfo().locations.platformWww
+                    : this.handler.www_dir(this.root);
 
                 if (['asset', 'js-module'].indexOf(type) > -1) {
                     return installer.uninstall(item, wwwDest, plugin_id);
                 } else {
                     return installer.uninstall(item, this.root, plugin_id, options, project);
                 }
-
             }
         };
     }

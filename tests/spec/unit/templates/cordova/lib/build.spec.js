@@ -1750,7 +1750,6 @@ describe('Testing build.js:', () => {
             expect(actual).toContain('--debug');
             expect(actual).toContain('--release');
             expect(actual).toContain('--nobuild');
-
         });
     });
 });

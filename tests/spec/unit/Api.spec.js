@@ -485,7 +485,6 @@ describe('Api class', () => {
                 fail('Unwanted code branch: ' + error);
             }
         ));
-
     });
 
     describe('updatePlatform method', () => {
@@ -522,7 +521,7 @@ describe('Api class', () => {
         it('should emit createPlatform not callable when error occurs.', () => {
             Api.__set__('require', () => {
                 return {
-                    createProject: () => { throw 'Some Random Error'; }
+                    createProject: () => { throw new Error('Some Random Error'); }
                 };
             });
 
