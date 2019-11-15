@@ -234,6 +234,5 @@ describe('Testing ManifestJsonParser.js:', () => {
             const manifestFormat = writeFileSyncSpy.calls.argsFor(0)[2];
             expect(manifestFormat).toEqual('utf8');
         });
-
     });
 });

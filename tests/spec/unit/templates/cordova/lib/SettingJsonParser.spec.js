@@ -159,7 +159,6 @@ describe('Testing SettingJsonParser.js:', () => {
 
             expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(true);
             expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(false);
-
         });
 
         it('should write provided data.', () => {

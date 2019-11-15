@@ -17,8 +17,8 @@
     "apache"
   ],
   "scripts": {
-    "eslint": "eslint bin tests",
-    "test": "npm run eslint && npm run test:coverage",
+    "lint": "eslint .",
+    "test": "npm run lint && npm run test:coverage",
     "test:unit": "jasmine --config=tests/spec/unit.json",
     "test:coverage": "nyc jasmine --config=tests/spec/coverage.json"
   },
@@ -31,13 +31,7 @@
     "shelljs": "^0.5.3"
   },
   "devDependencies": {
-    "eslint": "^6.1.0",
-    "eslint-config-semistandard": "^14.0.0",
-    "eslint-config-standard": "^13.0.1",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-node": "^9.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.0",
+    "@cordova/eslint-config": "^2.0.0",
     "jasmine": "^3.4.0",
     "nyc": "^14.1.1",
     "rewire": "^4.0.1"

@@ -23,9 +23,9 @@ let config;
 
 function Config (xhr) {
     function loadPreferences (xhr) {
-        let parser = new DOMParser();
-        let doc = parser.parseFromString(xhr.responseText, 'application/xml');
-        let preferences = doc.getElementsByTagName('preference');
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xhr.responseText, 'application/xml');
+        const preferences = doc.getElementsByTagName('preference');
 
         return Array.prototype.slice.call(preferences);
     }
@@ -37,7 +37,7 @@ function Config (xhr) {
 function readConfig (success, error) {
     var xhr;
 
-    if (typeof config != 'undefined') {
+    if (typeof config !== 'undefined') {
         success(config);
     }
 

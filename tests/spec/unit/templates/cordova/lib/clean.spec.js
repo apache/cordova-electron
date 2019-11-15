@@ -88,7 +88,7 @@ describe('Clean', () => {
             clean.__set__('fs', {
                 existsSync: jasmine.createSpy('existsSync').and.returnValue(true),
                 removeSync: () => {
-                    throw 'Fake Error';
+                    throw new Error('Fake Error');
                 }
             });
 

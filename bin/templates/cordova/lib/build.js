@@ -209,8 +209,8 @@ class ElectronBuilder {
 
         for (const option in platformConfigs) {
             if (
-                PLATFORM_TOP_LEVEL_OPTIONS['allPlatforms'].includes(option)
-                || PLATFORM_TOP_LEVEL_OPTIONS[platform].includes(option)
+                PLATFORM_TOP_LEVEL_OPTIONS['allPlatforms'].includes(option) ||
+                PLATFORM_TOP_LEVEL_OPTIONS[platform].includes(option)
             ) {
                 userBuildSettings.config[platform][option] = platformConfigs[option];
             }
@@ -242,9 +242,9 @@ class ElectronBuilder {
 
     __validateUserPlatformBuildSettings (platformConfigs) {
         return !!(
-            platformConfigs.package
-            || platformConfigs.arch
-            || platformConfigs.signing
+            platformConfigs.package ||
+            platformConfigs.arch ||
+            platformConfigs.signing
         );
     }
 

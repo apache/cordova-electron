@@ -1431,7 +1431,6 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should map custom icon to installer and app icon locations', () => {
-
             const icon = mockGetImageItem({
                 src: path.join('res', 'logo.png'),
                 platform: undefined
@@ -1589,7 +1588,6 @@ describe('Testing prepare.js:', () => {
         });
 
         it('should map splashScreen images to the .cdv folder in the platform/www', () => {
-
             const icon = mockGetImageItem({
                 src: path.join('res', 'electron', 'splash.png'),
                 platform: 'electron'
@@ -1658,7 +1656,6 @@ describe('Testing prepare.js:', () => {
             expect(shellLsSpy).toHaveBeenCalled();
             expect(expected).toEqual(actual);
         });
-
     });
 
     describe('copyResources method', () => {

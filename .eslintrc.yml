@@ -16,12 +16,11 @@
 # under the License.
 
 root: true
-extends: semistandard
-rules:
-  indent:
-    - error
-    - 4
-  camelcase: off
-  padded-blocks: off
-  operator-linebreak: off
-  no-throw-literal: off
+extends: '@cordova/eslint-config/node'
+
+overrides:
+  - files: [tests/**/*.js]
+    extends: '@cordova/eslint-config/node-tests'
+
+  - files: [cordova-js-src/**/*.js]
+    extends: '@cordova/eslint-config/browser'
