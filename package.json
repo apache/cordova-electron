@@ -4,17 +4,14 @@
   "description": "electron apps as a target for cordova developers",
   "main": "bin/templates/cordova/Api.js",
   "bin": "bin/create",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/apache/cordova-electron"
-  },
-  "bugs": {
-    "url": "https://github.com/apache/cordova-electron/issues"
-  },
+  "repository": "github:apache/cordova-electron",
+  "bugs": "https://github.com/apache/cordova-electron/issues",
   "kewords": [
+    "apache",
     "cordova",
-    "electron",
-    "apache"
+    "cordova:platform",
+    "ecosystem:cordova",
+    "electron"
   ],
   "scripts": {
     "lint": "eslint .",
