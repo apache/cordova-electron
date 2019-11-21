@@ -1607,7 +1607,6 @@ describe('Testing prepare.js:', () => {
             mapResources(cordovaProject.root, '', '');
 
             existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue([false]);
-            prepare.__set__('fs', { existsSync: existsSyncSpy });
 
             expect(existsSyncSpy).not.toHaveBeenCalled();
         });
