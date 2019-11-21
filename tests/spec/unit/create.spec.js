@@ -17,11 +17,10 @@
     under the License.
 */
 
-const shell = require('shelljs');
 const fs = require('fs-extra');
 const path = require('path');
-const util = require('util');
 const rewire = require('rewire');
+const execa = require('execa');
 
 const cordova_bin = path.join(__dirname, '../../../bin');// is this the same on all platforms?
 const tmpDir = path.join(__dirname, '../../../temp');
@@ -29,24 +28,17 @@ const createScriptPath = path.join(cordova_bin, 'create');
 const create = rewire(path.join(cordova_bin, 'lib', 'create'));
 
 function createAndVerify (projectname, projectid) {
-    let return_code = 0;
-
     // remove existing folder
     fs.removeSync(tmpDir);
     fs.ensureDirSync(tmpDir);
 
-    // create the project
-    const command = util.format('"%s" "%s/%s" "%s" "%s"', createScriptPath, tmpDir, projectname, projectid, projectname);
-
-    return_code = shell.exec(command).code;
-    expect(return_code).toBe(0);
-
-    var tempCordovaScriptsPath = path.join(tmpDir, projectname, 'cordova');
-
-    console.log('tempCordovaScriptsPath = ' + tempCordovaScriptsPath);
+    const tempProjectDir = path.join(tmpDir, projectname);
+    const projectCreateProcess = execa.sync(createScriptPath, [tempProjectDir, projectid, projectname]);
+    expect(projectCreateProcess.exitCode).toBe(0);
 
     // created project has scripts in the cordova folder
     // build, clean, log, run, version
+    const tempCordovaScriptsPath = path.join(tempProjectDir, 'cordova');
     expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'build'))).toBe(true);
     expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'clean'))).toBe(true);
     expect(fs.existsSync(path.join(tempCordovaScriptsPath, 'log'))).toBe(true);
