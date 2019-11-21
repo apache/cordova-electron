@@ -1414,7 +1414,6 @@ describe('Testing prepare.js:', () => {
 
     describe('createResourceMap method', () => {
         let createResourceMap;
-        let shellLsSpy;
         let cordovaProject;
         let locations;
 
@@ -1424,10 +1423,8 @@ describe('Testing prepare.js:', () => {
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             locations = Object.assign({}, locationsDefault);
             createResourceMap = prepare.__get__('createResourceMap');
-            shellLsSpy = prepare.__get__('mapResources');
-
-            shellLsSpy = jasmine.createSpy('ls').and.returnValue([true]);
-            prepare.__set__('shell', { ls: shellLsSpy });
+            const existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue(true);
+            prepare.__set__('fs', { existsSync: existsSyncSpy });
         });
 
         it('should map custom icon to installer and app icon locations', () => {
@@ -1443,9 +1440,6 @@ describe('Testing prepare.js:', () => {
             };
 
             const actual = createResourceMap(cordovaProject, locations, data);
-
-            expect(shellLsSpy).toHaveBeenCalled();
-
             const expected = [
                 { [path.join('res', 'logo.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'app.png') },
                 { [path.join('res', 'logo.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') }
@@ -1468,9 +1462,6 @@ describe('Testing prepare.js:', () => {
             };
 
             const actual = createResourceMap(cordovaProject, locations, data);
-
-            expect(shellLsSpy).toHaveBeenCalled();
-
             const expected = [
                 { [path.join('res', 'electron', 'cordova_512.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') }
             ];
@@ -1499,9 +1490,6 @@ describe('Testing prepare.js:', () => {
             };
 
             const actual = createResourceMap(cordovaProject, locations, data);
-
-            expect(shellLsSpy).toHaveBeenCalled();
-
             const expected = [
                 { [path.join('res', 'electron', 'cordova.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'app.png') },
                 { [path.join('res', 'electron', 'cordova_512.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') }
@@ -1531,9 +1519,6 @@ describe('Testing prepare.js:', () => {
             };
 
             const actual = createResourceMap(cordovaProject, locations, data);
-
-            expect(shellLsSpy).toHaveBeenCalled();
-
             const expected = [
                 { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@1.5x.png') },
                 { [path.join('res', 'electron', 'cordova@2x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@2x.png') },
@@ -1572,9 +1557,6 @@ describe('Testing prepare.js:', () => {
             };
 
             const actual = createResourceMap(cordovaProject, locations, data);
-
-            expect(shellLsSpy).toHaveBeenCalled();
-
             const expected = [
                 { [path.join('res', 'electron', 'cordova_512.png')]: path.join('MOCK_PROJECT_ROOT', 'build-res', 'installer.png') },
                 { [path.join('res', 'electron', 'cordova@1.5x.png')]: path.join('MOCK_PROJECT_ROOT', 'www', 'img', 'icon@1.5x.png') },
@@ -1597,9 +1579,6 @@ describe('Testing prepare.js:', () => {
             };
 
             const actual = createResourceMap(cordovaProject, locations, data);
-
-            expect(shellLsSpy).toHaveBeenCalled();
-
             const expected = [
                 { [path.join('res', 'electron', 'splash.png')]: path.join('MOCK_PROJECT_ROOT', 'www', '.cdv', 'splashScreen.png') }
             ];
@@ -1610,7 +1589,7 @@ describe('Testing prepare.js:', () => {
 
     describe('mapResources method', () => {
         let mapResources;
-        let shellLsSpy;
+        let existsSyncSpy;
         let cordovaProject;
 
         beforeEach(() => {
@@ -1618,19 +1597,15 @@ describe('Testing prepare.js:', () => {
 
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             mapResources = prepare.__get__('mapResources');
-            shellLsSpy = prepare.__get__('mapResources');
 
-            shellLsSpy = jasmine.createSpy('ls').and.returnValue([true]);
-            prepare.__set__('shell', { ls: shellLsSpy });
+            existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue(true);
+            prepare.__set__('fs', { existsSync: existsSyncSpy });
         });
 
-        it('should not be called if resource does not exist.', () => {
-            mapResources(cordovaProject.root, '', '');
-
-            shellLsSpy = jasmine.createSpy('ls').and.returnValue([false]);
-            prepare.__set__('shell', { ls: shellLsSpy });
-
-            expect(shellLsSpy).not.toHaveBeenCalled();
+        it('should return an empty object when the resource path does not exist.', () => {
+            existsSyncSpy.and.returnValue(false);
+            const resources = mapResources(cordovaProject.root, '', '');
+            expect(resources).toEqual({});
         });
 
         it('should map to file to file', () => {
@@ -1641,7 +1616,7 @@ describe('Testing prepare.js:', () => {
             expected[sourcePath] = targetPath;
 
             const actual = mapResources(cordovaProject.root, sourcePath, targetPath);
-            expect(shellLsSpy).toHaveBeenCalled();
+            expect(existsSyncSpy).toHaveBeenCalled();
             expect(expected).toEqual(actual);
         });
 
@@ -1653,7 +1628,7 @@ describe('Testing prepare.js:', () => {
             expected[sourcePath] = targetPath;
 
             const actual = mapResources(cordovaProject.root, sourcePath, targetPath);
-            expect(shellLsSpy).toHaveBeenCalled();
+            expect(existsSyncSpy).toHaveBeenCalled();
             expect(expected).toEqual(actual);
         });
     });

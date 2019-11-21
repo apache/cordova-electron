@@ -28,8 +28,7 @@
     "electron-builder": "^21.2.0",
     "execa": "^3.3.0",
     "fs-extra": "^8.0.1",
-    "nopt": "^4.0.1",
-    "shelljs": "^0.5.3"
+    "nopt": "^4.0.1"
   },
   "devDependencies": {
     "@cordova/eslint-config": "^2.0.0",

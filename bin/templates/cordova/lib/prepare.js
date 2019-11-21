@@ -19,7 +19,6 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const shell = require('shelljs');
 const { ConfigParser, xmlHelpers, events, CordovaError } = require('cordova-common');
 const ManifestJsonParser = require('./ManifestJsonParser');
 const PackageJsonParser = require('./PackageJsonParser');
@@ -339,11 +338,9 @@ function createResourceMap (cordovaProject, locations, resources) {
  * Get a map containing resources of a specified name (or directory) to the target directory.
  */
 function mapResources (rootDir, sourcePath, targetPath) {
-    const pathMap = {};
-    shell.ls(path.join(rootDir, sourcePath)).forEach(() => {
-        pathMap[sourcePath] = targetPath;
-    });
-    return pathMap;
+    return fs.existsSync(path.join(rootDir, sourcePath))
+        ? { [sourcePath]: targetPath }
+        : {};
 }
 
 /**
