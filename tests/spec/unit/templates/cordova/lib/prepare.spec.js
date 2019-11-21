@@ -1602,12 +1602,10 @@ describe('Testing prepare.js:', () => {
             prepare.__set__('fs', { existsSync: existsSyncSpy });
         });
 
-        it('should not be called if resource does not exist.', () => {
-            mapResources(cordovaProject.root, '', '');
-
+        it('should return an empty object when the resource path does not exist.', () => {
             existsSyncSpy.and.returnValue(false);
-
-            expect(existsSyncSpy).not.toHaveBeenCalled();
+            const resources = mapResources(cordovaProject.root, '', '');
+            expect(resources).toEqual({});
         });
 
         it('should map to file to file', () => {
