@@ -1599,7 +1599,7 @@ describe('Testing prepare.js:', () => {
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             mapResources = prepare.__get__('mapResources');
 
-            existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue([true]);
+            existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue(true);
             prepare.__set__('fs', { existsSync: existsSyncSpy });
         });
 
