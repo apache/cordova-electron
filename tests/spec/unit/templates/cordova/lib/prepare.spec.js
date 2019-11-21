@@ -1606,7 +1606,7 @@ describe('Testing prepare.js:', () => {
         it('should not be called if resource does not exist.', () => {
             mapResources(cordovaProject.root, '', '');
 
-            existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue([false]);
+            existsSyncSpy.and.returnValue(false);
 
             expect(existsSyncSpy).not.toHaveBeenCalled();
         });
