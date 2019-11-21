@@ -1414,7 +1414,6 @@ describe('Testing prepare.js:', () => {
 
     describe('createResourceMap method', () => {
         let createResourceMap;
-        let existsSyncSpy;
         let cordovaProject;
         let locations;
 
@@ -1424,7 +1423,7 @@ describe('Testing prepare.js:', () => {
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             locations = Object.assign({}, locationsDefault);
             createResourceMap = prepare.__get__('createResourceMap');
-            existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue(true);
+            const existsSyncSpy = jasmine.createSpy('existsSyncSpy').and.returnValue(true);
             prepare.__set__('fs', { existsSync: existsSyncSpy });
         });
 
