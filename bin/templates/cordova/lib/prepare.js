@@ -188,7 +188,7 @@ function updateIcons (cordovaProject, locations) {
 function checkIconsAttributes (icon) {
     if (((icon.height && icon.width) >= 512 || (icon.height && icon.width) === undefined) && icon.src) return true;
 
-    events.emit('info', `The following${icon.target ? ' ' + icon.target : ''} icon with a size of width=${icon.width} height=${icon.height} does not meet the requirements and will be ignored.`);
+    events.emit('info', `The following${icon.target ? ` ${icon.target}` : ''} icon with a size of width=${icon.width} height=${icon.height} does not meet the requirements and will be ignored.`);
     return false;
 }
 

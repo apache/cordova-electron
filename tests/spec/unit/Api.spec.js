@@ -193,7 +193,7 @@ describe('Api class', () => {
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'cordova_plugins.js'))).toBeTruthy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -218,7 +218,7 @@ describe('Api class', () => {
                     expect(readJson(path.resolve(testProjectDir, 'www', 'js', 'sample.json')).title).toEqual('sample');
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -245,7 +245,7 @@ describe('Api class', () => {
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'))).toBeTruthy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -274,7 +274,7 @@ describe('Api class', () => {
                     api.events = _events;
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                     api.events = _events;
                 }
             );
@@ -297,7 +297,7 @@ describe('Api class', () => {
                     expect(logs.verbose.some(message => message === 'source-file.install is currently not supported for electron')).toBeTruthy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -318,7 +318,7 @@ describe('Api class', () => {
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'cordova_plugins.js'))).toBeTruthy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -362,7 +362,7 @@ describe('Api class', () => {
                     expect(result).not.toBeDefined();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -388,7 +388,7 @@ describe('Api class', () => {
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'js', 'sample.json'))).toBeFalsy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -418,7 +418,7 @@ describe('Api class', () => {
                     expect(fileExists(path.resolve(testProjectDir, 'www', 'plugins', 'module-plugin', 'www', 'plugin.js'))).toBeFalsy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -439,7 +439,7 @@ describe('Api class', () => {
                     expect(result).not.toBeDefined();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -461,7 +461,7 @@ describe('Api class', () => {
                     expect(logs.verbose.some(message => message === 'source-file.uninstall is currently not supported for electron')).toBeTruthy();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
@@ -479,7 +479,7 @@ describe('Api class', () => {
                     expect(result).not.toBeDefined();
                 },
                 (error) => {
-                    fail('Unwanted code branch: ' + error);
+                    fail(`Unwanted code branch: ${error}`);
                 }
             );
         });
