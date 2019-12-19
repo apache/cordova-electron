@@ -174,7 +174,7 @@ class Api {
                     .remove_plugin_changes(plugin, /* is_top_level= */true)
                     .save_all();
 
-                var targetDir = uninstallOptions.usePlatformWww
+                const targetDir = uninstallOptions.usePlatformWww
                     ? this.getPlatformInfo().locations.platformWww
                     : this.getPlatformInfo().locations.www;
 
