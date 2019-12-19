@@ -74,7 +74,7 @@ module.exports.prepare = function (cordovaProject, options) {
 
     const projectPackageJson = JSON.parse(fs.readFileSync(path.join(cordovaProject.root, 'package.json'), 'utf8'));
 
-    (new PackageJsonParser(this.locations.www))
+    (new PackageJsonParser(this.locations.www, cordovaProject.root))
         .configure(this.config, projectPackageJson)
         .write();
 

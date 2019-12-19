@@ -18,6 +18,7 @@
 */
 
 const path = require('path');
+const fs = require('fs-extra');
 const rewire = require('rewire');
 
 const PackageJsonParser = rewire('../../../../../../bin/templates/cordova/lib/PackageJsonParser');
@@ -66,7 +67,7 @@ describe('PackageJsonParser class', () => {
     });
 
     it('should set initial value correctly.', () => {
-        packageJsonParser = new PackageJsonParser(locations.www);
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project');
 
         // mock package JSON Object
         const packageJsonObj = { main: 'cdv-electron-main.js' };
@@ -77,7 +78,8 @@ describe('PackageJsonParser class', () => {
     });
 
     it('should return when config xml is not defined.', () => {
-        packageJsonParser = new PackageJsonParser(locations.www).configure(undefined);
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(undefined);
 
         // mock package JSON Object
         const packageJsonObj = { main: 'cdv-electron-main.js' };
@@ -86,7 +88,8 @@ describe('PackageJsonParser class', () => {
     });
 
     it('should set package json object values to default, when config xml is empty.', () => {
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty, defaultMockProjectPackageJson);
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfgEmpty, defaultMockProjectPackageJson);
 
         // mock package JSON Object
         const packageJsonObj = {
@@ -108,7 +111,8 @@ describe('PackageJsonParser class', () => {
     });
 
     it('should read and set package json object values from config xml.', () => {
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson);
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, defaultMockProjectPackageJson);
 
         // mock package JSON Object
         const packageJsonObj = {
@@ -129,8 +133,9 @@ describe('PackageJsonParser class', () => {
         expect(packageJsonParser.package).toEqual(packageJsonObj.package);
     });
 
-    it('should warn that cordova-electron is defined as dependency.', () => {
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson);
+    it('should warn when "cordova-*" prefixed dependency is defined in package.json dependencies.', () => {
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, defaultMockProjectPackageJson);
 
         expect(emitSpy).toHaveBeenCalled();
 
@@ -144,15 +149,62 @@ describe('PackageJsonParser class', () => {
         expect(actual).toContain('cordova-electron');
     });
 
-    it('should not warn that cordova-electron is defined as dev dependency.', () => {
-        // Fix defaultMockProjectPackageJson where cordova-* is devDependency
+    it('should not warn when "cordova-*" prefixed dependency is not defined in package.json dependencies.', () => {
         const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
         mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
-        mockProjectPackageJson.dependencies = {};
+        mockProjectPackageJson.dependencies = { foobar: '1.0.0' }; // setting a non "cordova-" dependency
 
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, mockProjectPackageJson);
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, mockProjectPackageJson);
 
         expect(emitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should skip configuring the Electron app\'s dependencies when the Cordova project\'s package.json dependencies are not set.', () => {
+        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        mockProjectPackageJson.dependencies = {};
+
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, mockProjectPackageJson);
+
+        expect(emitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should skip preparing npm packages that already contain absolute paths.', () => {
+        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        mockProjectPackageJson.dependencies = { foobar: 'file:/tmp/foobar.tar.gz' };
+
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, mockProjectPackageJson);
+
+        expect(emitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should convert npm packages that contain relative path to be absolute paths.', () => {
+        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        mockProjectPackageJson.dependencies = { foobar: 'file:../tmp/foobar.tar.gz' };
+
+        spyOn(fs, 'pathExistsSync').and.returnValue(true);
+
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project', '/root/project')
+            .configure(cfg, mockProjectPackageJson);
+
+        expect(emitSpy).not.toHaveBeenCalled();
+    });
+
+    it('should warn that an npm packages will be dropped when the absolute path could not be found.', () => {
+        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
+        mockProjectPackageJson.dependencies = { foobar: 'file:../tmp/foobar.tar.gz' };
+
+        spyOn(fs, 'pathExistsSync').and.returnValue(false);
+
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project', '/root/project')
+            .configure(cfg, mockProjectPackageJson);
+
+        const actual = emitSpy.calls.argsFor(0)[1];
+        const expectedPartial = '[Cordova Electron] The following local npm dependencies could not be located and will not be deployed to the Electron app:';
+        expect(actual).toContain(expectedPartial);
+        expect(actual).toContain('foobar');
     });
 
     it('should not set package dependencies when project dependencies is missing.', () => {
@@ -160,7 +212,8 @@ describe('PackageJsonParser class', () => {
         mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
         delete mockProjectPackageJson.dependencies;
 
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, mockProjectPackageJson);
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, mockProjectPackageJson);
 
         expect(emitSpy).not.toHaveBeenCalled();
         expect(packageJsonParser.package.dependencies).not.toBeDefined();
@@ -170,7 +223,9 @@ describe('PackageJsonParser class', () => {
         const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
         packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
 
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfgEmpty, defaultMockProjectPackageJson).write();
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfgEmpty, defaultMockProjectPackageJson)
+            .write();
 
         expect(writeFileSyncSpy).toHaveBeenCalled();
 
@@ -209,7 +264,9 @@ describe('PackageJsonParser class', () => {
         const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
         packageJsonParser.__set__('fs', { writeFileSync: writeFileSyncSpy });
 
-        packageJsonParser = new PackageJsonParser(locations.www).configure(cfg, defaultMockProjectPackageJson).write();
+        packageJsonParser = new PackageJsonParser(locations.www, '/root/project')
+            .configure(cfg, defaultMockProjectPackageJson)
+            .write();
 
         expect(writeFileSyncSpy).toHaveBeenCalled();
 
