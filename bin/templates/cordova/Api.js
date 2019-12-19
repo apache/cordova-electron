@@ -59,7 +59,7 @@ class Api {
         this.handler = require('./handler');
 
         this.locations = {
-            platformRootDir: platformRootDir,
+            platformRootDir,
             root: this.root,
             www: path.join(this.root, 'www'),
             res: path.join(this.root, 'res'),

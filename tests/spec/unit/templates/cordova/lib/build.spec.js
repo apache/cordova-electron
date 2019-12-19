@@ -119,7 +119,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -146,7 +146,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -173,7 +173,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
@@ -205,7 +205,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -341,7 +341,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -502,7 +502,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -556,7 +556,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -608,7 +608,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -640,7 +640,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -672,7 +672,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -716,7 +716,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -762,7 +762,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -812,7 +812,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -892,7 +892,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -986,7 +986,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -1061,7 +1061,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -1126,7 +1126,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: true, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
@@ -1213,7 +1213,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
@@ -1245,7 +1245,7 @@ describe('Testing build.js:', () => {
             };
 
             // config.mas is appeneded to build options to spoof what __formatAppendUserSettings method would have performed.
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [], config: { mas: {} } };
+            const buildOptions = { debug: false, buildConfig, argv: [], config: { mas: {} } };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
@@ -1273,7 +1273,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
@@ -1300,7 +1300,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
@@ -1343,7 +1343,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
@@ -1406,7 +1406,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
@@ -1469,7 +1469,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
@@ -1515,7 +1515,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
@@ -1563,7 +1563,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
@@ -1608,7 +1608,7 @@ describe('Testing build.js:', () => {
                 APP_WWW_DIR: api.locations.www
             };
 
-            const buildOptions = { debug: false, buildConfig: buildConfig, argv: [] };
+            const buildOptions = { debug: false, buildConfig, argv: [] };
 
             const config = {
                 debug: 'debug',
