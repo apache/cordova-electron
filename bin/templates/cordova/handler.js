@@ -48,7 +48,7 @@ module.exports = {
             const moduleSource = path.resolve(plugin_dir, jsModule.src);
             // Get module name based on existing 'name' attribute or filename
             // Must use path.extname/path.basename instead of path.parse due to CB-9981
-            const moduleName = plugin_id + '.' + (jsModule.name || path.basename(jsModule.src, path.extname(jsModule.src)));
+            const moduleName = `${plugin_id}.${jsModule.name || path.basename(jsModule.src, path.extname(jsModule.src))}`;
 
             // Read in the file, prepend the cordova.define, and write it back out.
             let scriptContent = fs.readFileSync(moduleSource, 'utf-8').replace(/^\ufeff/, ''); // Window BOM

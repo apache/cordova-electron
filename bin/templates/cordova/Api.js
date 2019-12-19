@@ -243,7 +243,7 @@ class Api {
         const modulesToInstall = plugin.getJsModules(platform)
             .filter((moduleToInstall) => installedPaths.indexOf(moduleToInstall.file) === -1)
             .map((moduleToInstall) => {
-                const moduleName = plugin.id + '.' + (moduleToInstall.name || moduleToInstall.src.match(/([^\/]+)\.js/)[1]);
+                const moduleName = `${plugin.id}.${moduleToInstall.name || moduleToInstall.src.match(/([^\/]+)\.js/)[1]}`;
                 const obj = {
                     file: ['plugins', plugin.id, moduleToInstall.src].join('/'),
                     id: moduleName,

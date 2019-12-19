@@ -100,5 +100,5 @@ module.exports = function (project) {
  * Logs all file operations via the verbose event stream, indented.
  */
 function logFileOp (message) {
-    events.emit('verbose', '  ' + message);
+    events.emit('verbose', `  ${message}`);
 }
