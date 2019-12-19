@@ -344,7 +344,7 @@ class Api {
 // @todo create projectInstance and fulfill promise with it.
 Api.updatePlatform = () => Promise.resolve();
 
-Api.createPlatform = function (dest, config, options, events) {
+Api.createPlatform = (dest, config, options, events) => {
     events = setupEvents(events);
 
     const name = config ? config.name() : 'HelloCordova';

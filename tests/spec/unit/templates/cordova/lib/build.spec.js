@@ -652,7 +652,7 @@ describe('Testing build.js:', () => {
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(requireSpy).toHaveBeenCalled();
-            expect(function () { electronBuilder.configureUserBuildSettings(); }).toThrow(
+            expect(() => { electronBuilder.configureUserBuildSettings(); }).toThrow(
                 new Error('The platform "mac" contains an invalid property. Valid properties are: package, arch, signing')
             );
         });
@@ -1194,7 +1194,7 @@ describe('Testing build.js:', () => {
 
             expect(existsSyncSpy).toHaveBeenCalled();
 
-            expect(function () { electronBuilder.fetchPlatformDefaults('name'); }).toThrow(new Error('Your platform "name" is not supported as a default target platform for Electron.'));
+            expect(() => { electronBuilder.fetchPlatformDefaults('name'); }).toThrow(new Error('Your platform "name" is not supported as a default target platform for Electron.'));
         });
 
         it('should __appendUserSigning linux signing.', () => {
@@ -1652,9 +1652,9 @@ describe('Testing build.js:', () => {
 
             // create spies
             const buildSpy = jasmine.createSpy('build');
-            build.__set__('require', () => {
-                return { build: buildSpy };
-            });
+            build.__set__('require', () => ({
+                build: buildSpy
+            }));
 
             electronBuilder = new ElectronBuilder(buildOptions, api).build();
 

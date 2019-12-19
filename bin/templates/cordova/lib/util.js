@@ -17,7 +17,7 @@
     under the License.
 */
 
-module.exports.deepMerge = function (mergeTo, mergeWith) {
+module.exports.deepMerge = (mergeTo, mergeWith) => {
     for (const property in mergeWith) {
         if (Object.prototype.toString.call(mergeWith[property]) === '[object Object]') {
             mergeTo[property] = module.exports.deepMerge((mergeTo[property] || {}), mergeWith[property]);
