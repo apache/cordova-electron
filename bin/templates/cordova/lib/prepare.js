@@ -128,10 +128,8 @@ function prepareSplashScreens (splashScreens) {
     };
 
     // iterate over remaining icon elements to find the icons for the app and installer
-    for (let i = 0; i < splashScreens.length; i++) {
-        const image = splashScreens[i];
+    for (const image of splashScreens) {
         image.extension = path.extname(image.src);
-
         splashScreen = splashScreen ? chooseOne(splashScreen, image) : image;
     }
 
@@ -144,14 +142,13 @@ function prepareSplashScreens (splashScreens) {
 function updatePathToSplashScreen (config, locations, resourceMap) {
     const elementKeys = Object.keys(resourceMap[0]);
     const splashScreenPath = resourceMap[0][elementKeys];
-
     const splash = config.doc.find('splash');
     const preferences = config.doc.findall('preference');
 
     splash.attrib.src = path.relative(locations.www, splashScreenPath);
-    for (let i = 0; i < preferences.length; i++) {
-        if (preferences[i].attrib.name === 'SplashScreen') {
-            preferences[i].attrib.value = splash.attrib.src;
+    for (const preference of preferences) {
+        if (preference.attrib.name === 'SplashScreen') {
+            preference.attrib.value = splash.attrib.src;
         }
     }
     config.write();
@@ -212,14 +209,11 @@ function prepareIcons (icons) {
 
     // find if there is high resolution images that has DPI suffix
     const highResAndRemainingIcons = findHighResIcons(icons);
-
     const highResIcons = highResAndRemainingIcons.highResIcons;
     const remainingIcons = highResAndRemainingIcons.remainingIcons;
 
     // iterate over remaining icon elements to find the icons for the app and installer
-    for (let i = 0; i < remainingIcons.length; i++) {
-        // if (fs.existsSync(icons[i].src)) {
-        const icon = remainingIcons[i];
+    for (const icon of remainingIcons) {
         const size = icon.width || icon.height;
         icon.extension = path.extname(icon.src);
 
