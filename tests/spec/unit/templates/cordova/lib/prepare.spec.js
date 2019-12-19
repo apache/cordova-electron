@@ -223,8 +223,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
@@ -279,8 +279,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
 
@@ -325,8 +325,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const copySyncSpy = jasmine.createSpy('copySync');
@@ -370,8 +370,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
@@ -426,8 +426,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
@@ -483,8 +483,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
                 const manifestPathMock = path.join(api.locations.www, 'manifest.json');
@@ -539,8 +539,8 @@ describe('Testing prepare.js:', () => {
                 // Create API instance and mock for test case.
                 const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
-                api.parser.update_www = () => { return this; };
-                api.parser.update_project = () => { return this; };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
 
                 const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
 
