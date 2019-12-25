@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
+    "prepack": "node .npm-scripts/prepack.js",
     "test": "npm run lint && npm run test:coverage",
     "test:coverage": "nyc npm run test:unit",
     "test:unit": "jasmine --config=tests/spec/unit.json"
@@ -51,8 +52,10 @@
   "nyc": {
     "all": true,
     "exclude": [
+      ".npm-scripts/",
       "bin/templates/build-res/",
-      "bin/templates/project/",
+      "bin/templates/platform_www/",
+      "bin/templates/www/",
       "cordova-js-src/",
       "cordova-lib/",
       "coverage/",

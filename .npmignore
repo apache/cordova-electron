@@ -20,3 +20,8 @@ npm-debug.log*
 .gitattributes
 .github
 .gitignore
+
+# others
+.npm-scripts
+cordova-js-src
+cordova-lib

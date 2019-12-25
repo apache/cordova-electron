@@ -26,21 +26,21 @@ const events = require('cordova-common').events;
 const check_reqs = require('./../templates/cordova/lib/check_reqs.js');
 
 // exported method to create a project, returns a promise that resolves with null
-module.exports.createProject = (project_path, package_name, project_name, options) => {
+module.exports.createProject = (platform_dir, package_name, project_name, options) => {
 /*
     // create the dest and the standard place for our api to live
     // platforms/platformName/cordova/Api.js
 */
 
     events.emit('log', 'Creating Cordova project for cordova-electron:');
-    events.emit('log', '\tPath: ' + project_path);
+    events.emit('log', '\tPath: ' + platform_dir);
     events.emit('log', '\tName: ' + project_name);
 
     // Set default values for path, package and name
-    project_path = project_path || 'CordovaExample';
+    platform_dir = platform_dir || 'CordovaExample';
 
     // Check if project already exists
-    if (fs.existsSync(project_path)) {
+    if (fs.existsSync(platform_dir)) {
         events.emit('error', 'Oops, destination already exists! Delete it and try again');
     }
 
@@ -51,37 +51,15 @@ module.exports.createProject = (project_path, package_name, project_name, option
     }
 
     // Make sure that the platform directory is created if missing.
-    fs.ensureDirSync(project_path);
+    fs.ensureDirSync(platform_dir);
 
-    // copy templates/build-res directory ( recursive )
-    fs.copySync(path.join(ROOT, 'bin/templates/build-res'), path.join(project_path, 'build-res'), { overwrite: false });
-
-    // copy templates/cordova directory ( recursive )
-    fs.copySync(path.join(ROOT, 'bin/templates/cordova'), path.join(project_path, 'cordova'), { overwrite: false });
-
-    // copy templates/www directory ( recursive )
-    fs.copySync(path.join(ROOT, 'bin/templates/project/www'), path.join(project_path, 'www'), { overwrite: false });
+    // copy templates directory to the platform directory recursively
+    fs.copySync(path.join(ROOT, 'bin/templates'), path.join(platform_dir), { overwrite: false });
 
     // recreate our node_modules structure in the new project
     if (fs.existsSync(path.join(ROOT, 'node_modules'))) {
-        fs.copySync(path.join(ROOT, 'node_modules'), path.join(project_path, 'cordova', 'node_modules'), { overwrite: false });
+        fs.copySync(path.join(ROOT, 'node_modules'), path.join(platform_dir, 'cordova', 'node_modules'), { overwrite: false });
     }
-
-    const platform_www = path.join(project_path, 'platform_www');
-
-    fs.ensureDirSync(platform_www);
-
-    // copy cordova-js-src directory
-    fs.copySync(path.join(ROOT, 'cordova-js-src'), path.join(platform_www, 'cordova-js-src'), { overwrite: false });
-
-    // copy cordova js file to platform_www
-    fs.copySync(path.join(ROOT, 'cordova-lib', 'cordova.js'), path.join(platform_www, 'cordova.js'), { overwrite: false });
-
-    // copy cdv-electron-main.js
-    fs.copySync(path.join(ROOT, 'bin/templates/project/cdv-electron-main.js'), path.join(platform_www, 'cdv-electron-main.js'), { overwrite: false });
-
-    // copy cdv-electron-settings.json
-    fs.copySync(path.join(ROOT, 'bin/templates/project/cdv-electron-settings.json'), path.join(platform_www, 'cdv-electron-settings.json'), { overwrite: false });
 
     return Promise.resolve();
 };
