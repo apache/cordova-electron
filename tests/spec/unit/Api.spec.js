@@ -294,7 +294,7 @@ describe('Api class', () => {
             }, { }).then(
                 (result) => {
                     expect(result).not.toBeDefined();
-                    expect(logs.verbose.some(message => message === 'source-file.install is currently not supported for electron')).toBeTruthy();
+                    expect(logs.verbose.some(message => message === 'source-file.install is not supported for electron')).toBeTruthy();
                 },
                 (error) => {
                     fail(`Unwanted code branch: ${error}`);
@@ -458,7 +458,7 @@ describe('Api class', () => {
             }, { }).then(
                 (result) => {
                     expect(result).not.toBeDefined();
-                    expect(logs.verbose.some(message => message === 'source-file.uninstall is currently not supported for electron')).toBeTruthy();
+                    expect(logs.verbose.some(message => message === 'source-file.uninstall is not supported for electron')).toBeTruthy();
                 },
                 (error) => {
                     fail(`Unwanted code branch: ${error}`);

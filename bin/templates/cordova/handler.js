@@ -19,7 +19,7 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const events = require('cordova-common').events;
+const { events } = require('cordova-common');
 
 module.exports = {
     www_dir: (project_dir) => path.join(project_dir, 'www'),
@@ -77,12 +77,12 @@ module.exports = {
         install: (obj, plugin_dir, project_dir, plugin_id, options) => {
             // var dest = path.join(obj.targetDir, path.basename(obj.src));
             // common.copyFile(plugin_dir, obj.src, project_dir, dest);
-            events.emit('verbose', 'source-file.install is currently not supported for electron');
+            events.emit('verbose', 'source-file.install is not supported for electron');
         },
         uninstall: (obj, project_dir, plugin_id, options) => {
             // var dest = path.join(obj.targetDir, path.basename(obj.src));
             // common.removeFile(project_dir, dest);
-            events.emit('verbose', 'source-file.uninstall is currently not supported for electron');
+            events.emit('verbose', 'source-file.uninstall is not supported for electron');
         }
     },
     'header-file': {
@@ -123,7 +123,7 @@ module.exports = {
             const dest = path.join(wwwDest, asset.target);
             const destDir = path.parse(dest).dir;
 
-            if (destDir) fs.ensureDirSync(destDir);
+            fs.ensureDirSync(destDir);
             fs.copySync(src, dest);
         },
         uninstall: (asset, wwwDest, plugin_id) => {
