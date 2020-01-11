@@ -23,16 +23,17 @@
 */
 const path = require('path');
 const fs = require('fs-extra');
-const CordovaCommon = require('cordova-common');
-const CordovaLogger = CordovaCommon.CordovaLogger;
-// const ConfigParser = CordovaCommon.ConfigParser;
-const ActionStack = CordovaCommon.ActionStack;
-const selfEvents = CordovaCommon.events;
-// const xmlHelpers = CordovaCommon.xmlHelpers;
-const PlatformJson = CordovaCommon.PlatformJson;
-const PlatformMunger = CordovaCommon.ConfigChanges.PlatformMunger;
-const PluginInfoProvider = CordovaCommon.PluginInfoProvider;
-
+const {
+    ActionStack,
+    ConfigChanges,
+    CordovaLogger,
+    events,
+    PlatformJson,
+    PluginInfo,
+    PluginInfoProvider
+} = require('cordova-common');
+const selfEvents = events;
+const PlatformMunger = ConfigChanges.PlatformMunger;
 const Parser = require('./parser');
 
 function setupEvents (externalEventEmitter) {
@@ -94,7 +95,7 @@ class Api {
     }
 
     addPlugin (pluginInfo, installOptions) {
-        if (!pluginInfo) {
+        if (!pluginInfo || !(pluginInfo instanceof PluginInfo)) {
             return Promise.reject(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
         }
 
@@ -144,6 +145,10 @@ class Api {
     }
 
     removePlugin (plugin, uninstallOptions) {
+        if (!plugin || !(plugin instanceof PluginInfo)) {
+            return Promise.reject(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
+        }
+
         uninstallOptions = uninstallOptions || {};
         // CB-10108 platformVersion option is required for proper plugin installation
         uninstallOptions.platformVersion = uninstallOptions.platformVersion || this.getPlatformInfo().version;
