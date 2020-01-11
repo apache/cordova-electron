@@ -19,7 +19,9 @@
 
 const rewire = require('rewire');
 const path = require('path');
-const ConfigParser = require('cordova-common').ConfigParser;
+const fs = require('fs-extra');
+const { ConfigParser } = require('cordova-common');
+const ManifestJsonParser = rewire('../../../../../../bin/templates/cordova/lib/ManifestJsonParser');
 
 const FIXTURES = path.join(__dirname, '..', '..', '..', '..', 'fixtures');
 
@@ -28,211 +30,148 @@ const cfg1 = new ConfigParser(path.join(FIXTURES, 'test-config-1.xml'));
 const cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
 const cfgEmpty = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
 
-describe('Testing ManifestJsonParser.js:', () => {
-    let ManifestJsonParser;
-    let locations;
+const locations = {
+    buildRes: path.join('mock', 'build-res'),
+    www: path.join('mock', 'www'),
+    configXml: path.join('mock', 'config.xml')
+};
+
+const defaltInitManifest = {
+    background_color: '#FFF',
+    display: 'standalone',
+    orientation: 'any',
+    start_url: 'index.html'
+};
+
+describe('ManifestJson class', () => {
+    let manifestJsonParser;
 
     beforeEach(() => {
-        ManifestJsonParser = rewire('../../../../../../bin/templates/cordova/lib/ManifestJsonParser');
-
-        locations = {
-            buildRes: path.join('mock', 'build-res'),
-            www: path.join('mock', 'www'),
-            configXml: path.join('mock', 'config.xml')
-        };
+        manifestJsonParser = new ManifestJsonParser(locations.www);
     });
 
-    describe('ManifestJson class', () => {
-        let manifestJsonParser;
+    it('should have been constructed with initial values.', () => {
+        expect(manifestJsonParser).toBeDefined();
+        expect(manifestJsonParser.path).toEqual(path.join(locations.www, 'manifest.json'));
+        expect(manifestJsonParser.www).toEqual(locations.www);
+        expect(manifestJsonParser.manifest).toEqual(defaltInitManifest);
+    });
 
-        beforeEach(() => {
-            manifestJsonParser = ManifestJsonParser.__get__('ManifestJsonParser');
-        });
+    it('should return when config xml is not defined.', () => {
+        manifestJsonParser.configure();
+        expect(manifestJsonParser.manifest).toEqual(defaltInitManifest);
+    });
 
-        it('should should be defined.', () => {
-            expect(manifestJsonParser).toBeDefined();
-        });
+    it('should set manifest json object values to default, when config xml is empty.', () => {
+        manifestJsonParser.configure(cfgEmpty);
+        expect(manifestJsonParser.manifest).toEqual(jasmine.objectContaining({
+            start_url: undefined
+        }));
+    });
 
-        it('should set initial value correctly.', () => {
-            manifestJsonParser = new ManifestJsonParser(locations.www);
+    it('should read and set manifest json object values from the first config xml.', () => {
+        manifestJsonParser.configure(cfg1);
+        expect(manifestJsonParser.manifest).toEqual(jasmine.objectContaining({
+            orientation: 'portrait',
+            name: 'HelloWorld',
+            short_name: 'HelloWorld',
+            version: 'whatever',
+            description: 'A sample Apache Cordova application.',
+            author: 'Cordova Team',
+            icons: [{ src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' }]
+        }));
+    });
 
-            // mock manifest JSON Object
-            const manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'any',
-                start_url: 'index.html'
-            };
+    it('should read and set manifest json object values from second config xml.', () => {
+        manifestJsonParser.configure(cfg2);
+        expect(manifestJsonParser.manifest).toEqual(jasmine.objectContaining({
+            orientation: 'landscape',
+            name: 'HelloWorld',
+            short_name: 'Hello',
+            theme_color: '0xff0000ff',
+            version: 'whatever',
+            description: 'A sample Apache Cordova application.',
+            author: 'Cordova Team'
+        }));
+    });
 
-            expect(manifestJsonParser.path).toEqual(path.join('mock', 'www', 'manifest.json'));
-            expect(manifestJsonParser.www).toEqual(locations.www);
-            expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
-        });
+    it('should update theme color if start_url exists in path and contains meta theme-color.', () => {
+        spyOn(fs, 'existsSync').and.returnValue(true);
+        spyOn(fs, 'readFileSync').and.returnValue('<meta name="theme-color" content="#33363b">');
 
-        it('should return when config xml is not defined.', () => {
-            manifestJsonParser = new ManifestJsonParser(locations.www).configure(undefined);
+        manifestJsonParser.configureThemeColor(cfg1);
+        expect(manifestJsonParser.manifest.theme_color).toEqual('#33363b');
+    });
 
-            // mock manifest JSON Object
-            const manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'any',
-                start_url: 'index.html'
-            };
+    it('should update theme color with StatusBarBackgroundColor if start_url file does not contain meta theme-color.', () => {
+        spyOn(fs, 'existsSync').and.returnValue(true);
+        spyOn(fs, 'readFileSync').and.returnValue('');
 
-            expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
-        });
+        manifestJsonParser.configureThemeColor(cfg2);
+        expect(manifestJsonParser.manifest.theme_color).toEqual('0xff0000ff');
+    });
 
-        it('should set manifest json object values to default, when config xml is empty.', () => {
-            manifestJsonParser = new ManifestJsonParser(locations.www).configure(cfgEmpty);
+    it('should update theme color with no value when StatusBarBackgroundColor is missing and start_url file does not contain meta theme-color.', () => {
+        spyOn(fs, 'existsSync').and.returnValue(true);
+        spyOn(fs, 'readFileSync').and.returnValue('');
 
-            // mock manifest JSON Object
-            const manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'any',
-                start_url: undefined,
-                icons: []
-            };
+        manifestJsonParser.configureThemeColor(cfgEmpty);
+        expect(manifestJsonParser.manifest.theme_color).toEqual(undefined);
+    });
 
-            expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
-        });
+    it('should write something.', () => {
+        spyOn(fs, 'writeFileSync').and.returnValue(true);
 
-        it('should read and set manifest json object values from the first config xml.', () => {
-            manifestJsonParser = new ManifestJsonParser(locations.www).configure(cfg1);
+        manifestJsonParser.write();
+        expect(fs.writeFileSync).toHaveBeenCalledWith(
+            jasmine.any(String),
+            JSON.stringify(defaltInitManifest, null, 2),
+            'utf8'
+        );
+    });
 
-            // mock manifest JSON Object
-            const manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'portrait',
-                start_url: 'index.html',
-                name: 'HelloWorld',
-                short_name: 'HelloWorld',
-                version: 'whatever',
-                description: 'A sample Apache Cordova application.',
-                author: 'Cordova Team',
-                icons: [{ src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' }]
-            };
-            expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
-        });
+    it('should write defaults with empty config.xml.', () => {
+        spyOn(fs, 'writeFileSync').and.returnValue(true);
 
-        it('should read and set manifest json object values from second config xml.', () => {
-            manifestJsonParser = new ManifestJsonParser(locations.www).configure(cfg2);
+        manifestJsonParser.configure(cfgEmpty)
+            .write();
 
-            // mock manifest JSON Object
-            const manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'landscape',
-                start_url: 'index.html',
-                name: 'HelloWorld',
-                short_name: 'Hello',
-                theme_color: '0xff0000ff',
-                version: 'whatever',
-                description: 'A sample Apache Cordova application.',
-                author: 'Cordova Team',
-                icons: []
-            };
-            expect(manifestJsonParser.manifest).toEqual(manifestJsonObj);
-        });
+        const expectedManifest = {
+            background_color: '#FFF',
+            display: 'standalone',
+            orientation: 'any'
+        };
 
-        it('should be called if start_url is defined in config xml.', () => {
-            const existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
-            const readFileSyncSpy = jasmine.createSpy('readFileSync').and.returnValue('<meta name="theme-color" content="#33363b">');
-            manifestJsonParser.__set__('fs', { readFileSync: readFileSyncSpy, existsSync: existsSyncSpy });
+        expect(fs.writeFileSync).toHaveBeenCalledWith(
+            jasmine.any(String),
+            JSON.stringify(expectedManifest, null, 2),
+            'utf8'
+        );
+    });
 
-            manifestJsonParser = new ManifestJsonParser(locations.www).configureThemeColor(cfg1);
+    it('should write with user defined values from config.xml.', () => {
+        spyOn(fs, 'writeFileSync').and.returnValue(true);
 
-            expect(existsSyncSpy).toHaveBeenCalled();
-            expect(readFileSyncSpy).toHaveBeenCalled();
-        });
+        manifestJsonParser.configure(cfg1)
+            .write();
 
-        it('should not be called if start_url is not defined in config xml.', () => {
-            const existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
-            const readFileSyncSpy = jasmine.createSpy('readFileSync');
-            manifestJsonParser.__set__('fs', { readFileSync: readFileSyncSpy, existsSync: existsSyncSpy });
+        const expectedManifest = {
+            background_color: '#FFF',
+            display: 'standalone',
+            orientation: 'portrait',
+            start_url: 'index.html',
+            name: 'HelloWorld',
+            short_name: 'HelloWorld',
+            version: 'whatever',
+            description: 'A sample Apache Cordova application.',
+            author: 'Cordova Team',
+            icons: [{ src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' }]
+        };
 
-            manifestJsonParser = new ManifestJsonParser(locations.www).configureThemeColor(cfgEmpty);
-
-            expect(existsSyncSpy).toHaveBeenCalled();
-            expect(readFileSyncSpy).toHaveBeenCalled();
-        });
-
-        it('should write provided data when config xml is empty.', () => {
-            const existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
-            const readFileSyncSpy = jasmine.createSpy('readFileSync');
-            const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            manifestJsonParser.__set__('fs', { readFileSync: readFileSyncSpy, existsSync: existsSyncSpy, writeFileSync: writeFileSyncSpy });
-
-            manifestJsonParser = new ManifestJsonParser(locations.www).configure(cfgEmpty).write();
-
-            expect(existsSyncSpy).not.toHaveBeenCalled();
-            expect(readFileSyncSpy).not.toHaveBeenCalled();
-            expect(writeFileSyncSpy).toHaveBeenCalled();
-
-            // mock manifest JSON Object
-            let manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'any',
-                icons: []
-            };
-
-            const manifestPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(manifestPath).toEqual(path.join('mock', 'www', 'manifest.json'));
-
-            // get manifest json file content and remove white spaces
-            let manifestFile = writeFileSyncSpy.calls.argsFor(0)[1];
-
-            // convert to remove white space
-            manifestFile = manifestFile.replace(/\s+/g, '');
-            manifestJsonObj = JSON.stringify(manifestJsonObj).replace(/\s/g, '');
-            expect(manifestFile).toEqual(manifestJsonObj);
-
-            const manifestFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(manifestFormat).toEqual('utf8');
-        });
-
-        it('should write manifest json object values from config xml.', () => {
-            const existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
-            const readFileSyncSpy = jasmine.createSpy('readFileSync');
-            const writeFileSyncSpy = jasmine.createSpy('writeFileSync');
-            manifestJsonParser.__set__('fs', { readFileSync: readFileSyncSpy, existsSync: existsSyncSpy, writeFileSync: writeFileSyncSpy });
-
-            manifestJsonParser = new ManifestJsonParser(locations.www).configure(cfg1).write();
-
-            expect(existsSyncSpy).toHaveBeenCalled();
-            expect(readFileSyncSpy).toHaveBeenCalled();
-            expect(writeFileSyncSpy).toHaveBeenCalled();
-
-            // mock manifest JSON Object
-            let manifestJsonObj = {
-                background_color: '#FFF',
-                display: 'standalone',
-                orientation: 'portrait',
-                start_url: 'index.html',
-                name: 'HelloWorld',
-                short_name: 'HelloWorld',
-                version: 'whatever',
-                description: 'A sample Apache Cordova application.',
-                author: 'Cordova Team',
-                icons: [{ src: 'res/electron/cordova.png', type: 'image/png', sizes: '16x16' }]
-            };
-
-            const manifestPath = writeFileSyncSpy.calls.argsFor(0)[0];
-            expect(manifestPath).toEqual(path.join('mock', 'www', 'manifest.json'));
-
-            // get manifest json file content and remove white spaces
-            let manifestFile = writeFileSyncSpy.calls.argsFor(0)[1];
-
-            // convert to remove white space
-            manifestFile = manifestFile.replace(/\s+/g, '');
-            manifestJsonObj = JSON.stringify(manifestJsonObj).replace(/\s/g, '');
-            expect(manifestFile).toEqual(manifestJsonObj);
-
-            const manifestFormat = writeFileSyncSpy.calls.argsFor(0)[2];
-            expect(manifestFormat).toEqual('utf8');
-        });
+        expect(fs.writeFileSync).toHaveBeenCalledWith(
+            jasmine.any(String),
+            JSON.stringify(expectedManifest, null, 2),
+            'utf8'
+        );
     });
 });
