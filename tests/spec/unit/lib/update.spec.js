@@ -25,7 +25,7 @@ describe('Update', () => {
         it('should reject with an errror that update is not supported.', () => {
             update.run().then(
                 () => {},
-                (error) => {
+                error => {
                     expect(error).toEqual(new Error('Update not supported'));
                 }
             );
@@ -34,14 +34,9 @@ describe('Update', () => {
 
     describe('help export method', () => {
         it('should warn that updating is not support for Electron.', () => {
-            const logSpy = jasmine.createSpy('log');
-            update.__set__('console', {
-                log: logSpy
-            });
-
+            spyOn(console, 'log');
             update.help();
-
-            expect(logSpy.calls.argsFor(0)[0]).toContain('WARNING : Electron does not support updating. Remove and then re-Add the platform to get the latest.');
+            expect(console.log).toHaveBeenCalledWith('WARNING : Electron does not support updating. Remove and then re-Add the platform to get the latest.');
         });
     });
 });
