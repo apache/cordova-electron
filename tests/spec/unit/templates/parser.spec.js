@@ -17,15 +17,16 @@
     under the License.
 */
 
-const rewire = require('rewire');
 const path = require('path');
-const CordovaError = require('cordova-common').CordovaError;
+const fs = require('fs-extra');
+const rewire = require('rewire');
+const { CordovaError, events } = require('cordova-common');
 const Parser = rewire('../../../../bin/templates/cordova/parser');
+
+const mockProjectPath = 'mock_project_path';
 
 describe('Parser class', () => {
     describe('Constructing parser instanse', () => {
-        const mockProjectPath = 'mock_project_path';
-
         it('should not have valid electron project', () => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(false));
 
@@ -36,201 +37,150 @@ describe('Parser class', () => {
 
         it('should have valid electron project and set path', () => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
-
             const parser = new Parser(mockProjectPath);
-
             expect(parser.path).toBe(mockProjectPath);
         });
     });
 
-    describe('update_from_config method', () => {
-        const mockProjectPath = 'mock_project_path';
+    describe('Class Methods', () => {
+        let parser;
 
-        it('should return a resolved promise.', () => {
+        beforeEach(() => {
             Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
-
-            const parser = new Parser(mockProjectPath);
-            const actual = parser.update_from_config();
-
-            expect(typeof actual).toBe(typeof Promise.resolve());
-        });
-    });
-
-    describe('www_dir method', () => {
-        const mockProjectPath = 'mock_project_path';
-
-        it('should return the projects www dir path.', () => {
-            Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
-
-            const parser = new Parser(mockProjectPath);
-            const actual = parser.www_dir();
-
-            expect(actual).toBe(path.join(mockProjectPath, 'www'));
-        });
-    });
-
-    describe('update_www method', () => {
-        const mockProjectPath = 'mock_project_path';
-
-        it('should detect merges/electron file path and merge/update user source files into the platform staging dir', () => {
-            Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
-
-            const fsExistsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
-            Parser.__set__('fs', {
-                existsSync: fsExistsSyncSpy
-            });
-
-            const emitSpy = jasmine.createSpy('emit');
-            Parser.__set__('events', {
-                emit: emitSpy
-            });
-
-            const mergeAndUpdateDirSpy = jasmine.createSpy('mergeAndUpdateDir');
-            Parser.__set__('FileUpdater', {
-                mergeAndUpdateDir: mergeAndUpdateDirSpy
-            });
-
-            const parser = new Parser(mockProjectPath);
-
-            const cordovaProject = {
-                root: 'mock',
-                projectConfig: {
-                    path: path.join('mock', 'config.xml'),
-                    cdvNamespacePrefix: 'cdv'
-                },
-                locations: {
-                    www: path.join('mock', 'www')
-                }
-            };
-
-            parser.update_www(cordovaProject);
-
-            expect(fsExistsSyncSpy).toHaveBeenCalled();
-            expect(emitSpy).toHaveBeenCalled();
-
-            // The emit message was.
-            let actualEmit = emitSpy.calls.argsFor(0)[1];
-            let expectedEmit = 'Found "merges/electron" folder. Copying its contents into the electron project.';
-            expect(actualEmit).toBe(expectedEmit);
-
-            const expectedSourceDirs = [
-                'www',
-                path.join('..', mockProjectPath, 'platform_www'),
-                path.join('merges', 'electron')
-            ];
-            const expectedTargetDir = path.join('..', mockProjectPath, 'www');
-            actualEmit = emitSpy.calls.argsFor(1)[1];
-            expectedEmit = `Merging and updating files from [${expectedSourceDirs.join(', ')}] to ${expectedTargetDir}`;
-            expect(actualEmit).toBe(expectedEmit);
-
-            expect(mergeAndUpdateDirSpy).toHaveBeenCalled();
+            parser = new Parser(mockProjectPath);
         });
 
-        it('should detect merges/electron file path and merge/update user source files into the platform staging dir', () => {
-            Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
-
-            const fsExistsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
-            Parser.__set__('fs', {
-                existsSync: fsExistsSyncSpy
+        describe('update_from_config method', () => {
+            it('should return a resolved promise.', () => {
+                const actual = parser.update_from_config();
+                expect(typeof actual).toBe(typeof Promise.resolve());
             });
-
-            const emitSpy = jasmine.createSpy('emit');
-            Parser.__set__('events', {
-                emit: emitSpy
-            });
-
-            const mergeAndUpdateDirSpy = jasmine.createSpy('mergeAndUpdateDir');
-            Parser.__set__('FileUpdater', {
-                mergeAndUpdateDir: mergeAndUpdateDirSpy
-            });
-
-            const parser = new Parser(mockProjectPath);
-
-            const cordovaProject = {
-                root: 'mock',
-                projectConfig: {
-                    path: path.join('mock', 'config.xml'),
-                    cdvNamespacePrefix: 'cdv'
-                },
-                locations: {
-                    www: path.join('mock', 'www')
-                }
-            };
-
-            parser.update_www(cordovaProject);
-
-            expect(fsExistsSyncSpy).toHaveBeenCalled();
-            expect(emitSpy).toHaveBeenCalled();
-
-            // The emit message was.
-            let actualEmit = emitSpy.calls.argsFor(0)[1];
-            let expectedEmit = 'Found "merges/electron" folder. Copying its contents into the electron project.';
-            expect(actualEmit).not.toBe(expectedEmit);
-
-            const expectedSourceDirs = [
-                'www',
-                path.join('..', mockProjectPath, 'platform_www')
-            ];
-            const expectedTargetDir = path.join('..', mockProjectPath, 'www');
-            actualEmit = emitSpy.calls.argsFor(0)[1];
-            expectedEmit = `Merging and updating files from [${expectedSourceDirs.join(', ')}] to ${expectedTargetDir}`;
-            expect(actualEmit).toBe(expectedEmit);
-
-            expect(mergeAndUpdateDirSpy).toHaveBeenCalled();
         });
-    });
 
-    describe('config_xml method', () => {
-        const mockProjectPath = 'mock_project_path';
-
-        it('should return the projects config.xml file path.', () => {
-            Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
-
-            const parser = new Parser(mockProjectPath);
-            const actual = parser.config_xml();
-
-            expect(actual).toBe(path.join(mockProjectPath, 'config.xml'));
+        describe('www_dir method', () => {
+            it('should return the projects www dir path.', () => {
+                const actual = parser.www_dir();
+                expect(actual).toBe(path.join(mockProjectPath, 'www'));
+            });
         });
-    });
 
-    describe('update_project method', () => {
-        const mockProjectPath = 'mock_project_path';
+        describe('update_www method', () => {
+            it('should detect merges/electron file path and merge/update user source files into the platform staging dir', () => {
+                spyOn(fs, 'existsSync').and.returnValue(true);
+                spyOn(events, 'emit');
 
-        it('should copy munged config.xml to platform www dir.', () => {
-            const fsCopySyncSpy = jasmine.createSpy('copySync');
-            Parser.__set__('fs', {
-                copySync: fsCopySyncSpy
+                const mergeAndUpdateDirSpy = jasmine.createSpy('mergeAndUpdateDir');
+                Parser.__set__('FileUpdater', {
+                    mergeAndUpdateDir: mergeAndUpdateDirSpy
+                });
+
+                parser.update_www({
+                    root: 'mock',
+                    projectConfig: {
+                        path: path.join('mock', 'config.xml'),
+                        cdvNamespacePrefix: 'cdv'
+                    },
+                    locations: {
+                        www: path.join('mock', 'www')
+                    }
+                });
+
+                expect(events.emit).toHaveBeenCalledWith(
+                    'verbose',
+                    'Found "merges/electron" folder. Copying its contents into the electron project.'
+                );
+
+                const expectedSourceDirs = [
+                    'www',
+                    path.join('..', mockProjectPath, 'platform_www'),
+                    path.join('merges', 'electron')
+                ];
+                const expectedTargetDir = path.join('..', mockProjectPath, 'www');
+
+                expect(events.emit).toHaveBeenCalledWith(
+                    'verbose',
+                    `Merging and updating files from [${expectedSourceDirs.join(', ')}] to ${expectedTargetDir}`
+                );
+
+                expect(mergeAndUpdateDirSpy).toHaveBeenCalled();
             });
 
-            Parser.__set__('dirExists', jasmine.createSpy('dirExists').and.returnValue(true));
+            it('should detect merges/electron file path and merge/update user source files into the platform staging dir', () => {
+                spyOn(fs, 'existsSync').and.returnValue(false);
+                spyOn(events, 'emit');
 
-            const parser = new Parser(mockProjectPath);
+                const mergeAndUpdateDirSpy = jasmine.createSpy('mergeAndUpdateDir');
+                Parser.__set__('FileUpdater', {
+                    mergeAndUpdateDir: mergeAndUpdateDirSpy
+                });
 
-            parser.update_project().then(() => {
-                expect(fsCopySyncSpy).toHaveBeenCalled();
+                const cordovaProject = {
+                    root: 'mock',
+                    projectConfig: {
+                        path: path.join('mock', 'config.xml'),
+                        cdvNamespacePrefix: 'cdv'
+                    },
+                    locations: {
+                        www: path.join('mock', 'www')
+                    }
+                };
 
-                const actualSrc = fsCopySyncSpy.calls.argsFor(0)[0];
-                const actualDest = fsCopySyncSpy.calls.argsFor(0)[1];
-                expect(actualSrc).toBe(path.join(mockProjectPath, 'config.xml'));
-                expect(actualDest).toBe(path.join(mockProjectPath, 'www', 'config.xml'));
+                parser.update_www(cordovaProject);
+
+                expect(fs.existsSync).toHaveBeenCalled();
+                expect(events.emit).toHaveBeenCalled();
+
+                // The emit message was.
+                let actualEmit = events.emit.calls.argsFor(0)[1];
+                let expectedEmit = 'Found "merges/electron" folder. Copying its contents into the electron project.';
+                expect(actualEmit).not.toBe(expectedEmit);
+
+                const expectedSourceDirs = [
+                    'www',
+                    path.join('..', mockProjectPath, 'platform_www')
+                ];
+                const expectedTargetDir = path.join('..', mockProjectPath, 'www');
+                actualEmit = events.emit.calls.argsFor(0)[1];
+                expectedEmit = `Merging and updating files from [${expectedSourceDirs.join(', ')}] to ${expectedTargetDir}`;
+                expect(actualEmit).toBe(expectedEmit);
+                expect(mergeAndUpdateDirSpy).toHaveBeenCalled();
+            });
+        });
+
+        describe('config_xml method', () => {
+            it('should return the projects config.xml file path.', () => {
+                expect(parser.config_xml()).toBe(path.join(mockProjectPath, 'config.xml'));
+            });
+        });
+
+        describe('update_project method', () => {
+            it('should copy munged config.xml to platform www dir.', () => {
+                const fsCopySyncSpy = jasmine.createSpy('copySync');
+                Parser.__set__('fs', { copySync: fsCopySyncSpy });
+
+                parser.update_project().then(() => {
+                    const actualSrc = fsCopySyncSpy.calls.argsFor(0)[0];
+                    const actualDest = fsCopySyncSpy.calls.argsFor(0)[1];
+
+                    expect(fsCopySyncSpy).toHaveBeenCalled();
+                    expect(actualSrc).toBe(path.join(mockProjectPath, 'config.xml'));
+                    expect(actualDest).toBe(path.join(mockProjectPath, 'www', 'config.xml'));
+                });
             });
         });
     });
 
     describe('logFileOp method', () => {
         it('should emit passed in message.', () => {
-            const emitSpy = jasmine.createSpy('emit');
-            Parser.__set__('events', {
-                emit: emitSpy
-            });
+            spyOn(events, 'emit');
 
             const msg = 'random message';
             const logFileOp = Parser.__get__('logFileOp');
             logFileOp(msg);
 
             // The emit message was.
-            const actualEmit = emitSpy.calls.argsFor(0)[1];
-            expect(emitSpy).toHaveBeenCalled();
+            const actualEmit = events.emit.calls.argsFor(0)[1];
+            expect(events.emit).toHaveBeenCalled();
             expect(actualEmit).toBe(`  ${msg}`);
         });
     });
