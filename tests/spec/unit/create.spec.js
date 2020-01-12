@@ -49,7 +49,7 @@ function createAndVerify (projectname, projectid) {
     fs.removeSync(tmpDir);
 }
 
-function createAndValidateProjectDirName (projectname, projectid) {
+function createAndValidateProjectDirName (projectname, projectid, copyNodeModules) {
     // remove existing folder
     fs.removeSync(tmpDir);
     fs.ensureDirSync(tmpDir);
@@ -59,7 +59,15 @@ function createAndValidateProjectDirName (projectname, projectid) {
     const _fs = create.__get__('fs');
     create.__set__('fs', {
         ensureDirSync: _fs.ensureDirSync,
-        existsSync: path => !(path === projectPath),
+        existsSync: path => {
+            if (path === projectPath) {
+                return false;
+            } else if (path.includes('node_modules') && copyNodeModules) {
+                return false;
+            } else {
+                return true;
+            }
+        },
         copySync: () => true
     });
 
@@ -125,6 +133,13 @@ describe('create', () => {
         const projectid = 'com.test.app6';
 
         return createAndValidateProjectDirName(projectname, projectid);
+    });
+
+    it('copy node_modules folder if it exists', () => {
+        const projectname = 'withnodemodules';
+        const projectid = 'com.test.withnodemodules';
+
+        return createAndValidateProjectDirName(projectname, projectid, true);
     });
 
     it('should stop creating project when project destination already exists', () => {
