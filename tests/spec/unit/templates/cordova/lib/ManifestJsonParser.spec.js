@@ -36,7 +36,7 @@ const locations = {
     configXml: path.join('mock', 'config.xml')
 };
 
-const defaltInitManifest = {
+const defaultInitManifest = {
     background_color: '#FFF',
     display: 'standalone',
     orientation: 'any',
@@ -54,12 +54,12 @@ describe('ManifestJson class', () => {
         expect(manifestJsonParser).toBeDefined();
         expect(manifestJsonParser.path).toEqual(path.join(locations.www, 'manifest.json'));
         expect(manifestJsonParser.www).toEqual(locations.www);
-        expect(manifestJsonParser.manifest).toEqual(defaltInitManifest);
+        expect(manifestJsonParser.manifest).toEqual(defaultInitManifest);
     });
 
     it('should return when config xml is not defined.', () => {
         manifestJsonParser.configure();
-        expect(manifestJsonParser.manifest).toEqual(defaltInitManifest);
+        expect(manifestJsonParser.manifest).toEqual(defaultInitManifest);
     });
 
     it('should set manifest json object values to default, when config xml is empty.', () => {
@@ -125,7 +125,7 @@ describe('ManifestJson class', () => {
         manifestJsonParser.write();
         expect(fs.writeFileSync).toHaveBeenCalledWith(
             jasmine.any(String),
-            JSON.stringify(defaltInitManifest, null, 2),
+            JSON.stringify(defaultInitManifest, null, 2),
             'utf8'
         );
     });

@@ -49,7 +49,7 @@ function createAndVerify (projectname, projectid) {
     fs.removeSync(tmpDir);
 }
 
-function createAndValidateProjectDirName (projectname, projectid, copyNodeModules) {
+function createAndValidateProjectDirName (projectname, projectid, { copyNodeModules = false } = {}) {
     // remove existing folder
     fs.removeSync(tmpDir);
     fs.ensureDirSync(tmpDir);
@@ -139,7 +139,7 @@ describe('create', () => {
         const projectname = 'withnodemodules';
         const projectid = 'com.test.withnodemodules';
 
-        return createAndValidateProjectDirName(projectname, projectid, true);
+        return createAndValidateProjectDirName(projectname, projectid, { copyNodeModules: true });
     });
 
     it('should stop creating project when project destination already exists', () => {

@@ -25,15 +25,13 @@ const path = require('path');
 const fs = require('fs-extra');
 const {
     ActionStack,
-    ConfigChanges,
+    ConfigChanges: { PlatformMunger },
     CordovaLogger,
-    events,
+    events: selfEvents,
     PlatformJson,
     PluginInfo,
     PluginInfoProvider
 } = require('cordova-common');
-const selfEvents = events;
-const PlatformMunger = ConfigChanges.PlatformMunger;
 const Parser = require('./parser');
 
 function setupEvents (externalEventEmitter) {
