@@ -52,7 +52,7 @@ if (argv.help || !projectPath) {
     console.log('   <project_template_dir>: Path to project template (override).');
     process.exit(0);
 } else {
-    const configPath = path.resolve(__dirname, 'templates/project/config.xml');
+    const configPath = path.resolve(__dirname, 'templates/platform_www/config.xml');
     const config = new ConfigParser(configPath);
 
     // apply overrides (package and project names
