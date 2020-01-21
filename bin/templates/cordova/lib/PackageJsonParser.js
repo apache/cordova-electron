@@ -22,9 +22,10 @@ const path = require('path');
 const { events } = require('cordova-common');
 
 class PackageJsonParser {
-    constructor (wwwDir) {
+    constructor (wwwDir, projectRootDir) {
         this.path = path.join(wwwDir, 'package.json');
         this.www = wwwDir;
+        this.projectRootDir = projectRootDir;
         this.package = {
             main: 'cdv-electron-main.js'
         };
@@ -38,8 +39,26 @@ class PackageJsonParser {
             this.package.description = config.description() || 'A sample Apache Cordova application that responds to the deviceready event.';
 
             if (projectPackageJson.dependencies) {
-                const cordovaDependencies = Object.keys(projectPackageJson.dependencies)
-                    .filter((npmPackage) => /^cordova(?!-plugin)-/.test(npmPackage));
+                const cordovaDependencies = [];
+                const droppedPackages = [];
+
+                for (const [npmPackage, npmPackageValue] of Object.entries(projectPackageJson.dependencies)) {
+                    if (/^cordova(?!-plugin)-/.test(npmPackage)) {
+                        cordovaDependencies.push(npmPackage);
+                    }
+
+                    // Format FilePath Based Dependencies
+                    if (npmPackageValue.startsWith('file:..')) {
+                        const relativePath = npmPackageValue.split('file:')[1];
+                        const absolutePath = path.resolve(this.projectRootDir, relativePath);
+
+                        if (fs.pathExistsSync(absolutePath)) {
+                            projectPackageJson.dependencies[npmPackage] = `file:${absolutePath}`;
+                        } else {
+                            droppedPackages.push(npmPackage);
+                        }
+                    }
+                }
 
                 // If Cordova dependencies are detected in "dependencies" of "package.json" warn for potential app package bloating
                 if (cordovaDependencies.length) {
@@ -51,6 +70,10 @@ class PackageJsonParser {
 It is recommended that all Cordova packages are defined as "devDependencies" in the "package.json" file. It is safe to move them manually.
 Packages defined as a dependency will be bundled with the application and can increase the built application's size.
 `);
+                }
+
+                if (droppedPackages.length) {
+                    events.emit('warn', `[Cordova Electron] The following local npm dependencies could not be located and will not be deployed to the Electron app:\n\t${droppedPackages.join('\n\t- ')}`);
                 }
 
                 this.package.dependencies = projectPackageJson.dependencies;
