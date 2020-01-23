@@ -3,7 +3,6 @@
   "version": "2.0.0-dev",
   "description": "electron apps as a target for cordova developers",
   "main": "bin/templates/cordova/Api.js",
-  "bin": "bin/create",
   "repository": "github:apache/cordova-electron",
   "bugs": "https://github.com/apache/cordova-electron/issues",
   "kewords": [

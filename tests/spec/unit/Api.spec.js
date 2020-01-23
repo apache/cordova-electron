@@ -20,7 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
-const { events, PluginInfo } = require('cordova-common');
+const { events, PluginInfo, ConfigParser } = require('cordova-common');
 
 const templateDir = path.resolve(__dirname, '..', '..', '..', 'bin', 'templates');
 
@@ -434,10 +434,26 @@ describe('Api prototype methods', () => {
         /**
          * @todo improve createPlatform to test actual created platforms.
          */
-        it('should export static createPlatform function', () => {
+        it('should create cordova project with destination only provided', () => {
             spyOn(events, 'emit');
 
             return Api.createPlatform(tmpDir)
+                .then((results) => {
+                    expect(events.emit).toHaveBeenCalledWith(
+                        'log',
+                        jasmine.stringMatching(/Creating Cordova project/)
+                    );
+
+                    expect(results.constructor.name).toBe('Api');
+                });
+        });
+
+        it('should create cordova project with config parser included', () => {
+            spyOn(events, 'emit');
+
+            const config = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
+
+            return Api.createPlatform(tmpDir, config)
                 .then((results) => {
                     expect(events.emit).toHaveBeenCalledWith(
                         'log',
