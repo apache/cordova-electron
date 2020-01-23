@@ -29,7 +29,6 @@ const {
     CordovaLogger,
     events: selfEvents,
     PlatformJson,
-    PluginInfo,
     PluginInfoProvider
 } = require('cordova-common');
 const Parser = require('./parser');
@@ -93,8 +92,8 @@ class Api {
     }
 
     addPlugin (pluginInfo, installOptions) {
-        if (!pluginInfo || !(pluginInfo instanceof PluginInfo)) {
-            return Promise.reject(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
+        if (!pluginInfo) {
+            return Promise.reject(new Error('Missing plugin info parameter. The first parameter should contain a valid PluginInfo instance.'));
         }
 
         installOptions = installOptions || {};
@@ -142,9 +141,9 @@ class Api {
             });
     }
 
-    removePlugin (plugin, uninstallOptions) {
-        if (!plugin || !(plugin instanceof PluginInfo)) {
-            return Promise.reject(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
+    removePlugin (pluginInfo, uninstallOptions) {
+        if (!pluginInfo) {
+            return Promise.reject(new Error('Missing plugin info parameter. The first parameter should contain a valid PluginInfo instance.'));
         }
 
         uninstallOptions = uninstallOptions || {};
@@ -154,18 +153,18 @@ class Api {
         const actions = new ActionStack();
 
         let platform = this.platform;
-        if (!plugin.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
+        if (!pluginInfo.getPlatformsArray().includes(platform)) { // if `cordova-electron` is not defined in plugin.xml, `browser` is used instead.
             platform = 'browser';
         }
 
         // queue up plugin files
-        plugin.getFilesAndFrameworks(platform)
-            .concat(plugin.getAssets(platform))
-            .concat(plugin.getJsModules(platform))
+        pluginInfo.getFilesAndFrameworks(platform)
+            .concat(pluginInfo.getAssets(platform))
+            .concat(pluginInfo.getJsModules(platform))
             .forEach((item) => {
                 actions.push(actions.createAction(
-                    this._getUninstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions],
-                    this._getInstaller(item.itemType), [item, plugin.dir, plugin.id, uninstallOptions]));
+                    this._getUninstaller(item.itemType), [item, pluginInfo.dir, pluginInfo.id, uninstallOptions],
+                    this._getInstaller(item.itemType), [item, pluginInfo.dir, pluginInfo.id, uninstallOptions]));
             });
 
         // run through the action stack
@@ -174,17 +173,17 @@ class Api {
                 this._munger
                     // Ignore passed `is_top_level` option since platform itself doesn't know
                     // anything about managing dependencies - it's responsibility of caller.
-                    .remove_plugin_changes(plugin, /* is_top_level= */true)
+                    .remove_plugin_changes(pluginInfo, /* is_top_level= */true)
                     .save_all();
 
                 const targetDir = uninstallOptions.usePlatformWww
                     ? this.getPlatformInfo().locations.platformWww
                     : this.getPlatformInfo().locations.www;
 
-                this._removeModulesInfo(plugin, targetDir);
+                this._removeModulesInfo(pluginInfo, targetDir);
                 // Remove stale plugin directory
                 // @todo this should be done by plugin files uninstaller
-                fs.removeSync(path.resolve(this.root, 'Plugins', plugin.id));
+                fs.removeSync(path.resolve(this.root, 'Plugins', pluginInfo.id));
             });
     }
 

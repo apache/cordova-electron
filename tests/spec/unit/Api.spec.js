@@ -144,19 +144,16 @@ describe('Api class', () => {
             return api.addPlugin().then(
                 () => {},
                 error => {
-                    expect(error).toEqual(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
+                    expect(error).toEqual(new Error('Missing plugin info parameter. The first parameter should contain a valid PluginInfo instance.'));
                 }
             );
         });
 
-        it('should Promise reject when PluginInfo parameter is not PluginInfo instance.', () => {
+        it('should error out when a PluginInfo parameter is not valid', () => {
             class FakePluginInfo {}
-            return api.addPlugin(new FakePluginInfo()).then(
-                () => {},
-                error => {
-                    expect(error).toEqual(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
-                }
-            );
+            return expect(() => {
+                api.addPlugin(new FakePluginInfo());
+            }).toThrowError();
         });
 
         describe('Use Electron Plugin with Default Install Options', () => {
@@ -288,19 +285,16 @@ describe('Api class', () => {
             return api.removePlugin().then(
                 () => {},
                 error => {
-                    expect(error).toEqual(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
+                    expect(error).toEqual(new Error('Missing plugin info parameter. The first parameter should contain a valid PluginInfo instance.'));
                 }
             );
         });
 
-        it('should Promise reject when PluginInfo parameter is not PluginInfo instance.', () => {
+        it('should error out when a PluginInfo parameter is not valid.', () => {
             class FakePluginInfo {}
-            return api.removePlugin(new FakePluginInfo()).then(
-                () => {},
-                error => {
-                    expect(error).toEqual(new Error('The parameter is incorrect. The first parameter should be valid PluginInfo instance'));
-                }
-            );
+            return expect(() => {
+                api.removePlugin(new FakePluginInfo());
+            }).toThrowError();
         });
 
         describe('Use Electron Plugin with Default Install Options', () => {
