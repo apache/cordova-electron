@@ -51,6 +51,11 @@ function createWindow () {
     // Open the DevTools.
     if (cdvElectronSettings.browserWindow.webPreferences.devTools) {
         mainWindow.webContents.openDevTools();
+
+        // add dev tool extensions
+        cdvElectronSettings.devToolExtensions.forEach((extensionPath) => {
+            BrowserWindow.addDevToolsExtension(extensionPath);
+        });
     }
 
     // Emitted when the window is closed.
