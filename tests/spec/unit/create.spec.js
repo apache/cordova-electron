@@ -59,15 +59,8 @@ function createAndValidateProjectDirName (projectname, projectid, { copyNodeModu
     const _fs = create.__get__('fs');
     create.__set__('fs', {
         ensureDirSync: _fs.ensureDirSync,
-        existsSync: path => {
-            if (path === projectPath) {
-                return false;
-            } else if (path.includes('node_modules') && copyNodeModules) {
-                return false;
-            } else {
-                return true;
-            }
-        },
+        existsSync: path => path !== projectPath &&
+            !(path.includes('node_modules') && copyNodeModules),
         copySync: () => true
     });
 

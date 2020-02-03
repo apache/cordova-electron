@@ -65,6 +65,17 @@ describe('Parser class', () => {
         });
 
         describe('update_www method', () => {
+            const mockConfigParser = {
+                root: 'mock',
+                projectConfig: {
+                    path: path.join('mock', 'config.xml'),
+                    cdvNamespacePrefix: 'cdv'
+                },
+                locations: {
+                    www: path.join('mock', 'www')
+                }
+            };
+
             it('should detect merges/electron file path and merge/update user source files into the platform staging dir', () => {
                 spyOn(fs, 'existsSync').and.returnValue(true);
                 spyOn(events, 'emit');
@@ -74,16 +85,7 @@ describe('Parser class', () => {
                     mergeAndUpdateDir: mergeAndUpdateDirSpy
                 });
 
-                parser.update_www({
-                    root: 'mock',
-                    projectConfig: {
-                        path: path.join('mock', 'config.xml'),
-                        cdvNamespacePrefix: 'cdv'
-                    },
-                    locations: {
-                        www: path.join('mock', 'www')
-                    }
-                });
+                parser.update_www(mockConfigParser);
 
                 expect(events.emit).toHaveBeenCalledWith(
                     'verbose',
@@ -114,18 +116,7 @@ describe('Parser class', () => {
                     mergeAndUpdateDir: mergeAndUpdateDirSpy
                 });
 
-                const cordovaProject = {
-                    root: 'mock',
-                    projectConfig: {
-                        path: path.join('mock', 'config.xml'),
-                        cdvNamespacePrefix: 'cdv'
-                    },
-                    locations: {
-                        www: path.join('mock', 'www')
-                    }
-                };
-
-                parser.update_www(cordovaProject);
+                parser.update_www(mockConfigParser);
 
                 expect(fs.existsSync).toHaveBeenCalled();
                 expect(events.emit).toHaveBeenCalled();
