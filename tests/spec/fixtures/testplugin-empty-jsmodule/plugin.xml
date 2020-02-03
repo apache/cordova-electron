@@ -28,9 +28,5 @@
     <platform name="electron">
       <js-module src="www/MyTestPlugin2.js">
       </js-module>
-
-      <asset src="src/electron/sample.json" target="js/electron.json" />
-
-      <source-file src="src/electron/sample.json" target-dir="js" />
     </platform>
 </plugin>
