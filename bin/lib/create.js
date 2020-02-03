@@ -36,9 +36,6 @@ module.exports.createProject = (platform_dir, package_name, project_name, option
     events.emit('log', '\tPath: ' + platform_dir);
     events.emit('log', '\tName: ' + project_name);
 
-    // Set default values for path, package and name
-    platform_dir = platform_dir || 'CordovaExample';
-
     // Check if project already exists
     if (fs.existsSync(platform_dir)) {
         events.emit('error', 'Oops, destination already exists! Delete it and try again');

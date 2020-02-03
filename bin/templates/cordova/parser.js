@@ -44,15 +44,6 @@ class Parser {
         return path.join(this.path, 'www');
     }
 
-    // Used for creating platform_www in projects created by older versions.
-    // cordovajs_path (libDir) {
-    //     return path.resolve(path.join(libDir, 'cordova-lib', 'cordova.js'));
-    // }
-
-    // cordovajs_src_path (libDir) {
-    //     return path.resolve(path.join(libDir, 'cordova-js-src'));
-    // }
-
     // Replace the www dir with contents of platform_www and app www.
     update_www (cordovaProject, opts) {
         const platform_www = path.join(this.path, 'platform_www');
@@ -76,8 +67,6 @@ class Parser {
         events.emit('verbose', `Merging and updating files from [${sourceDirs.join(', ')}] to ${targetDir}`);
         FileUpdater.mergeAndUpdateDir(sourceDirs, targetDir, { rootDir: cordovaProject.root }, logFileOp);
     }
-
-    // update_overrides () {}
 
     config_xml () {
         return path.join(this.path, 'config.xml');

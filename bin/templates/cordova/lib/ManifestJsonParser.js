@@ -61,7 +61,7 @@ class ManifestJsonParser {
                 sizes: `${icon.width}x${icon.height}`
             }));
 
-        if (icons) this.manifest.icons = icons;
+        if (icons.length) this.manifest.icons = icons;
 
         return this;
     }
