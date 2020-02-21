@@ -32,7 +32,7 @@ const {
     PlatformJson,
     PluginInfoProvider
 } = require('cordova-common');
-const Parser = require('./parser');
+const Parser = require('../../../lib/parser');
 
 function setupEvents (externalEventEmitter) {
     if (externalEventEmitter) {
