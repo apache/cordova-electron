@@ -26,6 +26,7 @@ const fs = require('fs-extra');
 const {
     ActionStack,
     ConfigChanges: { PlatformMunger },
+    CordovaError,
     CordovaLogger,
     events: selfEvents,
     PlatformJson,
@@ -361,10 +362,12 @@ class Api {
 Api.updatePlatform = () => Promise.resolve();
 
 Api.createPlatform = (dest, config, options, events) => {
+    if (!config) throw new CordovaError('An Electron platform can not be created with a missing config argument.');
+
     events = setupEvents(events);
 
-    const name = config ? config.name() : 'HelloCordova';
-    const id = config ? config.packageName() : 'io.cordova.hellocordova';
+    const name = config.name();
+    const id = config.packageName();
 
     try {
         // we create the project using our scripts in this platform
