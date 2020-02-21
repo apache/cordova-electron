@@ -337,7 +337,7 @@ class Api {
     }
 
     clean (cleanOptions) {
-        return require('./lib/clean').run(cleanOptions);
+        return require('../../../lib/clean').run(cleanOptions);
     }
 
     requirements () {
