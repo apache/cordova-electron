@@ -20,7 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
-const { events, PluginInfo } = require('cordova-common');
+const { events, PluginInfo, ConfigParser } = require('cordova-common');
 
 const templateDir = path.resolve(__dirname, '..', '..', '..', 'bin', 'templates');
 
@@ -423,21 +423,21 @@ describe('Api prototype methods', () => {
     });
 
     describe('createPlatform method', () => {
+        let config;
+
         beforeEach(() => {
             fs.removeSync(tmpDir);
+            config = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
         });
 
         afterEach(() => {
             fs.removeSync(tmpDir);
         });
 
-        /**
-         * @todo improve createPlatform to test actual created platforms.
-         */
-        it('should export static createPlatform function', () => {
+        it('should create cordova project at the provided destination', () => {
             spyOn(events, 'emit');
 
-            return Api.createPlatform(tmpDir)
+            return Api.createPlatform(tmpDir, config)
                 .then((results) => {
                     expect(events.emit).toHaveBeenCalledWith(
                         'log',
@@ -450,7 +450,11 @@ describe('Api prototype methods', () => {
 
         it('should emit createPlatform not callable when error occurs.', () => {
             spyOn(create, 'createProject').and.returnValue(new Error('Some Random Error'));
-            expect(() => Api.createPlatform(tmpDir)).toThrowError();
+            expect(() => Api.createPlatform(tmpDir, config)).toThrowError();
+        });
+
+        it('should throw error when config argument is missing.', () => {
+            expect(() => Api.createPlatform(tmpDir)).toThrowError(/An Electron platform can not be created with a missing config argument./);
         });
     });
 
