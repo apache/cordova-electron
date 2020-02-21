@@ -22,7 +22,7 @@ const path = require('path');
 const { ConfigParser, xmlHelpers, events, CordovaError } = require('cordova-common');
 const ManifestJsonParser = require('./ManifestJsonParser');
 const PackageJsonParser = require('./PackageJsonParser');
-const SettingJsonParser = require('./SettingJsonParser');
+const SettingJsonParser = require('../../../../lib/SettingJsonParser');
 
 module.exports.prepare = function (cordovaProject, options) {
     // First cleanup current config and merge project's one into own
