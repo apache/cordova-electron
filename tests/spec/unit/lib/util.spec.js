@@ -17,7 +17,11 @@
     under the License.
 */
 
-const util = require('../../../../../../bin/templates/cordova/lib/util');
+const path = require('path');
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const util = require(path.join(rootDir, 'lib/util'));
 
 describe('Testing util.js:', () => {
     describe('deepMerge method', () => {

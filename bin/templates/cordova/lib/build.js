@@ -20,7 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const events = require('cordova-common').events;
-const { deepMerge } = require('./util');
+const { deepMerge } = require('../../../../lib/util');
 
 const PLATFORM_MAPPING = {
     linux: 'linux',

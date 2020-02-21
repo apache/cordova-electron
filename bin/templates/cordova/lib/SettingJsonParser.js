@@ -19,7 +19,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const { deepMerge } = require('./util');
+const { deepMerge } = require('../../../../lib/util');
 
 class SettingJsonParser {
     constructor (wwwDir) {
