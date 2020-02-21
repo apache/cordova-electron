@@ -341,7 +341,7 @@ class Api {
     }
 
     requirements () {
-        return require('./lib/check_reqs').run();
+        return require('../../../lib/check_reqs').run();
     }
 
     static version () {

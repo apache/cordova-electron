@@ -1686,7 +1686,7 @@ describe('Testing build.js:', () => {
 
             build.__set__('require', (file) => {
                 if (file === 'LOAD_MY_FAKE_DATA') return buildConfig;
-                if (file === './check_reqs') return { run: () => Promise.resolve([]) };
+                if (file === '../../../../lib/check_reqs') return { run: () => Promise.resolve([]) };
                 return require(file);
             });
 
@@ -1723,7 +1723,7 @@ describe('Testing build.js:', () => {
 
             build.__set__('require', (file) => {
                 // if (file === 'LOAD_MY_FAKE_DATA') return buildConfig;
-                if (file === './check_reqs') return { run: () => Promise.reject(new Error('Error')) };
+                if (file === '../../../../lib/check_reqs') return { run: () => Promise.reject(new Error('Error')) };
                 return require(file);
             });
 

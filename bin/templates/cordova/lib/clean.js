@@ -19,7 +19,7 @@
 
 const fs = require('fs-extra');
 const path = require('path');
-const check_reqs = require('./check_reqs');
+const check_reqs = require('../../../../lib/check_reqs');
 const platformBuildDir = path.join('platforms', 'electron', 'www');
 
 module.exports.run = () => {

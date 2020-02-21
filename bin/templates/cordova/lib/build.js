@@ -352,7 +352,7 @@ class ElectronBuilder {
     }
 }
 
-module.exports.run = (buildOptions, api) => require('./check_reqs')
+module.exports.run = (buildOptions, api) => require('../../../../lib/check_reqs')
     .run()
     .then(() => (new ElectronBuilder(buildOptions, api))
         .configure()
