@@ -82,7 +82,7 @@ class Api {
             locations: this.locations,
             root: this.root,
             name: this.platform,
-            version: require('./version'),
+            version: Api.version(),
             projectConfig: this.config
         };
     }
@@ -341,6 +341,20 @@ class Api {
 
     requirements () {
         return require('./lib/check_reqs').run();
+    }
+
+    static version () {
+        let platformPkg = null;
+
+        try {
+            // coming from user project
+            platformPkg = require(require.resolve('cordova-electron/package.json'));
+        } catch (e) {
+            // coming from repo test & coho
+            platformPkg = require('../../../package.json');
+        }
+
+        return platformPkg.version;
     }
 }
 // @todo create projectInstance and fulfill promise with it.

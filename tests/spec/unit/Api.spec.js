@@ -99,8 +99,7 @@ describe('Api class', () => {
 
     describe('getPlatformInfo method', () => {
         it('should return object containing platform information', () => {
-            // Mocking require that is called to get version.
-            Api.__set__('require', () => '1.0.0');
+            spyOn(Api, 'version').and.returnValue('1.0.0');
 
             expect(api.getPlatformInfo()).toEqual({
                 locations: mockExpectedLocations,
@@ -109,8 +108,6 @@ describe('Api class', () => {
                 version: '1.0.0',
                 projectConfig: undefined
             });
-
-            Api.__set__('require', apiRequire);
         });
     });
 
@@ -454,6 +451,38 @@ describe('Api prototype methods', () => {
         it('should emit createPlatform not callable when error occurs.', () => {
             spyOn(create, 'createProject').and.returnValue(new Error('Some Random Error'));
             expect(() => Api.createPlatform(tmpDir)).toThrowError();
+        });
+    });
+
+    describe('version method', () => {
+        it('should get version from cordova-electron package.', () => {
+            const dummyRequire = path => {
+                expect(path).toEqual('cordova-elecrtron-resolved-package-path');
+                return { version: '1.0.0' };
+            };
+
+            dummyRequire.resolve = path => {
+                return 'cordova-elecrtron-resolved-package-path';
+            };
+
+            Api.__set__('require', dummyRequire);
+
+            expect(Api.version()).toEqual('1.0.0');
+        });
+
+        it('should get version from package.json.', () => {
+            const dummyRequire = path => {
+                expect(path).toEqual('../../../package.json');
+                return { version: '1.0.0' };
+            };
+
+            dummyRequire.resolve = path => {
+                throw Error('random error');
+            };
+
+            Api.__set__('require', dummyRequire);
+
+            expect(Api.version()).toEqual('1.0.0');
         });
     });
 });
