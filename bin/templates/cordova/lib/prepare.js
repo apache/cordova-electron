@@ -20,7 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { ConfigParser, xmlHelpers, events, CordovaError } = require('cordova-common');
-const ManifestJsonParser = require('./ManifestJsonParser');
+const ManifestJsonParser = require('../../../../lib/ManifestJsonParser');
 const PackageJsonParser = require('./PackageJsonParser');
 const SettingJsonParser = require('../../../../lib/SettingJsonParser');
 
