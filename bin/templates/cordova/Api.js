@@ -89,7 +89,7 @@ class Api {
     }
 
     prepare (cordovaProject, options) {
-        return require('./lib/prepare').prepare.call(this, cordovaProject, options);
+        return require('../../../lib/prepare').prepare.call(this, cordovaProject, options);
     }
 
     addPlugin (pluginInfo, installOptions) {
