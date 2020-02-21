@@ -333,7 +333,7 @@ class Api {
     }
 
     run (runOptions) {
-        return require('./lib/run').run(runOptions);
+        return require('../../../lib/run').run(runOptions);
     }
 
     clean (cleanOptions) {
