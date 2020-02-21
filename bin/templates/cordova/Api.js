@@ -55,7 +55,7 @@ class Api {
         this.root = platformRootDir || path.resolve(__dirname, '..');
         this.events = setupEvents(events);
         this.parser = new Parser(this.root);
-        this.handler = require('./handler');
+        this.handler = require('../../../lib/handler');
 
         this.locations = {
             platformRootDir,
