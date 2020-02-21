@@ -21,9 +21,10 @@ const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
 
-const cordova_bin = path.join(__dirname, '../../../bin');// is this the same on all platforms?
-const tmpDir = path.join(__dirname, '../../../temp');
-const create = rewire(path.join(cordova_bin, 'lib', 'create'));
+const rootDir = path.resolve(__dirname, '../../../..');
+const tmpDir = path.join(rootDir, 'temp');
+
+const create = rewire(path.join(rootDir, 'lib/create'));
 
 function createAndValidateProjectDirName (projectname, projectid, { copyNodeModules = false } = {}) {
     // remove existing folder

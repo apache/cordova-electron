@@ -371,7 +371,7 @@ Api.createPlatform = (dest, config, options, events) => {
 
     try {
         // we create the project using our scripts in this platform
-        return require('../../lib/create').createProject(dest, id, name, options).then(() => new Api(null, dest, events));
+        return require('../../../lib/create').createProject(dest, id, name, options).then(() => new Api(null, dest, events));
     } catch (e) {
         events.emit('error', 'createPlatform is not callable from the electron project API.');
     }
