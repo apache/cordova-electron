@@ -20,13 +20,17 @@
 
 const rewire = require('rewire');
 const path = require('path');
-const Api = rewire('../../../../../../bin/templates/cordova/Api');
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const Api = rewire(path.join(rootDir, 'lib/Api'));
+const check_reqs = require(path.join(rootDir, 'lib/check_reqs'));
 
 describe('Testing build.js:', () => {
     let build;
 
     beforeEach(() => {
-        build = rewire('../../../../../../bin/templates/cordova/lib/build');
+        build = rewire(path.join(rootDir, 'lib/build'));
     });
 
     describe('Build class', () => {
@@ -1686,7 +1690,7 @@ describe('Testing build.js:', () => {
 
             build.__set__('require', (file) => {
                 if (file === 'LOAD_MY_FAKE_DATA') return buildConfig;
-                if (file === '../../../../lib/check_reqs') return { run: () => Promise.resolve([]) };
+                if (file === './check_reqs') return { run: () => Promise.resolve([]) };
                 return require(file);
             });
 
@@ -1713,40 +1717,35 @@ describe('Testing build.js:', () => {
             });
         });
 
-        it('should have failed requirement and console log error.', () => {
+        it('should have failed requirement check and thrown error.', () => {
             const api = new Api(null);
             const buildOptions = { debug: false, buildConfig: 'LOAD_MY_FAKE_DATA', argv: [] };
+            const errorMsg = 'error';
+            spyOn(check_reqs, 'run').and.callFake(() => Promise.reject(new Error(errorMsg)));
 
-            // create spies
-            const logSpy = jasmine.createSpy('emit');
-            build.__set__('console', { log: logSpy });
-
-            build.__set__('require', (file) => {
-                // if (file === 'LOAD_MY_FAKE_DATA') return buildConfig;
-                if (file === '../../../../lib/check_reqs') return { run: () => Promise.reject(new Error('Error')) };
-                return require(file);
-            });
-
-            build.run(buildOptions, api).then(() => {
-                expect(logSpy).toHaveBeenCalled();
-            });
+            return build.run(buildOptions, api).then(
+                () => fail('Unexpectedly resolved'),
+                error => {
+                    expect(check_reqs.run).toHaveBeenCalled();
+                    expect(error.message).toBe(errorMsg);
+                }
+            );
         });
     });
 
     describe('Module exports help', () => {
         it('should display help usage.', () => {
             const help = build.__get__('module.exports.help');
-
             const argv = { binPath: 'bin' };
 
-            const logSpy = jasmine.createSpy('log');
-            build.__set__('console', { log: logSpy });
+            // create spies
+            spyOn(console, 'log');
 
             help(argv);
 
-            expect(logSpy).toHaveBeenCalled();
+            expect(console.log).toHaveBeenCalled();
 
-            const actual = logSpy.calls.argsFor(0)[0];
+            const actual = console.log.calls.argsFor(0)[0];
             expect(actual).toContain('--debug');
             expect(actual).toContain('--release');
             expect(actual).toContain('--nobuild');
