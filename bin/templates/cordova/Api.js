@@ -17,6 +17,12 @@
     under the License.
 */
 
+const { resolve } = require('path');
+
+// Setting up some global defaults to share accross all files
+global.cdvPlatformPath = resolve(__dirname, '..');
+global.cdvProjectPath = resolve(__dirname, '../../..');
+
 try {
     module.exports = require('cordova-electron');
 } catch (error) {
