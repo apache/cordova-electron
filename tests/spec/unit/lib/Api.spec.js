@@ -22,14 +22,13 @@ const path = require('path');
 const rewire = require('rewire');
 const { events, PluginInfo, ConfigParser } = require('cordova-common');
 
-const rootDir = path.resolve(__dirname, '../../..');
-const templateDir = path.join(rootDir, 'bin/templates');
+const rootDir = path.resolve(__dirname, '../../../..');
 const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
 const tmpDir = path.join(rootDir, 'temp');
 const testProjectDir = path.join(tmpDir, 'testapp');
 
 const create = require(path.join(rootDir, 'lib/create'));
-const Api = rewire(path.join(templateDir, 'cordova', 'Api'));
+const Api = rewire(path.join(rootDir, 'lib/Api'));
 
 const apiRequire = Api.__get__('require');
 const pluginFixture = path.join(fixturesDir, 'testplugin');
@@ -477,7 +476,7 @@ describe('Api prototype methods', () => {
 
         it('should get version from package.json.', () => {
             const dummyRequire = path => {
-                expect(path).toEqual('../../../package.json');
+                expect(path).toEqual('../package.json');
                 return { version: '1.0.0' };
             };
 
