@@ -6,10 +6,6 @@ coverage
 tests
 temp
 
-# CI service configurations
-.travis.yml
-appveyor.yml
-
 # Logging
 logs
 *.log
