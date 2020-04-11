@@ -21,7 +21,10 @@ const path = require('path');
 const fs = require('fs-extra');
 const rewire = require('rewire');
 const { CordovaError, events } = require('cordova-common');
-const Parser = rewire('../../../../bin/templates/cordova/parser');
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const Parser = rewire(path.join(rootDir, 'lib/parser'));
 
 const mockProjectPath = 'mock_project_path';
 

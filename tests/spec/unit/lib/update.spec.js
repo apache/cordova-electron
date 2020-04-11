@@ -17,8 +17,12 @@
     under the License.
 */
 
+const path = require('path');
 const rewire = require('rewire');
-const update = rewire('../../../../bin/lib/update');
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const update = rewire(path.join(rootDir, 'lib/update'));
 
 describe('Update', () => {
     describe('run export method', () => {

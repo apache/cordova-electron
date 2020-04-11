@@ -19,14 +19,17 @@
 
 const rewire = require('rewire');
 const path = require('path');
-const run = rewire('../../../../../../bin/templates/cordova/lib/run');
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const run = rewire(path.join(rootDir, 'lib/run'));
 
 describe('Run', () => {
     describe('run export method', () => {
         it('should run electron with cdv-electron-main.js.', () => {
             const execaSpy = jasmine.createSpy('execa');
             const onSpy = jasmine.createSpy('on');
-            const expectedPathToMain = path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'www', 'cdv-electron-main.js');
+            const expectedPathToMain = path.join(rootDir, 'bin/templates/www/cdv-electron-main.js');
 
             run.__set__('electron', 'electron-require');
             spyOn(process, 'exit');
@@ -49,16 +52,13 @@ describe('Run', () => {
 
     describe('help export method', () => {
         it('should console out run usage.', () => {
-            const logSpy = jasmine.createSpy('log');
-            run.__set__('console', {
-                log: logSpy
-            });
+            spyOn(console, 'log');
 
             run.help({ binPath: 'foobar' });
 
-            expect(logSpy.calls.argsFor(0)[0]).toContain('Usage');
-            expect(logSpy.calls.argsFor(0)[0]).toContain('foobar');
-            expect(logSpy.calls.argsFor(0)[0]).toContain('nobuild');
+            expect(console.log.calls.argsFor(0)[0]).toContain('Usage');
+            expect(console.log.calls.argsFor(0)[0]).toContain('foobar');
+            expect(console.log.calls.argsFor(0)[0]).toContain('nobuild');
         });
     });
 });

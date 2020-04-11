@@ -22,19 +22,19 @@ const path = require('path');
 const rewire = require('rewire');
 const { events, PluginInfo, ConfigParser } = require('cordova-common');
 
-const templateDir = path.resolve(__dirname, '..', '..', '..', 'bin', 'templates');
-
-const create = require(path.join(templateDir, '../lib/create'));
-const Api = rewire(path.join(templateDir, 'cordova', 'Api'));
-
-const tmpDir = path.join(__dirname, '../../../temp');
-const apiRequire = Api.__get__('require');
-const FIXTURES = path.join(__dirname, '..', 'fixtures');
-const pluginFixture = path.join(FIXTURES, 'testplugin');
-const pluginFixtureEmptyJSModule = path.join(FIXTURES, 'testplugin-empty-jsmodule');
-const pluginNotElectronFixture = path.join(FIXTURES, 'test-non-electron-plugin');
-const pluginBrowserFixture = path.join(FIXTURES, 'test-browser-plugin');
+const rootDir = path.resolve(__dirname, '../../../..');
+const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
+const tmpDir = path.join(rootDir, 'temp');
 const testProjectDir = path.join(tmpDir, 'testapp');
+
+const create = require(path.join(rootDir, 'lib/create'));
+const Api = rewire(path.join(rootDir, 'lib/Api'));
+
+const apiRequire = Api.__get__('require');
+const pluginFixture = path.join(fixturesDir, 'testplugin');
+const pluginFixtureEmptyJSModule = path.join(fixturesDir, 'testplugin-empty-jsmodule');
+const pluginNotElectronFixture = path.join(fixturesDir, 'test-non-electron-plugin');
+const pluginBrowserFixture = path.join(fixturesDir, 'test-browser-plugin');
 
 function dirExists (dir) {
     return fs.existsSync(dir) && fs.statSync(dir).isDirectory();
@@ -65,7 +65,7 @@ describe('Api class', () => {
 
     beforeAll(() => {
         fs.ensureDirSync(tmpDir);
-        fs.copySync(path.resolve(FIXTURES, 'testapp'), path.resolve(tmpDir, 'testapp'));
+        fs.copySync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'));
 
         apiEvents = Api.__get__('selfEvents');
         apiEvents.addListener('verbose', (data) => { });
@@ -427,7 +427,7 @@ describe('Api prototype methods', () => {
 
         beforeEach(() => {
             fs.removeSync(tmpDir);
-            config = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
+            config = new ConfigParser(path.join(fixturesDir, 'test-config-empty.xml'));
         });
 
         afterEach(() => {
@@ -476,7 +476,7 @@ describe('Api prototype methods', () => {
 
         it('should get version from package.json.', () => {
             const dummyRequire = path => {
-                expect(path).toEqual('../../../package.json');
+                expect(path).toEqual('../package.json');
                 return { version: '1.0.0' };
             };
 

@@ -20,16 +20,17 @@
 const path = require('path');
 const fs = require('fs-extra');
 const rewire = require('rewire');
-
-const PackageJsonParser = rewire('../../../../../../bin/templates/cordova/lib/PackageJsonParser');
 const { ConfigParser, events } = require('cordova-common');
 
-const FIXTURES = path.join(__dirname, '..', '..', '..', '..', 'fixtures');
+const rootDir = path.resolve(__dirname, '../../../..');
+const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
+
+const PackageJsonParser = rewire(path.join(rootDir, 'lib/PackageJsonParser'));
 
 // Create a real config object before mocking out everything.
-const cfg = new ConfigParser(path.join(FIXTURES, 'test-config-1.xml'));
-const cfgEmpty = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
-const cfgNoAuthorCustomEmail = new ConfigParser(path.join(FIXTURES, 'test-config-no-author-custom-email.xml'));
+const cfg = new ConfigParser(path.join(fixturesDir, 'test-config-1.xml'));
+const cfgEmpty = new ConfigParser(path.join(fixturesDir, 'test-config-empty.xml'));
+const cfgNoAuthorCustomEmail = new ConfigParser(path.join(fixturesDir, 'test-config-no-author-custom-email.xml'));
 
 const defaultMockProjectPackageJson = {
     name: 'io.cordova.electronTest',

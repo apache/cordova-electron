@@ -20,7 +20,10 @@
 const rewire = require('rewire');
 const path = require('path');
 const CordovaError = require('cordova-common').CordovaError;
-const Api = require(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'Api'));
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const Api = require(path.join(rootDir, 'bin/templates/cordova/Api'));
 let prepare;
 
 /**
@@ -128,7 +131,7 @@ function createSpies () {
     updateSplashScreensSpy = jasmine.createSpy('updateSplashScreensSpy');
     emitSpy = jasmine.createSpy('emitSpy');
 
-    prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+    prepare = rewire(path.join(rootDir, 'lib/prepare'));
 
     prepare.__set__('events', {
         emit: emitSpy
@@ -1418,7 +1421,7 @@ describe('Testing prepare.js:', () => {
         let locations;
 
         beforeEach(() => {
-            prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+            prepare = rewire(path.join(rootDir, 'lib/prepare'));
 
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             locations = Object.assign({}, locationsDefault);
@@ -1593,7 +1596,7 @@ describe('Testing prepare.js:', () => {
         let cordovaProject;
 
         beforeEach(() => {
-            prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+            prepare = rewire(path.join(rootDir, 'lib/prepare'));
 
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             mapResources = prepare.__get__('mapResources');
@@ -1639,7 +1642,7 @@ describe('Testing prepare.js:', () => {
         let cordovaProject;
 
         beforeEach(() => {
-            prepare = rewire(path.resolve(__dirname, '..', '..', '..', '..', '..', '..', 'bin', 'templates', 'cordova', 'lib', 'prepare'));
+            prepare = rewire(path.join(rootDir, 'lib/prepare'));
 
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             copyResources = prepare.__get__('copyResources');

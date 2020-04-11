@@ -21,14 +21,16 @@ const rewire = require('rewire');
 const path = require('path');
 const fs = require('fs-extra');
 const { ConfigParser } = require('cordova-common');
-const ManifestJsonParser = rewire('../../../../../../bin/templates/cordova/lib/ManifestJsonParser');
 
-const FIXTURES = path.join(__dirname, '..', '..', '..', '..', 'fixtures');
+const rootDir = path.resolve(__dirname, '../../../..');
+const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
+
+const ManifestJsonParser = rewire(path.join(rootDir, 'lib/ManifestJsonParser'));
 
 // Create a real config object before mocking out everything.
-const cfg1 = new ConfigParser(path.join(FIXTURES, 'test-config-1.xml'));
-const cfg2 = new ConfigParser(path.join(FIXTURES, 'test-config-2.xml'));
-const cfgEmpty = new ConfigParser(path.join(FIXTURES, 'test-config-empty.xml'));
+const cfg1 = new ConfigParser(path.join(fixturesDir, 'test-config-1.xml'));
+const cfg2 = new ConfigParser(path.join(fixturesDir, 'test-config-2.xml'));
+const cfgEmpty = new ConfigParser(path.join(fixturesDir, 'test-config-empty.xml'));
 
 const locations = {
     buildRes: path.join('mock', 'build-res'),

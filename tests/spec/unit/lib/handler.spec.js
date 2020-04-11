@@ -21,7 +21,10 @@ const path = require('path');
 const fs = require('fs-extra');
 const { events } = require('cordova-common');
 const rewire = require('rewire');
-const handler = rewire('../../../bin/templates/cordova/handler');
+
+const rootDir = path.resolve(__dirname, '../../../..');
+
+const handler = rewire(path.join(rootDir, 'lib/handler'));
 
 describe('Handler export', () => {
     describe('www_dir method', () => {
