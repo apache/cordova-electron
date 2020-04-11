@@ -28,7 +28,7 @@ const handler = rewire(path.join(rootDir, 'lib/handler'));
 
 describe('Handler export', () => {
     describe('www_dir method', () => {
-        it(`should return the project's www dir.`, () => {
+        it('should return the project\'s www dir.', () => {
             const projectDir = 'mocked-project-dir-path';
             expect(
                 handler.www_dir(projectDir)
@@ -93,19 +93,19 @@ describe('Handler export', () => {
             it('should write cordova.define for module "com.foo.dummy-plugin.dummy-module" (from source name) and not module.exports as module source is not JSON.', () => {
                 const jsModule = { src: 'src/dummy-module', name: 'dummy-module' };
                 const writeFileSyncContent = moduleExportTestCase(jsModule);
-                expect(writeFileSyncContent).not.toContain(`module.exports`);
+                expect(writeFileSyncContent).not.toContain('module.exports');
             });
 
             it('should write cordova.define for module "com.foo.dummy-plugin.dummy-module" (from source filepath) and not module.exports as module source is not JSON.', () => {
                 const jsModule = { src: 'src/dummy-module' };
                 const writeFileSyncContent = moduleExportTestCase(jsModule);
-                expect(writeFileSyncContent).not.toContain(`module.exports`);
+                expect(writeFileSyncContent).not.toContain('module.exports');
             });
 
             it('should write cordova.define for module "com.foo.dummy-plugin.dummy-module" (from source filepath) and not module.exports as module source is not JSON.', () => {
                 const jsModule = { src: 'src/dummy-module/something.json' };
                 const writeFileSyncContent = moduleExportTestCase(jsModule);
-                expect(writeFileSyncContent).toContain(`module.exports`);
+                expect(writeFileSyncContent).toContain('module.exports');
             });
         });
 
