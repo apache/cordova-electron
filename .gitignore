@@ -1,10 +1,21 @@
-npm-debug.log
-temp
+# System files
 .DS_Store
-.gitcore
-*.jar
+
+# Editors
 .vscode
-node_modules/
-.nyc_output/
-coverage/
+
+# Testing, code coverage, and linting
+.nyc_output
+coverage
+temp
+
+# Logging
+logs
+*.log
+npm-debug.log*
+
+# others
+node_modules
+
+# Built files during packaging
 bin/templates/platform_www/cordova.js
