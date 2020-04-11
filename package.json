@@ -30,8 +30,8 @@
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0",
     "jasmine": "^3.5.0",
-    "nyc": "^15.0.0-beta.0",
-    "rewire": "^4.0.1"
+    "nyc": "^15.0.1",
+    "rewire": "^5.0.0"
   },
   "author": "Apache Software Foundation",
   "contributors": [
