@@ -1,7 +1,7 @@
+# Config related files
+.*
+
 # Testing, code coverage, and linting
-.eslintignore
-.eslintrc.yml
-.nyc_output
 coverage
 tests
 temp
@@ -11,13 +11,6 @@ logs
 *.log
 npm-debug.log*
 
-# Git
-.git
-.gitattributes
-.github
-.gitignore
-
 # others
-.npm-scripts
 cordova-js-src
 cordova-lib
