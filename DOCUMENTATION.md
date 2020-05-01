@@ -358,7 +358,7 @@ The `--release` and `--debug` flags control the visibility of the DevTools. DevT
 
 If you need to debug the application's main process, you can do so by enabling the inspector with the Election's `inspect` or `inspect-brk` flags.
 
-As these flags are provided by Electron, you will need to separate the Cordova flags from Electron flags with and additional `--` separator.
+As these flags are provided by Electron, you will need to separate the Cordova flags from Electron flags with an additional `--` separator.
 
 For example:
 
