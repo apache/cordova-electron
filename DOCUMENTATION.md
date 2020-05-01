@@ -40,6 +40,7 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
   - [Bundling Node Modules](#bundling-node-modules)
     - [Cordova Package Handling](#cordova-package-handling)
   - [DevTools](#devtools)
+  - [Debugging the Application's Main Process](#debugging-the-applications-main-process)
   - [Build Configurations](#build-configurations)
     - [Default Build Configurations](#default-build-configurations)
     - [Customizing Build Configurations](#customizing-build-configurations)
@@ -352,6 +353,18 @@ Packages defined as a dependency will be bundled with the application and can in
 The `--release` and `--debug` flags control the visibility of the DevTools. DevTools are shown by default on **Debug Builds** (`without a flag` or with `--debug`). If you want to hide the DevTools pass in the `--release` flag when building or running the application.
 
 > Note: DevTools can be closed or opened manually with the debug build.
+
+## Debugging the Application's Main Process
+
+If you need to debug the application's main process, you can do so by enabling the inspector with the Election's `inspect` or `inspect-brk` flags.
+
+As these flags are provided by Electron, you will need to separate the Cordova flags from Electron flags with an additional `--` separator.
+
+For example:
+
+```shell
+cordova run electron --nobuild --debug -- --inspect-brk=5858
+```
 
 ## Build Configurations
 

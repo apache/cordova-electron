@@ -48,6 +48,32 @@ describe('Run', () => {
             onSpy.calls.argsFor(0)[1]();
             expect(process.exit).toHaveBeenCalled();
         });
+
+        it('should pass arguments to electron', () => {
+            const execaSpy = jasmine.createSpy('execa');
+            const onSpy = jasmine.createSpy('on');
+            const expectedElectronArguments = [
+                '--inspect-brk=5858',
+                path.join(rootDir, 'bin/templates/www/cdv-electron-main.js')
+            ];
+
+            run.__set__('electron', 'electron-require');
+            spyOn(process, 'exit');
+
+            run.__set__('execa', execaSpy.and.returnValue({
+                on: onSpy.and.callThrough()
+            }));
+
+            run.run({ argv: ['--inspect-brk=5858'] });
+
+            expect(execaSpy).toHaveBeenCalledWith('electron-require', expectedElectronArguments);
+            expect(onSpy).toHaveBeenCalled();
+            expect(process.exit).not.toHaveBeenCalled();
+
+            // trigger exist as if process was killed
+            onSpy.calls.argsFor(0)[1]();
+            expect(process.exit).toHaveBeenCalled();
+        });
     });
 
     describe('help export method', () => {
