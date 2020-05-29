@@ -22,6 +22,8 @@ const fs = require('fs');
 const { app, BrowserWindow } = require('electron');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
+// Electron main process modules
+const cdvElectronModules = require('./cdv-electron-modules.json');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -83,6 +85,8 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+cdvElectronModules.forEach(mod => require(mod));
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
