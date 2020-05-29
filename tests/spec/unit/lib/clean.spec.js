@@ -89,14 +89,4 @@ describe('Clean', () => {
             expect(console.log).toHaveBeenCalledWith('lib/clean will soon only export a `run` command, please update to not call `cleanProject`.');
         });
     });
-
-    describe('help export method', () => {
-        it('should console out clean usage.', () => {
-            spyOn(console, 'log');
-
-            clean.help({ binPath: 'foobar' });
-
-            expect(console.log).toHaveBeenCalledWith('Usage: foobar');
-        });
-    });
 });
