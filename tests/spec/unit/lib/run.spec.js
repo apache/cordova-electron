@@ -75,16 +75,4 @@ describe('Run', () => {
             expect(process.exit).toHaveBeenCalled();
         });
     });
-
-    describe('help export method', () => {
-        it('should console out run usage.', () => {
-            spyOn(console, 'log');
-
-            run.help({ binPath: 'foobar' });
-
-            expect(console.log.calls.argsFor(0)[0]).toContain('Usage');
-            expect(console.log.calls.argsFor(0)[0]).toContain('foobar');
-            expect(console.log.calls.argsFor(0)[0]).toContain('nobuild');
-        });
-    });
 });
