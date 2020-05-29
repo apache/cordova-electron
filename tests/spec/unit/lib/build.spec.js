@@ -1732,23 +1732,4 @@ describe('Testing build.js:', () => {
             );
         });
     });
-
-    describe('Module exports help', () => {
-        it('should display help usage.', () => {
-            const help = build.__get__('module.exports.help');
-            const argv = { binPath: 'bin' };
-
-            // create spies
-            spyOn(console, 'log');
-
-            help(argv);
-
-            expect(console.log).toHaveBeenCalled();
-
-            const actual = console.log.calls.argsFor(0)[0];
-            expect(actual).toContain('--debug');
-            expect(actual).toContain('--release');
-            expect(actual).toContain('--nobuild');
-        });
-    });
 });
