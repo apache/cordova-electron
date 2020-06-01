@@ -18,10 +18,37 @@
 */
 
 const fs = require('fs');
+const path = require('path');
 // Module to control application life, browser window and tray.
-const { app, BrowserWindow } = require('electron');
+const {
+    app,
+    BrowserWindow,
+    protocol
+} = require('electron');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
+const reservedScheme = require('./cdv-reserved-scheme.json');
+
+const scheme = cdvElectronSettings.scheme;
+const hostname = cdvElectronSettings.hostname;
+const isFileProtocol = scheme === 'file';
+
+/**
+ * The base url path.
+ * E.g:
+ * When scheme is defined as "file" the base path is "file://path-to-the-app-root-directory"
+ * When scheme is anything except "file", for example app, the base path will be "app://localhost"
+ *  The hostname "localhost" can be changed but only set when scheme is not "file"
+ */
+const basePath = (() => isFileProtocol ? `file://${__dirname}` : `${scheme}://${hostname}`)();
+
+if (reservedScheme.includes(scheme)) throw new Error(`The scheme "${scheme}" can not be registered. Please use a non-reserved scheme.`);
+
+if (!isFileProtocol) {
+    protocol.registerSchemesAsPrivileged([
+        { scheme, privileges: { standard: true, secure: true } }
+    ]);
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -43,7 +70,7 @@ function createWindow () {
 
     // Load a local HTML file or a remote URL.
     const cdvUrl = cdvElectronSettings.browserWindowInstance.loadURL.url;
-    const loadUrl = cdvUrl.includes('://') ? cdvUrl : `file://${__dirname}/${cdvUrl}`;
+    const loadUrl = cdvUrl.includes('://') ? cdvUrl : `${basePath}/${cdvUrl}`;
     const loadUrlOpts = Object.assign({}, cdvElectronSettings.browserWindowInstance.loadURL.options);
 
     mainWindow.loadURL(loadUrl, loadUrlOpts);
@@ -62,10 +89,27 @@ function createWindow () {
     });
 }
 
+function configureProtocol () {
+    protocol.registerFileProtocol(scheme, (request, _cb) => {
+        const url = request.url.substr(basePath.length + 1);
+        _cb({ path: path.normalize(`${__dirname}/${url}`) });
+    }, (error) => {
+        if (error) console.error('Failed to register protocol');
+    });
+
+    protocol.interceptFileProtocol('file', (_, _cb) => { _cb(null); });
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+    if (!isFileProtocol) {
+        configureProtocol();
+    }
+
+    createWindow();
+});
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -80,6 +124,10 @@ app.on('activate', () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (mainWindow === null) {
+        if (!isFileProtocol) {
+            configureProtocol();
+        }
+
         createWindow();
     }
 });
