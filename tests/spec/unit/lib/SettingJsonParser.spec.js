@@ -123,7 +123,7 @@ describe('Testing SettingJsonParser.js:', () => {
             expect(settingJsonParser.package.hostname).toBe('localhost');
         });
 
-        it('should set custom scheme and hostname from config.xml .', () => {
+        it('should set custom scheme and hostname from config.xml.', () => {
             options = { options: { release: true, argv: [] } };
 
             SettingJsonParser.__set__('require', (file) => {

@@ -37,7 +37,7 @@ const isFileProtocol = scheme === 'file';
  * The base url path.
  * E.g:
  * When scheme is defined as "file" the base path is "file://path-to-the-app-root-directory"
- * When scheme is anything except "file", for example app, the base path will be "app://localhost"
+ * When scheme is anything except "file", for example "app", the base path will be "app://localhost"
  *  The hostname "localhost" can be changed but only set when scheme is not "file"
  */
 const basePath = (() => isFileProtocol ? `file://${__dirname}` : `${scheme}://${hostname}`)();
