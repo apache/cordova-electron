@@ -90,14 +90,12 @@ function createWindow () {
 }
 
 function configureProtocol () {
-    protocol.registerFileProtocol(scheme, (request, _cb) => {
+    protocol.registerFileProtocol(scheme, (request, cb) => {
         const url = request.url.substr(basePath.length + 1);
-        _cb({ path: path.normalize(`${__dirname}/${url}`) });
-    }, (error) => {
-        if (error) console.error('Failed to register protocol');
+        cb({ path: path.normalize(`${__dirname}/${url}`) });
     });
 
-    protocol.interceptFileProtocol('file', (_, _cb) => { _cb(null); });
+    protocol.interceptFileProtocol('file', (_, cb) => { cb(null); });
 }
 
 // This method will be called when Electron has finished
