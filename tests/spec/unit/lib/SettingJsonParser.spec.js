@@ -27,6 +27,7 @@ const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
 // Create a real config object before mocking out everything.
 const cfg = new ConfigParser(path.join(fixturesDir, 'test-config-1.xml'));
 const cfgEmpty = new ConfigParser(path.join(fixturesDir, 'test-config-empty.xml'));
+const cfgCustomSchemeHostname = new ConfigParser(path.join(fixturesDir, 'test-config-custom-scheme.xml'));
 
 describe('Testing SettingJsonParser.js:', () => {
     let SettingJsonParser;
@@ -98,6 +99,50 @@ describe('Testing SettingJsonParser.js:', () => {
 
             expect(settingJsonParser.package.browserWindow.webPreferences.devTools).toBe(false);
             expect(settingJsonParser.package.browserWindow.webPreferences.nodeIntegration).toBe(true);
+        });
+
+        it('should set scheme and hostname to default when not defined.', () => {
+            options = { options: { release: true, argv: [] } };
+
+            SettingJsonParser.__set__('require', (file) => {
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        browserWindow: {
+                            webPreferences: { }
+                        }
+                    };
+                }
+
+                return require(file);
+            });
+
+            settingJsonParser = new SettingJsonParser(locations.www).configure(cfgEmpty, options.options, false);
+
+            expect(settingJsonParser.package.scheme).toBe('file');
+            expect(settingJsonParser.package.hostname).toBe('localhost');
+        });
+
+        it('should set custom scheme and hostname from config.xml.', () => {
+            options = { options: { release: true, argv: [] } };
+
+            SettingJsonParser.__set__('require', (file) => {
+                // return defaults
+                if (file.includes('cdv-electron-settings.json')) {
+                    return {
+                        browserWindow: {
+                            webPreferences: { }
+                        }
+                    };
+                }
+
+                return require(file);
+            });
+
+            settingJsonParser = new SettingJsonParser(locations.www).configure(cfgCustomSchemeHostname, options.options, false);
+
+            expect(settingJsonParser.package.scheme).toBe('app');
+            expect(settingJsonParser.package.hostname).toBe('cordova');
         });
 
         it('should use default when users settings files does not exist.', () => {
@@ -191,7 +236,7 @@ describe('Testing SettingJsonParser.js:', () => {
             // get settings json file content and remove white spaces
             let settingsFile = writeFileSyncSpy.calls.argsFor(0)[1];
             settingsFile = settingsFile.replace(/\s+/g, '');
-            expect(settingsFile).toEqual('{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}},"browserWindowInstance":{"loadURL":{"url":"index.html"}}}');
+            expect(settingsFile).toEqual('{"browserWindow":{"webPreferences":{"devTools":true,"nodeIntegration":true}},"browserWindowInstance":{"loadURL":{"url":"index.html"}},"scheme":"file","hostname":"localhost"}');
 
             const settingsFormat = writeFileSyncSpy.calls.argsFor(0)[2];
             expect(settingsFormat).toEqual('utf8');
