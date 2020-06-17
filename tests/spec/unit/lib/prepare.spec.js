@@ -19,9 +19,13 @@
 
 const rewire = require('rewire');
 const path = require('path');
+const fs = require('fs-extra');
 const CordovaError = require('cordova-common').CordovaError;
 
 const rootDir = path.resolve(__dirname, '../../../..');
+const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
+const tmpDir = path.join(rootDir, 'temp');
+const testProjectDir = path.join(tmpDir, 'testapp');
 
 const Api = require(path.join(rootDir, 'bin/templates/cordova/Api'));
 let prepare;
@@ -209,6 +213,13 @@ describe('Testing prepare.js:', () => {
         // define spies
         let updatePathsSpy;
         let cordovaProject;
+        let api;
+
+        beforeAll(() => {
+            fs.ensureDirSync(tmpDir);
+            fs.copySync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'));
+            api = new Api(null, testProjectDir);
+        });
 
         beforeEach(() => {
             createSpies();
@@ -224,7 +235,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;
@@ -280,7 +290,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;
@@ -326,7 +335,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;
@@ -371,7 +379,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;
@@ -427,7 +434,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;
@@ -484,7 +490,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;
@@ -540,7 +545,6 @@ describe('Testing prepare.js:', () => {
             // Mocking the scope with dummy API;
             return Promise.resolve().then(function () {
                 // Create API instance and mock for test case.
-                const api = new Api(null, '', '');
                 api.events = { emit: emitSpy };
                 api.parser.update_www = () => this;
                 api.parser.update_project = () => this;

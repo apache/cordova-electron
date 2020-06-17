@@ -20,7 +20,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
-const { events, PluginInfo, ConfigParser } = require('cordova-common');
+const { events, PluginInfo, ConfigParser, CordovaError } = require('cordova-common');
 
 const rootDir = path.resolve(__dirname, '../../../..');
 const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
@@ -94,6 +94,15 @@ describe('Api class', () => {
              */
             expect(api.root).toEqual(testProjectDir);
             expect(api.locations).toEqual(jasmine.objectContaining(mockExpectedLocations));
+        });
+
+        it('should throw error when the constructor is missing platformRootDir argument.', () => {
+            expect(() => new Api()).toThrowError(CordovaError, 'The path to the platform root directory was undefined or invalid.');
+        });
+
+        it('should throw error when the constructor contains an invalid platformRootDir path.', () => {
+            const fakePath = path.join(__dirname, '/some-fake-path');
+            expect(() => new Api(undefined, fakePath)).toThrowError(CordovaError, 'The path to the platform root directory was undefined or invalid.');
         });
     });
 

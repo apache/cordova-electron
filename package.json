@@ -59,7 +59,6 @@
       ".npm-scripts/",
       "bin/templates/build-res/",
       "bin/templates/platform_www/",
-      "bin/templates/www/",
       "cordova-js-src/",
       "cordova-lib/",
       "coverage/",
