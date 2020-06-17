@@ -40,6 +40,10 @@ describe('Testing build.js:', () => {
         api = new Api(null, testProjectDir);
     });
 
+    afterAll(() => {
+        fs.removeSync(tmpDir);
+    });
+
     beforeEach(() => {
         build = rewire(path.join(rootDir, 'lib/build'));
     });

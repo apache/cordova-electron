@@ -221,6 +221,10 @@ describe('Testing prepare.js:', () => {
             api = new Api(null, testProjectDir);
         });
 
+        afterAll(() => {
+            fs.removeSync(tmpDir);
+        });
+
         beforeEach(() => {
             createSpies();
             cordovaProject = Object.assign({}, cordovaProjectDefault);
