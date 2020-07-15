@@ -97,7 +97,10 @@ describe('Api class', () => {
         });
 
         it('should throw error when the constructor is missing platformRootDir argument.', () => {
-            expect(() => new Api()).toThrowError(CordovaError, 'The path to the platform root directory was undefined or invalid.');
+            expect(() => new Api()).toThrowError(
+                CordovaError,
+                'The path to the platform root directory was undefined or invalid.'
+            );
         });
 
         it('should throw error when the constructor contains an invalid platformRootDir path.', () => {
