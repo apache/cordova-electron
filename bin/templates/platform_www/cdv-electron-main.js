@@ -29,6 +29,10 @@ const {
 const cdvElectronSettings = require('./cdv-electron-settings.json');
 const reservedScheme = require('./cdv-reserved-scheme.json');
 
+const devTools = cdvElectronSettings.browserWindow.webPreferences.devTools
+    ? require('electron-devtools-installer')
+    : false;
+
 const scheme = cdvElectronSettings.scheme;
 const hostname = cdvElectronSettings.hostname;
 const isFileProtocol = scheme === 'file';
@@ -104,6 +108,13 @@ function configureProtocol () {
 app.on('ready', () => {
     if (!isFileProtocol) {
         configureProtocol();
+    }
+
+    if (devTools && cdvElectronSettings.devToolsExtension) {
+        const extensions = cdvElectronSettings.devToolsExtension.map(id => devTools[id] || id);
+        devTools.default(extensions) // default = install extension
+            .then((name) => console.log(`Added Extension:  ${name}`))
+            .catch((err) => console.log('An error occurred: ', err));
     }
 
     createWindow();

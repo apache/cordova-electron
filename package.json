@@ -23,6 +23,7 @@
     "cordova-common": "^4.0.1",
     "electron": "^9.0.0",
     "electron-builder": "^22.7.0",
+    "electron-devtools-installer": "^3.1.0",
     "execa": "^4.0.0",
     "fs-extra": "^9.0.0"
   },
