@@ -1261,6 +1261,33 @@ describe('Testing build.js:', () => {
             expect(buildOptions.buildConfig.electron.mac.signing.store.requirements).toBe(undefined);
         });
 
+        it('should format nsis-web taget with nsisWeb top-level configs in __formatAppendUserSettings.', () => {
+            // Sample target configuration option
+            const appPackageUrl = 'https://foo.bar/apps/win/web';
+            // The settings which will be populated by `__formatAppendUserSettings`
+            const userBuildSettings = {};
+            // platform config partial from `build.json`
+            const platformConfig = {
+                package: [
+                    { 'nsis-web': { appPackageUrl } }
+                ]
+            };
+            // the mock `build.json`
+            const buildConfig = { electron: { windows: platformConfig } };
+            // the build options which is passed from CLI/Lib to Platform Build
+            const buildOptions = { argv: [], buildConfig };
+
+            // // create spies
+            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(false);
+            build.__set__('fs', { existsSync: existsSyncSpy });
+
+            electronBuilder = new ElectronBuilder(buildOptions, api)
+                .__formatAppendUserSettings('win', platformConfig, userBuildSettings);
+
+            expect(existsSyncSpy).toHaveBeenCalled();
+            expect(userBuildSettings.config.nsisWeb.appPackageUrl).toBe(appPackageUrl);
+        });
+
         it('should append user singing for windows', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
