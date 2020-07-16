@@ -20,14 +20,29 @@
 
 const rewire = require('rewire');
 const path = require('path');
+const fs = require('fs-extra');
 
 const rootDir = path.resolve(__dirname, '../../../..');
+const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
+const tmpDir = path.join(rootDir, 'temp');
+const testProjectDir = path.join(tmpDir, 'testapp');
 
 const Api = rewire(path.join(rootDir, 'lib/Api'));
 const check_reqs = require(path.join(rootDir, 'lib/check_reqs'));
 
 describe('Testing build.js:', () => {
     let build;
+    let api;
+
+    beforeAll(() => {
+        fs.ensureDirSync(tmpDir);
+        fs.copySync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'));
+        api = new Api(null, testProjectDir);
+    });
+
+    afterAll(() => {
+        fs.removeSync(tmpDir);
+    });
 
     beforeEach(() => {
         build = rewire(path.join(rootDir, 'lib/build'));
@@ -41,7 +56,6 @@ describe('Testing build.js:', () => {
         let emitSpy;
 
         const emptyObj = {};
-        const api = new Api(null);
 
         beforeEach(() => {
             ElectronBuilder = build.__get__('ElectronBuilder');
@@ -1695,7 +1709,6 @@ describe('Testing build.js:', () => {
 
     describe('Module exports run', () => {
         it('should have called configure and build.', () => {
-            const api = new Api(null);
             const platformConfig = {
                 mac: { arch: ['x64'] }
             };
@@ -1745,7 +1758,6 @@ describe('Testing build.js:', () => {
         });
 
         it('should have failed requirement check and thrown error.', () => {
-            const api = new Api(null);
             const buildOptions = { debug: false, buildConfig: 'LOAD_MY_FAKE_DATA', argv: [] };
             const errorMsg = 'error';
             spyOn(check_reqs, 'run').and.callFake(() => Promise.reject(new Error(errorMsg)));
