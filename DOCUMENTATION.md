@@ -36,11 +36,16 @@ Electron is a framework that uses web technologies (HTML, CSS, and JS) to build 
     - [How to Disable the Window From Being Resizable](#how-to-disable-the-window-from-being-resizable)
     - [How to Make the Window Fullscreen](#how-to-make-the-window-fullscreen)
     - [How to Support Node.js and Electron APIs](#how-to-support-nodejs-and-electron-apis)
+    - [Customizing BrowserWindow Instance Method](#customizing-browserwindow-instance-method)
+      - [Load a local HTML file using relative path from the `{project_dir}/www` directory](#load-a-local-html-file-using-relative-path-from-the-project_dirwww-directory)
+      - [Load a local HTML using full path](#load-a-local-html-using-full-path)
+      - [Load a remote URL](#load-a-remote-url)
   - [Customizing the Electron's Main Process](#customizing-the-electrons-main-process)
   - [Bundling Node Modules](#bundling-node-modules)
     - [Cordova Package Handling](#cordova-package-handling)
   - [DevTools](#devtools)
   - [Debugging the Application's Main Process](#debugging-the-applications-main-process)
+  - [Enable Developer Tool Exrtensions (Chrome Extensions)](#enable-developer-tool-exrtensions-chrome-extensions)
   - [Build Configurations](#build-configurations)
     - [Default Build Configurations](#default-build-configurations)
     - [Customizing Build Configurations](#customizing-build-configurations)
@@ -364,6 +369,49 @@ For example:
 
 ```shell
 cordova run electron --nobuild --debug -- --inspect-brk=5858
+```
+
+## Enable Developer Tool Exrtensions (Chrome Extensions)
+
+To enable a devtool extension, for a debug build, add the `devToolsExtension` collection to the Cordova Electron Settings file (`ElectronSettingsFilePath`).
+
+For example:
+
+```json
+{
+  "devToolsExtension": [
+    "VUEJS_DEVTOOLS"
+  ]
+}
+```
+
+Below is a list of pre-provided devtools that can be added.
+
+- `EMBER_INSPECTOR`
+- `REACT_DEVELOPER_TOOLS`
+- `BACKBONE_DEBUGGER`
+- `JQUERY_DEBUGGER`
+- `ANGULARJS_BATARANG`
+- `VUEJS_DEVTOOLS`
+- `REDUX_DEVTOOLS`
+- `REACT_PERF`
+- `CYCLEJS_DEVTOOL`
+- `APOLLO_DEVELOPER_TOOLS`
+- `MOBX_DEVTOOLS`
+
+If there are any devtools or extensions you wish to use that are avaiable in the Chrome App Store, you can add them by provided the extension's app ID.
+
+**Note:** The developer tools & extensions are not installed on a release build.
+
+**Example:**
+
+```json
+{
+    "browserWindow": {
+        "width": 1024,
+        "height": 768
+    }
+}
 ```
 
 ## Build Configurations
