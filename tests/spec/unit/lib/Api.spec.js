@@ -65,7 +65,7 @@ describe('Api class', () => {
 
     beforeAll(() => {
         fs.ensureDirSync(tmpDir);
-        fs.copySync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'));
+        fs.copySync(path.resolve(fixturesDir, 'testapp'), testProjectDir);
 
         apiEvents = Api.__get__('selfEvents');
         apiEvents.addListener('verbose', (data) => { });
@@ -131,8 +131,21 @@ describe('Api class', () => {
             const prepare = jasmine.createSpy('prepare');
 
             Api.__set__('require', () => ({ prepare }));
-            api.prepare('', {});
-            expect(prepare).toHaveBeenCalledWith(jasmine.any(String), jasmine.any(Object));
+
+            // Mock project configs coming from lib.
+            const appendProjectPath = (dirFile) => path.join(api.root, dirFile);
+            const project = {
+                root: api.root,
+                projectConfig: new ConfigParser(appendProjectPath('config.xml')),
+                locations: {
+                    plugins: appendProjectPath('plugins'),
+                    www: appendProjectPath('www'),
+                    rootConfigXml: appendProjectPath('config.xml')
+                }
+            };
+
+            api.prepare(project, {});
+            expect(prepare).toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(Object));
             Api.__set__('require', apiRequire);
         });
     });
