@@ -107,6 +107,7 @@ const locationsDefault = cordovaProjectDefault.locations;
 let fakeParserConstructorSpy;
 let fakeManifestJsonParserConfigureSpy;
 let fakePackageJsonParserConfigureSpy;
+let fakePackageJsonParserEnableDevToolsSpy;
 let fakeSettingJsonParserConfigureSpy;
 let fakeParserWriteSpy;
 let fakeConfigParserConstructorSpy;
@@ -124,6 +125,7 @@ function createSpies () {
 
     fakeManifestJsonParserConfigureSpy = jasmine.createSpy('fakeManifestJsonParserConfigureSpy');
     fakePackageJsonParserConfigureSpy = jasmine.createSpy('fakePackageJsonParserConfigureSpy');
+    fakePackageJsonParserEnableDevToolsSpy = jasmine.createSpy('fakePackageJsonParserEnableDevToolsSpy');
     fakeSettingJsonParserConfigureSpy = jasmine.createSpy('fakeSettingJsonParserConfigureSpy');
 
     fakeParserWriteSpy = jasmine.createSpy('fakeParserWriteSpy');
@@ -181,6 +183,11 @@ class FakeManifestJsonParser extends FakeParser {
 class FakePackageJsonParser extends FakeParser {
     configure (configXmlParser, projectPackageJson) {
         fakePackageJsonParserConfigureSpy(configXmlParser, projectPackageJson);
+        return this;
+    }
+
+    enableDevTools (enable) {
+        fakePackageJsonParserEnableDevToolsSpy(enable);
         return this;
     }
 }
@@ -280,6 +287,7 @@ describe('Testing prepare.js:', () => {
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
@@ -287,6 +295,104 @@ describe('Testing prepare.js:', () => {
                 const actual = emitSpy.calls.argsFor(0)[1];
                 const expected = 'Generating config.xml';
                 expect(actual).toContain(expected);
+            });
+        });
+
+        it('should enable devtools.', () => {
+            // Mocking the scope with dummy API;
+            return Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        return configPath === defaultConfigPathMock;
+                    },
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('updateSplashScreens', updateSplashScreensFake);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
+
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
+                prepare.prepare.call(
+                    api,
+                    cordovaProject,
+                    {
+                        options: {
+                            release: false
+                        }
+                    },
+                    api
+                );
+
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalledWith(true);
+            });
+        });
+
+        it('should not enable devtools.', () => {
+            // Mocking the scope with dummy API;
+            return Promise.resolve().then(function () {
+                // Create API instance and mock for test case.
+                api.events = { emit: emitSpy };
+                api.parser.update_www = () => this;
+                api.parser.update_project = () => this;
+
+                const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
+
+                const copySyncSpy = jasmine.createSpy('copySync');
+                prepare.__set__('fs', {
+                    existsSync: function (configPath) {
+                        return configPath === defaultConfigPathMock;
+                    },
+                    copySync: copySyncSpy,
+                    readFileSync: function (filePath) {
+                        if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
+                            return defaultMockProjectPackageJson;
+                        }
+                    }
+                });
+
+                // override classes and methods called in modules.export.prepare
+                prepare.__set__('ConfigParser', FakeConfigParser);
+                prepare.__set__('xmlHelpers', xmlHelpersMock);
+                prepare.__set__('updateIcons', updateIconsFake);
+                prepare.__set__('updateSplashScreens', updateSplashScreensFake);
+                prepare.__set__('ManifestJsonParser', FakeManifestJsonParser);
+                prepare.__set__('PackageJsonParser', FakePackageJsonParser);
+                prepare.__set__('SettingJsonParser', FakeSettingJsonParser);
+
+                cordovaProject.projectConfig.getPlatformPreference = () => undefined;
+
+                prepare.prepare.call(
+                    api,
+                    cordovaProject,
+                    {
+                        options: {
+                            release: true
+                        }
+                    },
+                    api
+                );
+
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalledWith(false);
             });
         });
 
@@ -329,6 +435,7 @@ describe('Testing prepare.js:', () => {
 
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 const actual = fakeSettingJsonParserConfigureSpy.calls.argsFor(0)[1];
                 expect(actual).toEqual(undefined);
@@ -373,6 +480,7 @@ describe('Testing prepare.js:', () => {
 
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 const actual = fakeSettingJsonParserConfigureSpy.calls.argsFor(0)[2];
                 expect(actual).toContain('pass_test_path');
@@ -424,6 +532,7 @@ describe('Testing prepare.js:', () => {
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
@@ -480,6 +589,7 @@ describe('Testing prepare.js:', () => {
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeManifestJsonParserConfigureSpy).not.toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
@@ -535,6 +645,7 @@ describe('Testing prepare.js:', () => {
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeManifestJsonParserConfigureSpy).not.toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();
@@ -588,6 +699,7 @@ describe('Testing prepare.js:', () => {
                 expect(fakeConfigParserConstructorSpy).toHaveBeenCalled();
                 expect(fakeManifestJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakePackageJsonParserConfigureSpy).toHaveBeenCalled();
+                expect(fakePackageJsonParserEnableDevToolsSpy).toHaveBeenCalled();
                 expect(fakeSettingJsonParserConfigureSpy).toHaveBeenCalled();
                 expect(fakeParserWriteSpy).toHaveBeenCalled();
                 expect(fakeConfigParserWriteSpy).toHaveBeenCalled();

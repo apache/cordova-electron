@@ -488,31 +488,9 @@ describe('Api prototype methods', () => {
 
     describe('version method', () => {
         it('should get version from cordova-electron package.', () => {
-            const dummyRequire = path => {
-                expect(path).toEqual('cordova-elecrtron-resolved-package-path');
+            Api.__set__('getPackageJson', () => {
                 return { version: '1.0.0' };
-            };
-
-            dummyRequire.resolve = path => {
-                return 'cordova-elecrtron-resolved-package-path';
-            };
-
-            Api.__set__('require', dummyRequire);
-
-            expect(Api.version()).toEqual('1.0.0');
-        });
-
-        it('should get version from package.json.', () => {
-            const dummyRequire = path => {
-                expect(path).toEqual('../package.json');
-                return { version: '1.0.0' };
-            };
-
-            dummyRequire.resolve = path => {
-                throw Error('random error');
-            };
-
-            Api.__set__('require', dummyRequire);
+            });
 
             expect(Api.version()).toEqual('1.0.0');
         });

@@ -79,6 +79,39 @@ describe('PackageJsonParser class', () => {
         expect(packageJsonParser.package).toEqual(defaultInitPackageObj);
     });
 
+    it('should not modify the package object when config is not provided.', () => {
+        packageJsonParser.configure();
+        // the package object should be the same as it was initialized
+        expect(packageJsonParser.package).toEqual(defaultInitPackageObj);
+    });
+
+    it('should not add dev tools extension when enable argument = false.', () => {
+        packageJsonParser.enableDevTools(false);
+        // the package object should be the same as it was initialized
+        expect(packageJsonParser.package.dependencies).not.toBeDefined();
+    });
+
+    it('should not add dev tools extension when enable argument = undefined.', () => {
+        packageJsonParser.enableDevTools();
+        // the package object should be the same as it was initialized
+        expect(packageJsonParser.package.dependencies).not.toBeDefined();
+    });
+
+    it('should add dev tools extension when enable argument = true.', () => {
+        packageJsonParser.enableDevTools(true);
+        // the package object should be the same as it was initialized
+        expect(packageJsonParser.package.dependencies).toBeDefined();
+        expect(packageJsonParser.package.dependencies['electron-devtools-installer']).toBeDefined();
+    });
+
+    it('should not create dependencies object if it exists an enable argument = true.', () => {
+        packageJsonParser.package.dependencies = {}; // mocking that the object already exists
+        packageJsonParser.enableDevTools(true);
+        // the package object should be the same as it was initialized
+        expect(packageJsonParser.package.dependencies).toBeDefined();
+        expect(packageJsonParser.package.dependencies['electron-devtools-installer']).toBeDefined();
+    });
+
     it('should update the package object with default values, when config.xml is empty.', () => {
         packageJsonParser.configure(cfgEmpty, defaultMockProjectPackageJson);
 
