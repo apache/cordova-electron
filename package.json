@@ -20,17 +20,17 @@
     "test:unit": "jasmine --config=tests/spec/unit.json"
   },
   "dependencies": {
-    "cordova-common": "^4.0.1",
+    "cordova-common": "^4.0.2",
     "electron": "^10.1.1",
     "electron-builder": "^22.8.0",
     "electron-devtools-installer": "^3.1.1",
-    "execa": "^4.0.0",
-    "fs-extra": "^9.0.0"
+    "execa": "^4.0.3",
+    "fs-extra": "^9.0.1"
   },
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0",
-    "jasmine": "^3.5.0",
-    "nyc": "^15.0.1",
+    "jasmine": "^3.6.1",
+    "nyc": "^15.1.0",
     "rewire": "^5.0.0"
   },
   "author": "Apache Software Foundation",
