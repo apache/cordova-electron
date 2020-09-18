@@ -40,22 +40,6 @@ describe('create', () => {
         fs.removeSync(tmpDir);
     });
 
-    function createAndValidateProjectDirName (projectname, projectid) {
-        const projectPath = path.join(tmpDir, projectname);
-
-        create.__set__('fs', {
-            ensureDirSync: fs.ensureDirSync,
-            existsSync: path => path !== projectPath,
-            copySync: () => true
-        });
-
-        return create.createProject(projectPath, projectname, projectid, projectname)
-            .then(() => {
-                // expects the project name to be the directory name.
-                expect(fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
-            });
-    }
-
     it('creates a project that has the expected files', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
@@ -68,46 +52,20 @@ describe('create', () => {
         });
     });
 
-    it('create project with ascii name, no spaces', () => {
-        const projectname = 'testcreate';
-        const projectid = 'com.test.app1';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with ascii name, and spaces', () => {
-        const projectname = 'test create';
-        const projectid = 'com.test.app2';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with unicode name, no spaces', () => {
-        const projectname = '応応応応用用用用';
-        const projectid = 'com.test.app3';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with unicode name, and spaces', () => {
-        const projectname = '応応応応 用用用用';
-        const projectid = 'com.test.app4';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with ascii+unicode name, no spaces', () => {
-        const projectname = '応応応応hello用用用用';
-        const projectid = 'com.test.app5';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
     it('create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
+        const projectPath = path.join(tmpDir, projectname);
 
-        return createAndValidateProjectDirName(projectname, projectid);
+        create.__set__('fs', {
+            ensureDirSync: fs.ensureDirSync,
+            existsSync: path => path !== projectPath,
+            copySync: () => true
+        });
+
+        return create.createProject(projectPath, projectname, projectid).then(() => {
+            expect(fs.existsSync(projectPath)).toBe(true);
+        });
     });
 
     it('should stop creating project when project destination already exists', () => {
