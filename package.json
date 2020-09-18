@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "prepare": "node .npm-scripts/prepare.js",
+    "prepare": "cordova-js build > bin/templates/platform_www/cordova.js",
     "test": "npm run lint && npm run test:coverage",
     "test:coverage": "nyc npm run test:unit",
     "test:unit": "jasmine --config=tests/spec/unit.json"
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0",
+    "cordova-js": "^6.1.0",
     "jasmine": "^3.6.3",
     "nyc": "^15.1.0",
     "rewire": "^5.0.0"
@@ -51,7 +52,6 @@
       "bin/templates/build-res/",
       "bin/templates/platform_www/",
       "cordova-js-src/",
-      "cordova-lib/",
       "coverage/",
       "tests/"
     ],
