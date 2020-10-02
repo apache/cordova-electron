@@ -17,84 +17,58 @@
     under the License.
 */
 
+const os = require('os');
 const fs = require('fs-extra');
 const path = require('path');
 const rewire = require('rewire');
 
 const rootDir = path.resolve(__dirname, '../../../..');
-const tmpDir = path.join(rootDir, 'temp');
 
-const create = rewire(path.join(rootDir, 'lib/create'));
-
-function createAndValidateProjectDirName (projectname, projectid) {
-    // remove existing folder
-    fs.removeSync(tmpDir);
-    fs.ensureDirSync(tmpDir);
-
-    const projectPath = path.join(tmpDir, projectname);
-
-    const _fs = create.__get__('fs');
-    create.__set__('fs', {
-        ensureDirSync: _fs.ensureDirSync,
-        existsSync: path => path !== projectPath,
-        copySync: () => true
-    });
-
-    return create.createProject(projectPath, projectname, projectid, projectname)
-        .then(() => {
-            // expects the project name to be the directory name.
-            expect(_fs.readdirSync(tmpDir).includes(projectname)).toBe(true);
-
-            fs.removeSync(tmpDir);
-            create.__set__('fs', _fs);
-        });
+function makeTempDir () {
+    const dir = path.join(os.tmpdir(), 'cordova-electron-test-');
+    return fs.realpathSync(fs.mkdtempSync(dir));
 }
 
 describe('create', () => {
-    it('create project with ascii name, no spaces', () => {
+    let create, tmpDir;
+
+    beforeEach(() => {
+        create = rewire(path.join(rootDir, 'lib/create'));
+        tmpDir = makeTempDir();
+    });
+    afterEach(() => {
+        fs.removeSync(tmpDir);
+    });
+
+    it('creates a project that has the expected files', () => {
         const projectname = 'testcreate';
         const projectid = 'com.test.app1';
+        const projectPath = path.join(tmpDir, projectname);
 
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with ascii name, and spaces', () => {
-        const projectname = 'test create';
-        const projectid = 'com.test.app2';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with unicode name, no spaces', () => {
-        const projectname = '応応応応用用用用';
-        const projectid = 'com.test.app3';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with unicode name, and spaces', () => {
-        const projectname = '応応応応 用用用用';
-        const projectid = 'com.test.app4';
-
-        return createAndValidateProjectDirName(projectname, projectid);
-    });
-
-    it('create project with ascii+unicode name, no spaces', () => {
-        const projectname = '応応応応hello用用用用';
-        const projectid = 'com.test.app5';
-
-        return createAndValidateProjectDirName(projectname, projectid);
+        return create.createProject(projectPath, projectname, projectid).then(() => {
+            for (const filePath of ['build-res', 'cordova/Api.js', 'cordova/version']) {
+                expect(fs.existsSync(path.join(projectPath, filePath))).toBe(true);
+            }
+        });
     });
 
     it('create project with ascii+unicode name, and spaces', () => {
         const projectname = '応応応応 hello 用用用用';
         const projectid = 'com.test.app6';
+        const projectPath = path.join(tmpDir, projectname);
 
-        return createAndValidateProjectDirName(projectname, projectid);
+        create.__set__('fs', {
+            ensureDirSync: fs.ensureDirSync,
+            existsSync: path => path !== projectPath,
+            copySync: () => true
+        });
+
+        return create.createProject(projectPath, projectname, projectid).then(() => {
+            expect(fs.existsSync(projectPath)).toBe(true);
+        });
     });
 
     it('should stop creating project when project destination already exists', () => {
-        const _fs = create.__get__('fs');
         create.__set__('fs', {
             existsSync: jasmine.createSpy('existsSync').and.returnValue(true)
         });
@@ -105,8 +79,6 @@ describe('create', () => {
         expect(() => {
             create.createProject(tmpDir, projectname, projectid, projectname);
         }).toThrowError(/destination already exists/);
-
-        create.__set__('fs', _fs);
     });
 
     it('should stop creating project when requirement check fails', () => {
@@ -125,8 +97,5 @@ describe('create', () => {
         create.createProject(tmpDir, projectname, projectid, projectname);
 
         expect(emitSpy).toHaveBeenCalledWith('error', 'Please make sure you meet the software requirements in order to build a cordova electron project');
-
-        // clean-up
-        fs.removeSync(tmpDir);
     });
 });
