@@ -22,6 +22,12 @@ const path = require('path');
 
 const rootDir = path.resolve(__dirname, '../../../..');
 
+const apiStub = Object.freeze({
+    locations: Object.freeze({ www: 'FAKE_WWW' })
+});
+
+const expectedPathToMain = path.join(apiStub.locations.www, 'cdv-electron-main.js');
+
 const run = rewire(path.join(rootDir, 'lib/run'));
 
 describe('Run', () => {
@@ -29,7 +35,6 @@ describe('Run', () => {
         it('should run electron with cdv-electron-main.js.', () => {
             const execaSpy = jasmine.createSpy('execa');
             const onSpy = jasmine.createSpy('on');
-            const expectedPathToMain = path.join(rootDir, 'bin/templates/www/cdv-electron-main.js');
 
             run.__set__('electron', 'electron-require');
             spyOn(process, 'exit');
@@ -38,7 +43,7 @@ describe('Run', () => {
                 on: onSpy.and.callThrough()
             }));
 
-            run.run();
+            run.run.call(apiStub);
 
             expect(execaSpy).toHaveBeenCalledWith('electron-require', [expectedPathToMain]);
             expect(onSpy).toHaveBeenCalled();
@@ -54,7 +59,7 @@ describe('Run', () => {
             const onSpy = jasmine.createSpy('on');
             const expectedElectronArguments = [
                 '--inspect-brk=5858',
-                path.join(rootDir, 'bin/templates/www/cdv-electron-main.js')
+                expectedPathToMain
             ];
 
             run.__set__('electron', 'electron-require');
@@ -64,7 +69,7 @@ describe('Run', () => {
                 on: onSpy.and.callThrough()
             }));
 
-            run.run({ argv: ['--inspect-brk=5858'] });
+            run.run.call(apiStub, { argv: ['--inspect-brk=5858'] });
 
             expect(execaSpy).toHaveBeenCalledWith('electron-require', expectedElectronArguments);
             expect(onSpy).toHaveBeenCalled();
