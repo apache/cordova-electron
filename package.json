@@ -34,16 +34,6 @@
     "rewire": "^5.0.0"
   },
   "author": "Apache Software Foundation",
-  "contributors": [
-    {
-      "name": "Steve Gill",
-      "email": "steveng@adobe.com"
-    },
-    {
-      "name": "Jesse MacFadyen",
-      "email": "purplecabbage@apache.org"
-    }
-  ],
   "license": "Apache-2.0",
   "engines": {
     "node": ">=10.0.0"
