@@ -5,7 +5,7 @@
   "main": "lib/Api.js",
   "repository": "github:apache/cordova-electron",
   "bugs": "https://github.com/apache/cordova-electron/issues",
-  "kewords": [
+  "keywords": [
     "apache",
     "cordova",
     "cordova:platform",
