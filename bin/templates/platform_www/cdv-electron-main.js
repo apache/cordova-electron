@@ -19,11 +19,13 @@
 
 const fs = require('fs');
 const path = require('path');
+const { cordova } = require('./package.json');
 // Module to control application life, browser window and tray.
 const {
     app,
     BrowserWindow,
-    protocol
+    protocol,
+    ipcMain
 } = require('electron');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
@@ -70,6 +72,9 @@ function createWindow () {
     }
 
     const browserWindowOpts = Object.assign({}, cdvElectronSettings.browserWindow, { icon: appIcon });
+    browserWindowOpts.webPreferences.preload = path.join(app.getAppPath(), 'cdv-electron-preload.js');
+    browserWindowOpts.webPreferences.contextIsolation = true;
+
     mainWindow = new BrowserWindow(browserWindowOpts);
 
     // Load a local HTML file or a remote URL.
@@ -138,6 +143,18 @@ app.on('activate', () => {
         }
 
         createWindow();
+    }
+});
+
+ipcMain.handle('cdv-plugin-exec', async (event, serviceName, action, ...args) => {
+    if (cordova && cordova.services && cordova.services[serviceName]) {
+        const plugin = require(cordova.services[serviceName]);
+
+        return plugin[action]
+            ? plugin[action](args)
+            : Promise.reject(new Error(`The action "${ action }" for the requested plugin service "${ service }" does not exist.`));
+    } else {
+        return Promise.reject(new Error(`The requested plugin service "${ service }" does not exist have native support.`));
     }
 });
 
