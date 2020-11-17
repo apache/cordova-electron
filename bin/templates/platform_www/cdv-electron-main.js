@@ -146,15 +146,15 @@ app.on('activate', () => {
     }
 });
 
-ipcMain.handle('cdv-plugin-exec', async (event, serviceName, action, ...args) => {
+ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, ...args) => {
     if (cordova && cordova.services && cordova.services[serviceName]) {
         const plugin = require(cordova.services[serviceName]);
 
         return plugin[action]
             ? plugin[action](args)
-            : Promise.reject(new Error(`The action "${ action }" for the requested plugin service "${ service }" does not exist.`));
+            : Promise.reject(new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`));
     } else {
-        return Promise.reject(new Error(`The requested plugin service "${ service }" does not exist have native support.`));
+        return Promise.reject(new Error(`The requested plugin service "${serviceName}" does not exist have native support.`));
     }
 });
 
