@@ -179,7 +179,6 @@ describe('Handler export', () => {
                 'source-file',
                 'header-file',
                 'resource-file',
-                'framework',
                 'lib-file'
             ].forEach(type => {
                 for (const method of ['install', 'uninstall']) {
