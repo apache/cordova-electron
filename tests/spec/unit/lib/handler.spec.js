@@ -383,7 +383,7 @@ describe('Handler export', () => {
                 );
 
                 expect(events.emit).toHaveBeenCalledWith(
-                    'info',
+                    'verbose',
                     '[Cordova Electron] The service name "Device" was delinked.'
                 );
                 events.emit.calls.reset();
