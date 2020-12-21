@@ -95,6 +95,18 @@ describe('PackageJsonParser class', () => {
         expect(packageJsonParser.package.dependencies).not.toBeDefined();
     });
 
+    it('should remove dev tools extension when enable argument = false.', () => {
+        packageJsonParser.package.dependencies = packageJsonParser.package.dependencies || {
+            'electron-devtools-installer': '1.0.0' // test
+        };
+        // Ensure mock was set, this is acting as if it was set before.
+        expect(packageJsonParser.package.dependencies['electron-devtools-installer']).toBeDefined();
+        // This should remove the mock
+        packageJsonParser.enableDevTools(false);
+        // the dependency should have been removed.
+        expect(packageJsonParser.package.dependencies['electron-devtools-installer']).not.toBeDefined();
+    });
+
     it('should not add dev tools extension when enable argument = undefined.', () => {
         packageJsonParser.enableDevTools();
         // the package object should be the same as it was initialized

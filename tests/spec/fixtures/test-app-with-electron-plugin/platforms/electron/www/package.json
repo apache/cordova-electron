@@ -1,0 +1,15 @@
+{
+  "main": "cdv-electron-main.js",
+  "name": "org.apache.cordovaTestApp",
+  "displayName": "test-app-with-electron-plugin",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "homepage": "http://cordova.io",
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Apache Cordova Team",
+    "email": "dev@cordova.apache.org"
+  },
+  "dependencies": {},
+  "cordova": {}
+}

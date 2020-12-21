@@ -1,2 +1,3 @@
 cordova-lib/cordova.js
 bin/templates/platform_www/cordova.js
+tests/spec/fixtures/test-app-with-electron-plugin/
