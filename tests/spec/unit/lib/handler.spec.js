@@ -209,6 +209,26 @@ describe('Handler export', () => {
         });
 
         describe('framework.install', () => {
+            it('should not install framework when the source path does not exist.', async () => {
+                const execaSpy = jasmine.createSpy('execa');
+                handler.__set__('execa', execaSpy);
+
+                spyOn(fs, 'existsSync').and.returnValue(false);
+
+                await handler.framework.install(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir,
+                    frameworkInstallPluginId
+                );
+
+                expect(events.emit).toHaveBeenCalledWith(
+                    'warn',
+                    '[Cordova Electron] The defined "framework" source path does not exist and can not be installed.'
+                );
+                events.emit.calls.reset();
+            });
+
             it('should update the electron app package when service is registered', async () => {
                 const execaSpy = jasmine.createSpy('execa');
                 handler.__set__('execa', execaSpy);
@@ -323,7 +343,7 @@ describe('Handler export', () => {
 
                 expect(events.emit).toHaveBeenCalledWith(
                     'warn',
-                    '[Conflicts Detected] The service name "Device" is already taken by "cordova-plugin-device-electron" and can not be redeclared.'
+                    '[Cordova Electron] The service name "Device" is already taken by "cordova-plugin-device-electron" and can not be redeclared.'
                 );
                 events.emit.calls.reset();
             });
@@ -364,7 +384,7 @@ describe('Handler export', () => {
 
                 expect(events.emit).toHaveBeenCalledWith(
                     'info',
-                    'The service name "Device" was delinked.'
+                    '[Cordova Electron] The service name "Device" was delinked.'
                 );
                 events.emit.calls.reset();
             });
