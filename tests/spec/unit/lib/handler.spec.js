@@ -23,6 +23,9 @@ const { events } = require('cordova-common');
 const rewire = require('rewire');
 
 const rootDir = path.resolve(__dirname, '../../../..');
+const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
+const tmpDir = path.join(rootDir, 'temp');
+const testProjectDir = path.join(tmpDir, 'testapp');
 
 const handler = rewire(path.join(rootDir, 'lib/handler'));
 
@@ -170,6 +173,272 @@ describe('Handler export', () => {
         });
     });
 
+    describe('framework method', () => {
+        const frameworkInstallMockObject = {
+            itemType: 'framework',
+            type: undefined,
+            parent: undefined,
+            custom: false,
+            embed: false,
+            src: 'src/electron',
+            spec: undefined,
+            weak: false,
+            versions: undefined,
+            targetDir: undefined,
+            deviceTarget: undefined,
+            arch: undefined,
+            implementation: undefined
+        };
+
+        const frameworkInstallPluginId = 'cordova-plugin-device';
+        const frameworkInstallElectronPluginId = `${frameworkInstallPluginId}-electron`;
+        const frameworkInstallPluginDir = path.join(testProjectDir, `plugins/${frameworkInstallPluginId}`);
+        const frameworkInstallProjectDir = path.join(testProjectDir, 'platforms/electron');
+        const frameworkInstallProjectAppPackageFile = path.join(frameworkInstallProjectDir, 'www/package.json');
+        const frameworkInstallPluginPackageFile = path.join(frameworkInstallPluginDir, 'src/electron/package.json');
+
+        beforeEach(() => {
+            fs.ensureDirSync(tmpDir);
+            fs.copySync(path.resolve(fixturesDir, 'test-app-with-electron-plugin'), testProjectDir);
+
+            spyOn(events, 'emit');
+        });
+
+        afterEach(() => {
+            fs.removeSync(tmpDir);
+        });
+
+        describe('framework.install', () => {
+            it('should not install framework when the source path does not exist.', async () => {
+                const execaSpy = jasmine.createSpy('execa');
+                handler.__set__('execa', execaSpy);
+
+                spyOn(fs, 'existsSync').and.returnValue(false);
+
+                await handler.framework.install(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir,
+                    frameworkInstallPluginId
+                );
+
+                expect(events.emit).toHaveBeenCalledWith(
+                    'warn',
+                    '[Cordova Electron] The defined "framework" source path does not exist and can not be installed.'
+                );
+                events.emit.calls.reset();
+            });
+
+            it('should update the electron app package when service is registered', async () => {
+                const execaSpy = jasmine.createSpy('execa');
+                handler.__set__('execa', execaSpy);
+
+                // Mock npm install by updating the App's package.json
+                const appPackage = JSON.parse(
+                    fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8')
+                );
+
+                appPackage.dependencies[frameworkInstallElectronPluginId] = path.relative(
+                    frameworkInstallProjectAppPackageFile,
+                    path.join(frameworkInstallPluginDir, 'src/electron')
+                );
+
+                fs.writeFileSync(
+                    frameworkInstallProjectAppPackageFile,
+                    JSON.stringify(appPackage, null, 2),
+                    'utf8'
+                );
+
+                await handler.framework.install(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir,
+                    frameworkInstallPluginId
+                );
+
+                // Validate that device plugin's service is registered.
+                const validateAppPackage = JSON.parse(fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8'));
+                const test = validateAppPackage && validateAppPackage.cordova && validateAppPackage.cordova.services && validateAppPackage.cordova.services.Device;
+                expect(test).toBe(frameworkInstallElectronPluginId);
+            });
+
+            it('should not update the electron app package when there are no registered service', async () => {
+                const execaSpy = jasmine.createSpy('execa').and.returnValue({
+                    stdout: frameworkInstallElectronPluginId
+                });
+                handler.__set__('execa', execaSpy);
+
+                // Mock npm install by updating the App's package.json
+                const appPackage = JSON.parse(
+                    fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8')
+                );
+
+                appPackage.dependencies[frameworkInstallElectronPluginId] = path.relative(
+                    frameworkInstallProjectAppPackageFile,
+                    path.join(frameworkInstallPluginDir, 'src/electron')
+                );
+
+                fs.writeFileSync(
+                    frameworkInstallProjectAppPackageFile,
+                    JSON.stringify(appPackage, null, 2),
+                    'utf8'
+                );
+
+                const pluginPackage = JSON.parse(fs.readFileSync(frameworkInstallPluginPackageFile, 'utf8'));
+                delete pluginPackage.cordova;
+
+                fs.writeFileSync(
+                    frameworkInstallPluginPackageFile,
+                    JSON.stringify(pluginPackage, null, 2),
+                    'utf8'
+                );
+
+                await handler.framework.install(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir,
+                    frameworkInstallPluginId
+                );
+
+                // Validate that device plugin's service is registered.
+                const validateAppPackage = JSON.parse(fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8'));
+                const test = validateAppPackage && validateAppPackage.cordova && validateAppPackage.cordova.services && validateAppPackage.cordova.services.Device;
+                expect(test).not.toBe(frameworkInstallElectronPluginId);
+            });
+
+            it('should warn when there are conflicting service name between more then one plugin', async () => {
+                const execaSpy = jasmine.createSpy('execa').and.returnValue({
+                    stdout: frameworkInstallElectronPluginId
+                });
+                handler.__set__('execa', execaSpy);
+
+                // Mock npm install by updating the App's package.json
+                const appPackage = JSON.parse(
+                    fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8')
+                );
+
+                appPackage.dependencies[frameworkInstallElectronPluginId] = path.relative(
+                    frameworkInstallProjectAppPackageFile,
+                    path.join(frameworkInstallPluginDir, 'src/electron')
+                );
+
+                // fake some other device service already registered
+                appPackage.cordova = appPackage.cordova || {};
+                appPackage.cordova.services = appPackage.cordova.services || {
+                    Device: 'cordova-plugin-device-electron'
+                };
+
+                fs.writeFileSync(
+                    frameworkInstallProjectAppPackageFile,
+                    JSON.stringify(appPackage, null, 2),
+                    'utf8'
+                );
+
+                await handler.framework.install(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir,
+                    frameworkInstallPluginId
+                );
+
+                expect(events.emit).toHaveBeenCalledWith(
+                    'warn',
+                    '[Cordova Electron] The service name "Device" is already taken by "cordova-plugin-device-electron" and can not be redeclared.'
+                );
+                events.emit.calls.reset();
+            });
+        });
+
+        describe('framework.uninstall', () => {
+            it('should delink service name if defined', async () => {
+                const execaSpy = jasmine.createSpy('execa');
+                handler.__set__('execa', execaSpy);
+
+                // Mock npm install by updating the App's package.json
+                const appPackage = JSON.parse(
+                    fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8')
+                );
+
+                appPackage.dependencies[frameworkInstallElectronPluginId] = path.relative(
+                    frameworkInstallProjectAppPackageFile,
+                    path.join(frameworkInstallPluginDir, 'src/electron')
+                );
+
+                // fake some other device service already registered
+                appPackage.cordova = appPackage.cordova || {};
+                appPackage.cordova.services = appPackage.cordova.services || {
+                    Device: 'cordova-plugin-device-electron'
+                };
+
+                fs.writeFileSync(
+                    frameworkInstallProjectAppPackageFile,
+                    JSON.stringify(appPackage, null, 2),
+                    'utf8'
+                );
+
+                await handler.framework.uninstall(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir
+                );
+
+                expect(events.emit).toHaveBeenCalledWith(
+                    'verbose',
+                    '[Cordova Electron] The service name "Device" was delinked.'
+                );
+                events.emit.calls.reset();
+            });
+
+            it('should not delink service name if defined by another plugin', async () => {
+                const execaSpy = jasmine.createSpy('execa');
+                handler.__set__('execa', execaSpy);
+
+                // Mock npm install by updating the App's package.json
+                const appPackage = JSON.parse(
+                    fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8')
+                );
+
+                appPackage.dependencies[frameworkInstallElectronPluginId] = path.relative(
+                    frameworkInstallProjectAppPackageFile,
+                    path.join(frameworkInstallPluginDir, 'src/electron')
+                );
+
+                // fake some other device service already registered
+                appPackage.cordova = appPackage.cordova || {};
+                appPackage.cordova.services = appPackage.cordova.services || {
+                    Device: 'some-other-package'
+                };
+
+                fs.writeFileSync(
+                    frameworkInstallProjectAppPackageFile,
+                    JSON.stringify(appPackage, null, 2),
+                    'utf8'
+                );
+
+                await handler.framework.uninstall(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir
+                );
+
+                expect(events.emit).not.toHaveBeenCalled();
+            });
+
+            it('should not delink service name when not defined', async () => {
+                const execaSpy = jasmine.createSpy('execa');
+                handler.__set__('execa', execaSpy);
+
+                await handler.framework.uninstall(
+                    frameworkInstallMockObject,
+                    frameworkInstallPluginDir,
+                    frameworkInstallProjectDir
+                );
+
+                expect(events.emit).not.toHaveBeenCalled();
+            });
+        });
+    });
+
     describe('Unsupported Handlers', () => {
         it('should emit that the install and uninstall methods are not supported for X types.', () => {
             spyOn(events, 'emit');
@@ -179,7 +448,6 @@ describe('Handler export', () => {
                 'source-file',
                 'header-file',
                 'resource-file',
-                'framework',
                 'lib-file'
             ].forEach(type => {
                 for (const method of ['install', 'uninstall']) {

@@ -66,6 +66,10 @@ describe('PackageJsonParser class', () => {
         spyOn(events, 'emit');
     });
 
+    afterAll(() => {
+        fs.removeSync('mock');
+    });
+
     it('should have been constructed with initial values.', () => {
         expect(packageJsonParser).toBeDefined();
         expect(packageJsonParser.path).toEqual(path.join(locations.www, 'package.json'));
@@ -89,6 +93,18 @@ describe('PackageJsonParser class', () => {
         packageJsonParser.enableDevTools(false);
         // the package object should be the same as it was initialized
         expect(packageJsonParser.package.dependencies).not.toBeDefined();
+    });
+
+    it('should remove dev tools extension when enable argument = false.', () => {
+        packageJsonParser.package.dependencies = packageJsonParser.package.dependencies || {
+            'electron-devtools-installer': '1.0.0' // test
+        };
+        // Ensure mock was set, this is acting as if it was set before.
+        expect(packageJsonParser.package.dependencies['electron-devtools-installer']).toBeDefined();
+        // This should remove the mock
+        packageJsonParser.enableDevTools(false);
+        // the dependency should have been removed.
+        expect(packageJsonParser.package.dependencies['electron-devtools-installer']).not.toBeDefined();
     });
 
     it('should not add dev tools extension when enable argument = undefined.', () => {
@@ -121,10 +137,6 @@ describe('PackageJsonParser class', () => {
             displayName: 'HelloCordova',
             version: '1.0.0',
             description: 'A sample Apache Cordova application that responds to the deviceready event.',
-            dependencies: {
-                'cordova-electron': '^1.0.0',
-                'cordova-plugin-camera': '^1.0.0'
-            },
             homepage: 'https://cordova.io',
             license: 'Apache-2.0',
             author: 'Apache Cordova Team'
@@ -142,10 +154,6 @@ describe('PackageJsonParser class', () => {
             displayName: 'HelloWorld',
             version: '1.1.1',
             description: 'A sample Apache Cordova application.',
-            dependencies: {
-                'cordova-electron': '^1.0.0',
-                'cordova-plugin-camera': '^1.0.0'
-            },
             homepage: 'http://cordova.io',
             license: 'Apache 2.0 License',
             author: { name: 'Cordova Team', email: 'dev@cordova.com' }
@@ -154,106 +162,12 @@ describe('PackageJsonParser class', () => {
         expect(packageJsonParser.package).toEqual(packageJsonObj);
     });
 
-    it('should warn when any of the dependencies contain cordova-* is defined but not for cordova-plugin-*.', () => {
-        packageJsonParser.configure(cfg, defaultMockProjectPackageJson);
-
-        expect(events.emit).toHaveBeenCalledWith(
-            'warn',
-            jasmine.stringMatching(/^\[Cordova Electron\] The built package size/)
-        );
-
-        expect(events.emit).toHaveBeenCalledWith(
-            'verbose',
-            jasmine.stringMatching(/The following Cordova package\(s\) were detected/)
-        );
-
-        expect(events.emit).toHaveBeenCalledWith(
-            'verbose',
-            jasmine.stringMatching(/cordova-electron/)
-        );
-
-        expect(events.emit).not.toHaveBeenCalledWith(
-            'verbose',
-            jasmine.stringMatching(/cordova-plugin-camera/)
-        );
-    });
-
     it('should set default author when missing but author email is defined.', () => {
         packageJsonParser.configure(cfgNoAuthorCustomEmail, defaultMockProjectPackageJson);
         expect(packageJsonParser.package.author).toEqual({
             name: 'Apache Cordova Team',
             email: 'dev@cordova.com'
         });
-    });
-
-    it('should not warn when any cordova-* packages are defined as devDependency.', () => {
-        // Fix defaultMockProjectPackageJson where cordova-* is devDependency
-        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
-        mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
-        mockProjectPackageJson.dependencies = { foobar: '1.0.0' }; // setting a non "cordova-" dependency
-
-        packageJsonParser.configure(cfg, mockProjectPackageJson);
-
-        expect(events.emit).not.toHaveBeenCalled();
-    });
-
-    it('should skip configuring the Electron app\'s dependencies when the Cordova project\'s package.json dependencies are not set.', () => {
-        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
-        mockProjectPackageJson.dependencies = {};
-
-        packageJsonParser.configure(cfg, mockProjectPackageJson);
-
-        expect(events.emit).not.toHaveBeenCalled();
-    });
-
-    it('should skip preparing npm packages that already contain absolute paths.', () => {
-        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
-        mockProjectPackageJson.dependencies = { foobar: 'file:/tmp/foobar.tar.gz' };
-
-        packageJsonParser.configure(cfg, mockProjectPackageJson);
-
-        expect(events.emit).not.toHaveBeenCalled();
-    });
-
-    it('should convert npm packages that contain relative path to be absolute paths.', () => {
-        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
-        mockProjectPackageJson.dependencies = { foobar: 'file:../tmp/foobar.tar.gz' };
-
-        spyOn(fs, 'pathExistsSync').and.returnValue(true);
-
-        packageJsonParser.configure(cfg, mockProjectPackageJson);
-
-        expect(events.emit).not.toHaveBeenCalled();
-    });
-
-    it('should warn that an npm packages will be dropped when the absolute path could not be found.', () => {
-        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
-        mockProjectPackageJson.dependencies = { foobar: 'file:../tmp/foobar.tar.gz' };
-
-        spyOn(fs, 'pathExistsSync').and.returnValue(false);
-
-        packageJsonParser.configure(cfg, mockProjectPackageJson);
-
-        expect(events.emit).toHaveBeenCalledWith(
-            'warn',
-            jasmine.stringMatching(/^\[Cordova Electron\] The following local npm dependencies could not be located and will not be deployed/)
-        );
-
-        expect(events.emit).toHaveBeenCalledWith(
-            'warn',
-            jasmine.stringMatching(/foobar/)
-        );
-    });
-
-    it('should not set package dependencies when project dependencies is missing.', () => {
-        const mockProjectPackageJson = Object.assign({}, defaultMockProjectPackageJson);
-        mockProjectPackageJson.devDependencies = Object.assign({}, defaultMockProjectPackageJson.dependencies);
-        delete mockProjectPackageJson.dependencies;
-
-        packageJsonParser.configure(cfg, mockProjectPackageJson);
-
-        expect(events.emit).not.toHaveBeenCalled();
-        expect(packageJsonParser.package.dependencies).not.toBeDefined();
     });
 
     it('should write something.', () => {
