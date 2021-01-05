@@ -8,10 +8,10 @@
       "buildResources": "${APP_BUILD_RES_DIR}",
       "output": "${APP_BUILD_DIR}"
     },
-    "electronVersion": "10.1.2",
+    "electronVersion": "11.1.1",
 
     "electronDownload": {
-      "version": "10.1.2"
+      "version": "11.1.1"
     }
   }
 }
