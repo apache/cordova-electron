@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@cordova/eslint-config": "^3.0.0",
-    "jasmine": "^3.6.1",
+    "jasmine": "^3.6.3",
     "nyc": "^15.1.0",
     "rewire": "^5.0.0"
   },
