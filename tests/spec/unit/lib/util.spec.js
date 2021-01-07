@@ -38,5 +38,21 @@ describe('Testing util.js:', () => {
 
             expect(actual).toEqual(expected);
         });
+
+        it('should reject deep merge on reserved keys.', () => {
+            const mergeTo = { foo: 'bar', abc: [1, 2, 3] };
+            const payload = '{"food":"candy","abc":[5],"__proto__":{ "hoge":"hoge"}}';
+
+            const actual = util.deepMerge(mergeTo, JSON.parse(payload));
+            const expected = {
+                foo: 'bar',
+                food: 'candy',
+                abc: [1, 2, 3, 5]
+            };
+
+            expect(actual).toEqual(expected);
+            expect(actual.hoge).toBe(undefined);
+            expect({}.hoge).toBe(undefined);
+        });
     });
 });
