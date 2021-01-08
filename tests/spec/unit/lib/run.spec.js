@@ -27,6 +27,7 @@ const apiStub = Object.freeze({
 });
 
 const expectedPathToMain = path.join(apiStub.locations.www, 'cdv-electron-main.js');
+const expectedExecaOptions = { windowsHide: false };
 
 const run = rewire(path.join(rootDir, 'lib/run'));
 
@@ -45,7 +46,7 @@ describe('Run', () => {
 
             run.run.call(apiStub);
 
-            expect(execaSpy).toHaveBeenCalledWith('electron-require', [expectedPathToMain]);
+            expect(execaSpy).toHaveBeenCalledWith('electron-require', [expectedPathToMain], expectedExecaOptions);
             expect(onSpy).toHaveBeenCalled();
             expect(process.exit).not.toHaveBeenCalled();
 
@@ -71,7 +72,7 @@ describe('Run', () => {
 
             run.run.call(apiStub, { argv: ['--inspect-brk=5858'] });
 
-            expect(execaSpy).toHaveBeenCalledWith('electron-require', expectedElectronArguments);
+            expect(execaSpy).toHaveBeenCalledWith('electron-require', expectedElectronArguments, expectedExecaOptions);
             expect(onSpy).toHaveBeenCalled();
             expect(process.exit).not.toHaveBeenCalled();
 
