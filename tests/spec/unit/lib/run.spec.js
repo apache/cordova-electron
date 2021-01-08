@@ -27,7 +27,7 @@ const apiStub = Object.freeze({
 });
 
 const expectedPathToMain = path.join(apiStub.locations.www, 'cdv-electron-main.js');
-const expectedExecaOptions = { windowsHide: false };
+const expectedExecaOptions = { windowsHide: false, stdio: 'inherit' };
 
 const run = rewire(path.join(rootDir, 'lib/run'));
 
