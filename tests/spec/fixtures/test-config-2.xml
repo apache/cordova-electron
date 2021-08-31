@@ -37,13 +37,6 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
-    <platform name="android">
-        <allow-intent href="market:*" />
-    </platform>
-    <platform name="ios">
-        <allow-intent href="itms:*" />
-        <allow-intent href="itms-apps:*" />
-    </platform>
     <platform name="electron">
         <icon src="res/electron/cordova.png" />
         <icon src="res/electron/cordova@1.5.png" />
@@ -54,5 +47,4 @@
         <icon src="res/electron/cordova@16.png" />
         <icon src="res/electron/cordova_512.png" target="installer" />
     </platform>
-    <engine name="electron" spec="github:Apache/cordova-electron" />
 </widget>

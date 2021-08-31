@@ -55,5 +55,4 @@
         <icon src="res/electron/cordova@16.png" />
         <icon src="res/electron/cordova_512.png" target="installer" />
     </platform>
-    <engine name="electron" spec="github:Apache/cordova-electron" />
 </widget>

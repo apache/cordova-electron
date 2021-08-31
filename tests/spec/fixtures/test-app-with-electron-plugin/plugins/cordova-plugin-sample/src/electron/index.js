@@ -18,21 +18,18 @@
 */
 
 const { system, osInfo } = require('systeminformation');
+const electron = require
 
 module.exports = {
-    getDeviceInfo: async () => {
+    getSampleInfo: async () => {
         try {
-            const { manufacturer, model, uuid } = await system();
-            const { platform, distro, codename, build } = await osInfo();
+            const { model } = await system();
+            const { platform } = await osInfo();
 
             return {
-                manufacturer,
                 model,
                 platform: platform === 'darwin' ? codename : distro,
-                version: build,
-                uuid,
-                // cordova: ''
-                isVirtual: false
+                electronVersion: process.versions.electron
             };
         } catch (e) {
             console.log(e);
