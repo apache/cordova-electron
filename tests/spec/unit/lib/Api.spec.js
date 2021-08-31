@@ -54,9 +54,7 @@ const mockExpectedLocations = {
     defaultConfigXml: path.join(testProjectDir, 'cordova/defaults.xml'),
     build: path.join(testProjectDir, 'build'),
     buildRes: path.join(testProjectDir, 'build-res'),
-    cache: path.join(testProjectDir, 'cache'),
-    cordovaJs: 'bin/templates/project/assets/www/cordova.js',
-    cordovaJsSrc: 'cordova-js-src'
+    cache: path.join(testProjectDir, 'cache')
 };
 
 describe('Api class', () => {
