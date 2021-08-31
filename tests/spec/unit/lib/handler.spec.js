@@ -190,7 +190,7 @@ describe('Handler export', () => {
             implementation: undefined
         };
 
-        const frameworkInstallPluginId = 'cordova-plugin-device';
+        const frameworkInstallPluginId = 'cordova-plugin-sample';
         const frameworkInstallElectronPluginId = `${frameworkInstallPluginId}-electron`;
         const frameworkInstallPluginDir = path.join(testProjectDir, `plugins/${frameworkInstallPluginId}`);
         const frameworkInstallProjectDir = path.join(testProjectDir, 'platforms/electron');
@@ -256,9 +256,9 @@ describe('Handler export', () => {
                     frameworkInstallPluginId
                 );
 
-                // Validate that device plugin's service is registered.
+                // Validate that sample plugin's service is registered.
                 const validateAppPackage = JSON.parse(fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8'));
-                const test = validateAppPackage && validateAppPackage.cordova && validateAppPackage.cordova.services && validateAppPackage.cordova.services.Device;
+                const test = validateAppPackage && validateAppPackage.cordova && validateAppPackage.cordova.services && validateAppPackage.cordova.services.Sample;
                 expect(test).toBe(frameworkInstallElectronPluginId);
             });
 
@@ -300,9 +300,9 @@ describe('Handler export', () => {
                     frameworkInstallPluginId
                 );
 
-                // Validate that device plugin's service is registered.
+                // Validate that sample plugin's service is registered.
                 const validateAppPackage = JSON.parse(fs.readFileSync(frameworkInstallProjectAppPackageFile, 'utf8'));
-                const test = validateAppPackage && validateAppPackage.cordova && validateAppPackage.cordova.services && validateAppPackage.cordova.services.Device;
+                const test = validateAppPackage && validateAppPackage.cordova && validateAppPackage.cordova.services && validateAppPackage.cordova.services.Sample;
                 expect(test).not.toBe(frameworkInstallElectronPluginId);
             });
 
@@ -322,10 +322,10 @@ describe('Handler export', () => {
                     path.join(frameworkInstallPluginDir, 'src/electron')
                 );
 
-                // fake some other device service already registered
+                // fake some other sample service already registered
                 appPackage.cordova = appPackage.cordova || {};
                 appPackage.cordova.services = appPackage.cordova.services || {
-                    Device: 'cordova-plugin-device-electron'
+                    Sample: 'cordova-plugin-sample-electron'
                 };
 
                 fs.writeFileSync(
@@ -343,7 +343,7 @@ describe('Handler export', () => {
 
                 expect(events.emit).toHaveBeenCalledWith(
                     'warn',
-                    '[Cordova Electron] The service name "Device" is already taken by "cordova-plugin-device-electron" and can not be redeclared.'
+                    '[Cordova Electron] The service name "Sample" is already taken by "cordova-plugin-sample-electron" and can not be redeclared.'
                 );
                 events.emit.calls.reset();
             });
@@ -364,10 +364,10 @@ describe('Handler export', () => {
                     path.join(frameworkInstallPluginDir, 'src/electron')
                 );
 
-                // fake some other device service already registered
+                // fake some other sample service already registered
                 appPackage.cordova = appPackage.cordova || {};
                 appPackage.cordova.services = appPackage.cordova.services || {
-                    Device: 'cordova-plugin-device-electron'
+                    Sample: 'cordova-plugin-sample-electron'
                 };
 
                 fs.writeFileSync(
@@ -384,7 +384,7 @@ describe('Handler export', () => {
 
                 expect(events.emit).toHaveBeenCalledWith(
                     'verbose',
-                    '[Cordova Electron] The service name "Device" was delinked.'
+                    '[Cordova Electron] The service name "Sample" was delinked.'
                 );
                 events.emit.calls.reset();
             });
@@ -403,10 +403,10 @@ describe('Handler export', () => {
                     path.join(frameworkInstallPluginDir, 'src/electron')
                 );
 
-                // fake some other device service already registered
+                // fake some other sample service already registered
                 appPackage.cordova = appPackage.cordova || {};
                 appPackage.cordova.services = appPackage.cordova.services || {
-                    Device: 'some-other-package'
+                    Sample: 'some-other-package'
                 };
 
                 fs.writeFileSync(

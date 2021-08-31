@@ -1,0 +1,27 @@
+{
+  "name": "cordova-plugin-sample",
+  "version": "1.0.0",
+  "description": "Cordova Sample Plugin",
+  "cordova": {
+    "id": "cordova-plugin-sample",
+    "platforms": [
+      "electron"
+    ]
+  },
+  "keywords": [
+    "cordova",
+    "sample",
+    "ecosystem:cordova",
+    "cordova-electron"
+  ],
+  "author": "Apache Software Foundation",
+  "license": "Apache-2.0",
+  "engines": {
+    "cordovaDependencies": {
+      "1.0.0": {
+        "cordova": ">100",
+        "cordova-electron": ">=3.0.0"
+      }
+    }
+  }
+}

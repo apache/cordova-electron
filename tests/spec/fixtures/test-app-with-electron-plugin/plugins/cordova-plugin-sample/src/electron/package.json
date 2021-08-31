@@ -1,12 +1,12 @@
 {
-  "name": "cordova-plugin-device-electron",
+  "name": "cordova-plugin-sample-electron",
   "version": "1.0.0",
-  "description": "Electron Native Supprot for Cordova Device Plugin",
+  "description": "Cordova Sample Electron Plugin (Native Support)",
   "main": "index.js",
   "keywords": [
     "cordova",
     "electron",
-    "device",
+    "sample",
     "native"
   ],
   "author": "Apache Software Foundation",
@@ -15,6 +15,6 @@
     "systeminformation": "^4.27.9"
   },
   "cordova": {
-    "serviceName": "Device"
+    "serviceName": "Sample"
   }
 }

@@ -19,19 +19,19 @@
 -->
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    id="cordova-plugin-device"
-    version="2.0.4-dev">
-    <name>Device</name>
-    <description>Cordova Mock Device Plugin for Electron Testing</description>
+    id="cordova-plugin-sample"
+    version="1.0.0">
+    <name>Sanple</name>
+    <description>Cordova Sample Plugin</description>
     <license>Apache 2.0</license>
-    <keywords>cordova,device</keywords>
+    <keywords>cordova,sample</keywords>
 
     <engines>
         <engine name="cordova-electron" version=">=3.0.0" />
     </engines>
 
-    <js-module src="www/device.js" name="device">
-        <clobbers target="device" />
+    <js-module src="www/sample.js" name="sample">
+        <clobbers target="sample" />
     </js-module>
 
     <platform name="electron">
