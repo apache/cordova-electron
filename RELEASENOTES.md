@@ -19,6 +19,71 @@
 
 ## Release Notes for Cordova Electron
 
+### 3.0.0 (Sep 01, 2021)
+
+#### Environment Updates
+
+This release requires the environment to have **Node.js** `12.0.0` or higher. It is recommended to use the current LTS, which is `14.17.6` at the time of this release.
+
+#### Project Dependencies
+
+* `cordova-common@^4.0.2`
+* `electron@14.0.0`
+* `electron-builder@^22.11.7`
+* `electron-devtools-installer@^3.2.0`
+* `execa@^5.1.1`
+* `fs-extra@^10.0.0`
+
+#### Electron App Stack
+
+* [Electron](https://www.electronjs.org/blog/electron-14-0) 14.0.0
+* Chromium 93.0.4577.58
+* Node v14.17.0
+* V8 v9.3
+
+#### Breaking Changes
+
+* [GH-205](https://github.com/apache/cordova-electron/pull/205) feat!(Api): remove unused locations data
+* [GH-203](https://github.com/apache/cordova-electron/pull/203) feat!(electron): bump to `14.0.0`
+* [GH-202](https://github.com/apache/cordova-electron/pull/202) feat!: remove old VERSION file
+* [GH-199](https://github.com/apache/cordova-electron/pull/199) feat!: update node support
+* [GH-198](https://github.com/apache/cordova-electron/pull/198) feat!(dependencies): update other packages
+  * `execa@5.1.1`
+  * `fs-extra@10.0.0`
+  * `jasmine@3.9.0`
+* [GH-197](https://github.com/apache/cordova-electron/pull/197) feat!(dependencies): bump **Electron** packages
+  * `electron-builder@22.11.7`
+  * `electron-devtools-installer@3.2.0`
+* [GH-175](https://github.com/apache/cordova-electron/pull/175) breaking: add plugin support
+
+#### Features
+
+* [GH-200](https://github.com/apache/cordova-electron/pull/200) feat: update supported platform options
+* [GH-184](https://github.com/apache/cordova-electron/pull/184) feat: forward **Electron**'s process `stdio` to terminal
+
+#### Fixes
+
+* [GH-183](https://github.com/apache/cordova-electron/pull/183) fix(npm): change prepack script to prepare
+* [GH-180](https://github.com/apache/cordova-electron/pull/180) fix(windows): **Electron** window not displaying
+* [GH-182](https://github.com/apache/cordova-electron/pull/182) fix: restrict deep merging on reserved keys
+* [GH-172](https://github.com/apache/cordova-electron/pull/172) fix(pkg): typo in field "`keywords`"
+* [GH-169](https://github.com/apache/cordova-electron/pull/169) fix(Api): do not depend on globals
+
+#### Refactor Changes
+
+* [GH-181](https://github.com/apache/cordova-electron/pull/181) refactor: use class static
+
+#### Chores
+
+* [GH-201](https://github.com/apache/cordova-electron/pull/201) chore(asf-license): add to header
+* [GH-171](https://github.com/apache/cordova-electron/pull/171) chore: clean up `package.json`
+
+#### Test & Other Changes
+
+* [GH-194](https://github.com/apache/cordova-electron/pull/194) build: build `cordova.js` on `prepare`
+* [GH-204](https://github.com/apache/cordova-electron/pull/204) test: cleanup and remove unneeded code
+* [GH-90](https://github.com/apache/cordova-electron/pull/90) test(create): fix, clean up & extend
+
 ### 2.0.0 (Sep 17, 2020)
 
 #### Environment Updates
