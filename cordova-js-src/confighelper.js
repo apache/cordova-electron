@@ -35,7 +35,7 @@ function Config (xhr) {
 }
 
 function readConfig (success, error) {
-    var xhr;
+    let xhr;
 
     if (typeof config !== 'undefined') {
         success(config);
@@ -49,7 +49,7 @@ function readConfig (success, error) {
         }
     }
 
-    var xhrStatusChangeHandler = function () {
+    const xhrStatusChangeHandler = function () {
         if (xhr.readyState === 4) {
             if (xhr.status === 200 || xhr.status === 304 || xhr.status === 0 /* file:// */) {
                 config = new Config(xhr);
@@ -76,7 +76,7 @@ function readConfig (success, error) {
  * Returns preference value or undefined if it does not exist.
  * @param {String} preferenceName Preference name to read */
 Config.prototype.getPreferenceValue = function getPreferenceValue (preferenceName) {
-    var preferenceItem = this.preferences && this.preferences.filter(function (item) {
+    const preferenceItem = this.preferences && this.preferences.filter(function (item) {
         return item.attributes.name && item.attributes.name.value === preferenceName;
     });
 
