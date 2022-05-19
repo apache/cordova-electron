@@ -35,7 +35,7 @@ function Config (xhr) {
 }
 
 function readConfig (success, error) {
-    let xhr;
+    let xhr; // eslint-disable-line prefer-const
 
     if (typeof config !== 'undefined') {
         success(config);
