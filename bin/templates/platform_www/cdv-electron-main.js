@@ -63,12 +63,12 @@ let mainWindow;
 function createWindow () {
     // Create the browser window.
     let appIcon;
-    if (fs.existsSync(`${__dirname}/img/app.png`)) {
-        appIcon = `${__dirname}/img/app.png`;
-    } else if (fs.existsSync(`${__dirname}/img/icon.png`)) {
-        appIcon = `${__dirname}/img/icon.png`;
+    if (fs.existsSync(path.join(__dirname, 'img/app.png'))) {
+        appIcon = path.join(__dirname, 'img/app.png');
+    } else if (fs.existsSync(path.join(__dirname, 'img/icon.png'))) {
+        appIcon = path.join(__dirname, 'img/icon.png');
     } else {
-        appIcon = `${__dirname}/img/logo.png`;
+        appIcon = path.join(__dirname, 'img/logo.png');
     }
 
     const browserWindowOpts = Object.assign({}, cdvElectronSettings.browserWindow, { icon: appIcon });
@@ -101,7 +101,7 @@ function createWindow () {
 function configureProtocol () {
     protocol.registerFileProtocol(scheme, (request, cb) => {
         const url = request.url.substr(basePath.length + 1);
-        cb({ path: path.normalize(`${__dirname}/${url}`) });
+        cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
     });
 
     protocol.interceptFileProtocol('file', (_, cb) => { cb(null); });
