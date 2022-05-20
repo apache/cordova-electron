@@ -55,4 +55,13 @@ describe('Testing util.js:', () => {
             expect({}.hoge).toBe(undefined);
         });
     });
+
+    describe('getInstalledElectronVersion method', () => {
+        it('should have a version', () => {
+            const actual = util.getInstalledElectronVersion();
+
+            expect(actual).not.toBe(null);
+            expect(actual).not.toBe(undefined);
+        });
+    });
 });
