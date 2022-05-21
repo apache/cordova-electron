@@ -140,15 +140,17 @@ describe('Testing build.js:', () => {
             const buildOptions = { debug: true, buildConfig, argv: [] };
 
             // create spies
+            const getInstalledElectronVersionSpy = jasmine.createSpy('getInstalledElectronVersion').and.returnValue('1.33.7');
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
             requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
             build.__set__('fs', { existsSync: existsSyncSpy });
-            build.__set__({ require: requireSpy });
+            build.__set__({ require: requireSpy, getInstalledElectronVersion: getInstalledElectronVersionSpy });
 
             electronBuilder = new ElectronBuilder(buildOptions, api).configure();
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(requireSpy).toHaveBeenCalled();
+            expect(getInstalledElectronVersionSpy).toHaveBeenCalled();
             expect(electronBuilder.buildSettings).toEqual(buildConfig);
         });
 
@@ -167,15 +169,17 @@ describe('Testing build.js:', () => {
             const buildOptions = { debug: false, buildConfig, argv: [] };
 
             // create spies
+            const getInstalledElectronVersionSpy = jasmine.createSpy('getInstalledElectronVersion').and.returnValue('1.33.7');
             existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
             requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
             build.__set__('fs', { existsSync: existsSyncSpy });
-            build.__set__({ require: requireSpy });
+            build.__set__({ require: requireSpy, getInstalledElectronVersion: getInstalledElectronVersionSpy });
 
             electronBuilder = new ElectronBuilder(buildOptions, api).configure();
 
             expect(existsSyncSpy).toHaveBeenCalled();
             expect(requireSpy).toHaveBeenCalled();
+            expect(getInstalledElectronVersionSpy).toHaveBeenCalled();
             expect(electronBuilder.buildSettings).toEqual(buildConfig);
         });
 
