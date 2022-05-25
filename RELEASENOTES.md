@@ -19,6 +19,27 @@
 
 ## Release Notes for Cordova Electron
 
+### 3.1.0 (May 25, 2022)
+
+**Features:**
+
+* [GH-230](https://github.com/apache/cordova-electron/pull/230) feat: support custom **Electron** version
+* [GH-228](https://github.com/apache/cordova-electron/pull/228) feat: bump `electron@^14.2.9`
+
+**Fixes:**
+
+* [GH-229](https://github.com/apache/cordova-electron/pull/229) fix: `npm` 8 does not install plugin dependencies
+
+**Chores:**
+
+* [GH-231](https://github.com/apache/cordova-electron/pull/231) chore(npm): bump all dependencies to latest minor/path
+
+**Other Changes:**
+
+* [GH-226](https://github.com/apache/cordova-electron/pull/226) dep(npm): bump `@cordova/eslint-config@^4.0.0` w/ fix
+* [GH-221](https://github.com/apache/cordova-electron/pull/221) dep(npm): bump `minimist` from 1.2.5 to 1.2.6
+* [GH-207](https://github.com/apache/cordova-electron/pull/207) doc: `mas-dev` is macOS package
+
 ### 3.0.0 (Sep 01, 2021)
 
 #### Environment Updates
