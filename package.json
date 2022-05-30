@@ -1,6 +1,6 @@
 {
   "name": "cordova-electron",
-  "version": "3.1.1-dev",
+  "version": "4.0.0-dev",
   "description": "electron apps as a target for cordova developers",
   "main": "lib/Api.js",
   "repository": "github:apache/cordova-electron",
