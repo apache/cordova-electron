@@ -151,7 +151,22 @@ ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, ...args) => {
         const plugin = require(cordova.services[serviceName]);
 
         return plugin[action]
-            ? plugin[action](args)
+            ? new Promise((resolve, reject) => {
+                // Added a success and error function as second and third argument, in order to allow to pass to the error callback a copy of the error argument. This was not possible if this function returns a rejected promise: see https://github.com/electron/electron/issues/24427
+                const legacyresult = plugin[action](args, (result) => {
+                    resolve({ success: true, result: result });
+                }, (error) => {
+                    resolve({ success: false, result: error });
+                });
+
+                // For backward compatibility with cordova-electron 3.x, if plugin[action] returns (or fulfills the returned promise) before calling one of the two functions passed as arguments, it works as in previous cordova-electron versions
+                Promise.resolve(legacyresult)
+                    .then((legacyresult) => {
+                        resolve({ success: true, result: legacyresult });
+                    }, (legacyerror) => {
+                        reject(legacyerror);
+                    });
+            })
             : Promise.reject(new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`));
     } else {
         return Promise.reject(new Error(`The requested plugin service "${serviceName}" does not exist have native support.`));
