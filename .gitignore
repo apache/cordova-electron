@@ -3,6 +3,7 @@
 
 # Editors
 .vscode
+.idea
 
 # Testing, code coverage, and linting
 .nyc_output
