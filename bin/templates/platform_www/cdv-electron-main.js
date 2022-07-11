@@ -146,15 +146,23 @@ app.on('activate', () => {
     }
 });
 
-ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, ...args) => {
+ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, args) => {
+    // This function should never return a rejected promise or throw an exception, as otherwise ipcRenderer callback will convert the parameter to a string incapsulated in an Error. See https://github.com/electron/electron/issues/24427
     if (cordova && cordova.services && cordova.services[serviceName]) {
         const plugin = require(cordova.services[serviceName]);
 
         return plugin[action]
-            ? plugin[action](args)
-            : Promise.reject(new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`));
+            ? new Promise((resolve) => {
+                // New parameters for an interface more coherent with Cordova standards
+                plugin[action]((result) => {
+                    resolve({ success: true, result: result });
+                }, (error) => {
+                    resolve({ success: false, result: error });
+                }, args);
+            })
+            : { success: false, result: new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`) }; // This should not happen, maybe it should throw the error instead
     } else {
-        return Promise.reject(new Error(`The requested plugin service "${serviceName}" does not exist have native support.`));
+        return { success: false, result: new Error(`The requested plugin service "${serviceName}" does not exist have native support.`) }; // This should not happen, maybe it should throw the error instead
     }
 });
 
