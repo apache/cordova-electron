@@ -24,8 +24,16 @@ contextBridge.exposeInMainWorld('_cdvElectronIpc', {
     exec: (success, error, serviceName, action, args) => {
         return ipcRenderer.invoke('cdv-plugin-exec', serviceName, action, args)
             .then(
-                success,
-                error
+                (response) => {
+                    if (response.success) {
+                        (typeof success === 'function') && success(response.result);
+                    } else {
+                        (typeof error === 'function') && error(response.result);
+                    }
+                },
+                (e) => {
+                    (typeof error === 'function') && error(e);
+                }
             );
     },
 
