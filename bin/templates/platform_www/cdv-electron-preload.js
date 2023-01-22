@@ -23,15 +23,19 @@ const { cordova } = require('./package.json');
 const { PluginResult } = require('./CallbackContext.js');
 
 contextBridge.exposeInMainWorld('_cdvElectronIpc', {
-    exec: async (success, error, serviceName, action, callbackId, args) => {
+    exec: async (success, error, serviceName, action, args, callbackId) => {
         ipcRenderer.on(callbackId, (event, result) => {
             if (result.status === PluginResult.STATUS_OK) {
                 success(result.data);
-            } else if (result.status === PluginResult.STATUS_ERROR) {
+            } else if (result.status & PluginResult.STATUS_ERROR) {
                 error(result.data);
+            } else {
+                error(new Error('Unexpected plugin result status code'));
             }
 
-            if (!result.keepCallback) { ipcRenderer.removeAllListeners(callbackId); }
+            if (!result.keepCallback) {
+                ipcRenderer.removeAllListeners(callbackId);
+            }
         });
         try {
             await ipcRenderer.invoke('cdv-plugin-exec', serviceName, action, args, callbackId);
@@ -43,6 +47,6 @@ contextBridge.exposeInMainWorld('_cdvElectronIpc', {
     },
 
     hasService: (serviceName) => cordova &&
-        cordova.services &&
-        cordova.services[serviceName]
+            cordova.services &&
+            cordova.services[serviceName]
 });

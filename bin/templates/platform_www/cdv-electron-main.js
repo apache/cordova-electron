@@ -155,28 +155,47 @@ ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, args, callbackI
     // this condition should never be met, exec.js already tests for it.
     if (!(cordova && cordova.services && cordova.services[serviceName])) {
         const message = `NODE: Invalid Service. Service '${serviceName}' does not have an electron implementation.`;
-        callbackContext.error(new PluginResult(PluginResult.ERROR_UNKNOWN_SERVICE, message));
+        callbackContext.error(new PluginResult(PluginResult.ERROR | PluginResult.ERROR_UNKNOWN_SERVICE, message));
         return;
     }
 
     const plugin = require(cordova.services[serviceName]);
+
+    // API3 backwards compatible plugin call handling
+    const packageConfig = require(cordova.services[serviceName] + '/package.json');
+    if (packageConfig.cordova.API3 !== false) {
+        console.error('WARNING! Package ' + cordova.services[serviceName] + ' is using a deprecated API. Migrate to cordova-electron API 4.x ASAP. This API will be break in the next major version.');
+        try {
+            await plugin[action](args);
+        } catch (exception) {
+            const message = "NODE: Exception while invoking service action '" + serviceName + '.' + action + "'\r\n" + exception;
+            // print error to terminal
+            console.error(message, exception);
+            // trigger node side error callback
+            callbackContext.error(new PluginResult(PluginResult.ERROR | PluginResult.ERROR_INVOCATION_EXCEPTION_NODE, { message, exception }));
+        }
+        return;
+    }
+
+    // API 4.x handling
     try {
         const result = await plugin(action, args, callbackContext);
         if (result === true) {
             // successful invocation
         } else if (result === false) {
             const message = `NODE: Invalid action. Service '${serviceName}' does not have an electron implementation for action '${action}'.`;
-            callbackContext.error(new PluginResult(PluginResult.ERROR_UNKNOWN_ACTION, message));
+            callbackContext.error(new PluginResult(PluginResult.ERROR | PluginResult.ERROR_UNKNOWN_ACTION, message));
         } else {
             const message = 'NODE: Unexpected plugin exec result' + result;
-            callbackContext.error(new PluginResult(PluginResult.ERROR_UNEXPECTED_RESULT, message));
+            callbackContext.error(new PluginResult(PluginResult.ERROR | PluginResult.ERROR_UNEXPECTED_RESULT, message));
         }
     } catch (exception) {
         const message = "NODE: Exception while invoking service action '" + serviceName + '.' + action + "'\r\n" + exception;
+        // print error to terminal
         console.error(message, exception);
-        callbackContext.error(new PluginResult(PluginResult.ERROR_INVOCATION_EXCEPTION_NODE, { message, exception }));
+        // trigger node side error callback
+        callbackContext.error(new PluginResult(PluginResult.ERROR | PluginResult.ERROR_INVOCATION_EXCEPTION_NODE, { message, exception }));
     }
 });
-
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

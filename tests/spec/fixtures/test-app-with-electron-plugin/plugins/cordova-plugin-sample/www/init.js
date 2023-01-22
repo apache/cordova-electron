@@ -24,6 +24,7 @@ document.addEventListener("deviceready", () => {
         testLocation: null,
         testMany: null,
         testError: null,
+        testException: null,
         testEchoElectron: ['echo', 'echoo', 'echooo'],
         testEchoBrowser: ['echo', 'echoo', 'echooo'],
         testUnknownAction: ['echo', 'echoo', 'echooo']
@@ -34,7 +35,7 @@ document.addEventListener("deviceready", () => {
                 console.log(`${test} success callback`, data)
             },
             error => {
-                console.log(`${test} error callback`, error)
+                console.error(`${test} error callback`, error)
             },
             'Sample',
             test,
@@ -47,7 +48,7 @@ document.addEventListener("deviceready", () => {
             console.log(`UnkonwService success callback`, data)
         },
         error => {
-            console.log(`UnkonwService error callback`, error)
+            console.error(`UnkonwService error callback`, error)
         },
         'UnknownService',
         'irrelevant'

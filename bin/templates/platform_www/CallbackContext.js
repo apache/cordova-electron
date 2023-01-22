@@ -9,13 +9,13 @@ class PluginResult {
         this.keepCallback = value;
     }
 }
-PluginResult.prototype.STATUS_OK = 'OK';
-PluginResult.prototype.STATUS_ERROR = 'ERROR';
-PluginResult.prototype.ERROR_UNKNOWN_SERVICE = 'ERR_UNKNOWN_SERVICE';
-PluginResult.prototype.ERROR_UNKNOWN_ACTION = 'ERR_UNKNOWN_ACTION';
-PluginResult.prototype.ERROR_UNEXPECTED_RESULT = 'ERR_UNEXPECTED_RESULT';
-PluginResult.prototype.ERROR_INVOCATION_EXCEPTION_NODE = 'ERROR_INVOCATION_EXCEPTION_NODE';
-PluginResult.prototype.ERROR_INVOCATION_EXCEPTION_CHROME = 'ERROR_INVOCATION_EXCEPTION_CHROME';
+PluginResult.STATUS_OK = 1;
+PluginResult.STATUS_ERROR = 2;
+PluginResult.ERROR_UNKNOWN_SERVICE = 4;
+PluginResult.ERROR_UNKNOWN_ACTION = 8;
+PluginResult.ERROR_UNEXPECTED_RESULT = 16;
+PluginResult.ERROR_INVOCATION_EXCEPTION_NODE = 32;
+PluginResult.ERROR_INVOCATION_EXCEPTION_CHROME = 64;
 
 class CallbackContext {
     constructor (contextId, window) {

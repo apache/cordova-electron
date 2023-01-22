@@ -53,6 +53,9 @@ class Sample {
         console.log(message)
         callbackContext.success(message);
     }
+    testException(args, callbackContext) {
+        throw new Error('Exception in sample plugin')
+    }
 }
 
 module.exports = function (action, args, callbackContext) {
@@ -60,7 +63,13 @@ module.exports = function (action, args, callbackContext) {
     if (!sample[action]) {
         return false;
     }
-    console.log('ELECTRON: dispatching service action ' + action + '(' + args + ')')
+    console.log('ELECTRON/PLUGIN Sample: dispatching service action ' + action + '(' + args + ')')
     sample[action](args, callbackContext)
     return true;
 }
+
+// module.exports = {
+//     testEchoElectron: function() {
+//         console.log('ECHO ELECTRON', arguments)
+//     }
+// }

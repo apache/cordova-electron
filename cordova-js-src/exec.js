@@ -42,7 +42,7 @@ module.exports = function (success, fail, service, action, args) {
     const callbackId = service + cordova.callbackId++;
     if (window._cdvElectronIpc.hasService(service)) {
         // Electron based plugin support
-        window._cdvElectronIpc.exec(success, fail, service, action, callbackId, args);
+        window._cdvElectronIpc.exec(success, fail, service, action, args, callbackId);
     } else {
         // Fall back for browser based plugin support...
         const proxy = execProxy.get(service, action);
