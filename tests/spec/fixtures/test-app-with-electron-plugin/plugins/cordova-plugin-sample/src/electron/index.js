@@ -17,22 +17,50 @@
     under the License.
 */
 
-const { system, osInfo } = require('systeminformation');
-const electron = require
-
-module.exports = {
-    getSampleInfo: async () => {
-        try {
-            const { model } = await system();
-            const { platform } = await osInfo();
-
-            return {
-                model,
-                platform: platform === 'darwin' ? codename : distro,
-                electronVersion: process.versions.electron
-            };
-        } catch (e) {
-            console.log(e);
-        }
+class Sample {
+    testProcess(args, callbackContext) {
+        const process = require('process')
+        callbackContext.success(process.cwd());
     }
-};
+    testMany(args, callbackContext) {
+        let i = 0;
+        const PluginResult = callbackContext.PluginResult;
+        const interval = setInterval(() => {
+            if (i++ < 3) {
+                const result = new PluginResult(PluginResult.STATUS_OK, i);
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
+                return;
+            }
+            callbackContext.success('ELECTRON: last many. This will arrive')
+            callbackContext.success('ELECTRON: > last many. This will not')
+            clearInterval(interval)
+        }, 1000);
+    }
+    testError(args, callbackContext) {
+        const PluginResult = callbackContext.PluginResult;
+        let result;
+        for (let i = 0; i < 3; i++) {
+            result = new PluginResult(PluginResult.STATUS_ERROR, "ELECTRON: multiple errors: " + i);
+            result.setKeepCallback(true)
+            callbackContext.sendPluginResult(result)
+        }
+        callbackContext.error('ELECTRON: last error. This will arrive')
+        callbackContext.error('ELECTRON: > last error. This will not')
+    }
+    testEchoElectron(args, callbackContext) {
+        const message = 'ELECTRON: echo1 is ' + args[1]
+        console.log(message)
+        callbackContext.success(message);
+    }
+}
+
+module.exports = function (action, args, callbackContext) {
+    const sample = new Sample();
+    if (!sample[action]) {
+        return false;
+    }
+    console.log('ELECTRON: dispatching service action ' + action + '(' + args + ')')
+    sample[action](args, callbackContext)
+    return true;
+}

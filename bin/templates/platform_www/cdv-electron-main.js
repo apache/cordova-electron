@@ -60,7 +60,7 @@ if (!isFileProtocol) {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-function createWindow () {
+function createWindow() {
     // Create the browser window.
     let appIcon;
     if (fs.existsSync(path.join(__dirname, 'img/app.png'))) {
@@ -91,14 +91,14 @@ function createWindow () {
 
     // Emitted when the window is closed.
     mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
         mainWindow = null;
     });
 }
 
-function configureProtocol () {
+function configureProtocol() {
     protocol.registerFileProtocol(scheme, (request, cb) => {
         const url = request.url.substr(basePath.length + 1);
         cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
@@ -146,15 +146,36 @@ app.on('activate', () => {
     }
 });
 
-ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, ...args) => {
-    if (cordova && cordova.services && cordova.services[serviceName]) {
-        const plugin = require(cordova.services[serviceName]);
 
-        return plugin[action]
-            ? plugin[action](args)
-            : Promise.reject(new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`));
-    } else {
-        return Promise.reject(new Error(`The requested plugin service "${serviceName}" does not exist have native support.`));
+ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, args, callbackId) => {
+    // This function should never return a rejected promise or throw an exception, as otherwise ipcRenderer callback will convert the parameter to a string incapsulated in an Error. See https://github.com/electron/electron/issues/24427
+
+    const { CallbackContext, PluginResult } = require('./CallbackContext.js')
+    const callbackContext = new CallbackContext(callbackId, mainWindow);
+
+    // this condition should never be met, exec.js already tests for it.
+    if (!(cordova && cordova.services && cordova.services[serviceName])) {
+        const message = `NODE: Invalid Service. Service '${serviceName}' does not have an electron implementation.`;
+        callbackContext.error(new PluginResult(PluginResult.ERROR_UNKNOWN_SERVICE, message));
+        return;
+    }
+
+    const plugin = require(cordova.services[serviceName]);
+    try {
+        const result = await plugin(action, args, callbackContext);
+        if (result === true) {
+            // successful invocation
+        } else if (result === false) {
+            const message = `NODE: Invalid action. Service '${serviceName}' does not have an electron implementation for action '${action}'.`;
+            callbackContext.error(new PluginResult(PluginResult.ERROR_UNKNOWN_ACTION, message));
+        } else {
+            const message = "NODE: Unexpected plugin exec result" + result
+            callbackContext.error(new PluginResult(PluginResult.ERROR_UNEXPECTED_RESULT, message));
+        }
+    } catch (exception) {
+        const message = "NODE: Exception while invoking service action '" + serviceName + "." + action + "'\r\n" + exception
+        console.error(message, exception)
+        callbackContext.error(new PluginResult(PluginResult.ERROR_INVOCATION_EXCEPTION_NODE, { message, exception }));
     }
 });
 
