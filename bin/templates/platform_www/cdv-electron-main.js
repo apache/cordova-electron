@@ -60,7 +60,7 @@ if (!isFileProtocol) {
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-function createWindow() {
+function createWindow () {
     // Create the browser window.
     let appIcon;
     if (fs.existsSync(path.join(__dirname, 'img/app.png'))) {
@@ -98,7 +98,7 @@ function createWindow() {
     });
 }
 
-function configureProtocol() {
+function configureProtocol () {
     protocol.registerFileProtocol(scheme, (request, cb) => {
         const url = request.url.substr(basePath.length + 1);
         cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
@@ -146,11 +146,10 @@ app.on('activate', () => {
     }
 });
 
-
 ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, args, callbackId) => {
     // This function should never return a rejected promise or throw an exception, as otherwise ipcRenderer callback will convert the parameter to a string incapsulated in an Error. See https://github.com/electron/electron/issues/24427
 
-    const { CallbackContext, PluginResult } = require('./CallbackContext.js')
+    const { CallbackContext, PluginResult } = require('./CallbackContext.js');
     const callbackContext = new CallbackContext(callbackId, mainWindow);
 
     // this condition should never be met, exec.js already tests for it.
@@ -169,12 +168,12 @@ ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, args, callbackI
             const message = `NODE: Invalid action. Service '${serviceName}' does not have an electron implementation for action '${action}'.`;
             callbackContext.error(new PluginResult(PluginResult.ERROR_UNKNOWN_ACTION, message));
         } else {
-            const message = "NODE: Unexpected plugin exec result" + result
+            const message = 'NODE: Unexpected plugin exec result' + result;
             callbackContext.error(new PluginResult(PluginResult.ERROR_UNEXPECTED_RESULT, message));
         }
     } catch (exception) {
-        const message = "NODE: Exception while invoking service action '" + serviceName + "." + action + "'\r\n" + exception
-        console.error(message, exception)
+        const message = "NODE: Exception while invoking service action '" + serviceName + '.' + action + "'\r\n" + exception;
+        console.error(message, exception);
         callbackContext.error(new PluginResult(PluginResult.ERROR_INVOCATION_EXCEPTION_NODE, { message, exception }));
     }
 });

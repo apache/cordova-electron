@@ -20,26 +20,24 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const { cordova } = require('./package.json');
 
-const { PluginResult } = require('./CallbackContext.js')
+const { PluginResult } = require('./CallbackContext.js');
 
 contextBridge.exposeInMainWorld('_cdvElectronIpc', {
     exec: async (success, error, serviceName, action, callbackId, args) => {
         ipcRenderer.on(callbackId, (event, result) => {
-            if (result.status == PluginResult.STATUS_OK) {
-                success(result.data)
-            }
-            else if (result.status == PluginResult.STATUS_ERROR) {
-                error(result.data)
+            if (result.status === PluginResult.STATUS_OK) {
+                success(result.data);
+            } else if (result.status === PluginResult.STATUS_ERROR) {
+                error(result.data);
             }
 
-            if (!result.keepCallback)
-                ipcRenderer.removeAllListeners(callbackId)
+            if (!result.keepCallback) { ipcRenderer.removeAllListeners(callbackId); }
         });
         try {
-            await ipcRenderer.invoke('cdv-plugin-exec', serviceName, action, args, callbackId)
+            await ipcRenderer.invoke('cdv-plugin-exec', serviceName, action, args, callbackId);
         } catch (exception) {
-            const message = "CHROME: Exception while invoking service action '" + serviceName + "." + action + "'"
-            console.error(message, exception)
+            const message = "CHROME: Exception while invoking service action '" + serviceName + '.' + action + "'";
+            console.error(message, exception);
             error({ message, exception });
         }
     },
