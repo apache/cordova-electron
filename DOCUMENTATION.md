@@ -320,6 +320,78 @@ It is also possible to supply additional parameters using the [optional] `option
 
 > For more information refer to [Electron documentation](https://electronjs.org/docs/api/browser-window#winloadurlurl-options).
 
+## Writing a Plugin
+### Initializing
+Add a directory for your plugin's electron platform under src/electron and in it, initialize an NPM repository (`npm init`)
+### plugin.xml
+In your plugin.xml, add the following elements:
+```xml
+  <platform name="electron">
+    <framework src="src/electron" />
+  </platform>
+```
+
+### package.json
+In the repository's `package.json`, add the following:
+```json
+  "cordova": {
+    "serviceName": "YourService"
+  }
+```
+Where `YourService` is the service name that is being registered with cordova.
+
+### Writing the actual plugin
+In the `src/electron` directory, add a file `index.js`\
+This file could look something like this:
+```js
+module.exports = function(action, args, callbackContext) {
+    if(action === 'yourAction') {
+      console.log(args[0]); // will echo 'foo'
+      console.log(args[1]); // will echo 123
+      callbackContext.success('yourAction completed successfully');
+      return true;
+    }
+    return false;
+}
+```
+Returning `true` from the function indicates that the invocation has returned without problem, while returning `false` means the action was not found on the service.\
+The service can then be called via
+```js
+const success = success => console.log(success)
+const error = error => console.log(error)
+cordova.exec(success, error, 'YourService', 'yourAction', ['foo', 123]);
+```
+### Error handling
+To indicate an error in the execution and trigger the plugin caller's `error` callback, use `callbackContext.error`
+
+### Multiple plugin results
+If you want to return more than one plugin result, you need to keep the callback, this can be done by using `callbackContext.sendPluginResult` and `pluginResult.setKeepCallback`.\
+Here is an example of what this might look like:
+```js
+module.exports = function(action, args, callbackContext) {
+  if(action === 'yourAction') {
+        let i = 0;
+        const PluginResult = callbackContext.PluginResult;
+        const interval = setInterval(() => {
+            if (i++ < 3) {
+                const result = new PluginResult(PluginResult.STATUS_OK, i);
+                result.setKeepCallback(true);
+                callbackContext.sendPluginResult(result);
+                return;
+            }
+            clearInterval(interval)
+            callbackContext.success('Last result')
+            callbackContext.success('Already closed. This will not arrive')
+        }, 1000);
+    return true;
+  }
+  return false;
+}
+```
+In the example above, the `success` function will be called 4 times, with `0`, `1`, `2` and `'Last result'`.\
+After this, the listener for the callbackContext will be removed and subsequent calls will not be heard by the caller.
+
+
 ## Customizing the Electron's Main Process
 
 If it is necessary to customize the Electron's main process beyond the scope of the Electron's configuration settings, changes can be added directly to the `cdv-electron-main.js` file located in `{PROJECT_ROOT_DIR}/platform/electron/platform_www/`. This is the application's main process.

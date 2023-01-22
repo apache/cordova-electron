@@ -18,23 +18,28 @@
   under the License.
 -->
 
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-    id="cordova-plugin-sample"
-    version="1.0.0">
-    <name>Sanple</name>
-    <description>Cordova Sample Plugin</description>
-    <license>Apache 2.0</license>
-    <keywords>cordova,sample</keywords>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sample" version="1.0.0">
+  <name>Sanple</name>
+  <description>Cordova Sample Plugin</description>
+  <license>Apache 2.0</license>
+  <keywords>cordova,sample</keywords>
 
-    <engines>
-        <engine name="cordova-electron" version=">=3.0.0" />
-    </engines>
+  <engines>
+    <engine name="cordova-electron" version=">=3.0.0" />
+  </engines>
 
-    <js-module src="www/sample.js" name="sample">
-        <clobbers target="sample" />
+  <js-module src="www/init.js" name="initializer">
+    <runs/>
+  </js-module>
+
+
+  <platform name="electron">
+    <framework src="src/electron" />
+  </platform>
+
+  <platform name="browser">
+    <js-module src="src/browser/sample.js" name="bsample">
+      <runs />
     </js-module>
-
-    <platform name="electron">
-        <framework src="src/electron" />
-    </platform>
+  </platform>
 </plugin>

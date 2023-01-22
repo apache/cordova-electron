@@ -15,6 +15,7 @@
     "systeminformation": "^4.27.9"
   },
   "cordova": {
-    "serviceName": "Sample"
+    "serviceName": "Sample",
+    "API3": false
   }
 }
