@@ -75,6 +75,9 @@ function createWindow () {
     const browserWindowOpts = Object.assign({}, cdvElectronSettings.browserWindow, { icon: appIcon });
     browserWindowOpts.webPreferences.preload = path.join(app.getAppPath(), 'cdv-electron-preload.js');
     browserWindowOpts.webPreferences.contextIsolation = true;
+    // @todo review if using default "sandbox" is possible. When enabled, "Unable to load preload script:" error occurs.
+    // Other require statements also fails.
+    browserWindowOpts.webPreferences.sandbox = false;
 
     mainWindow = new BrowserWindow(browserWindowOpts);
 
