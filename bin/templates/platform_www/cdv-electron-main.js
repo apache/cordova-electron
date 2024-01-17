@@ -25,7 +25,8 @@ const {
     app,
     BrowserWindow,
     protocol,
-    ipcMain
+    ipcMain,
+    net
 } = require('electron');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
@@ -99,12 +100,11 @@ function createWindow () {
 }
 
 function configureProtocol () {
-    protocol.registerFileProtocol(scheme, (request, cb) => {
+    protocol.handle(scheme, (request, cb) => {
         const url = request.url.substr(basePath.length + 1);
-        cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
+        const fileUrl = `file://${path.normalize(path.join(__dirname, url))}`;
+        return net.fetch(fileUrl);
     });
-
-    protocol.interceptFileProtocol('file', (_, cb) => { cb(null); });
 }
 
 // This method will be called when Electron has finished
