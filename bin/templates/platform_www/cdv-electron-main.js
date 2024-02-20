@@ -25,7 +25,8 @@ const {
     app,
     BrowserWindow,
     protocol,
-    ipcMain
+    ipcMain,
+    net
 } = require('electron');
 // Electron settings from .json file.
 const cdvElectronSettings = require('./cdv-electron-settings.json');
@@ -74,6 +75,9 @@ function createWindow () {
     const browserWindowOpts = Object.assign({}, cdvElectronSettings.browserWindow, { icon: appIcon });
     browserWindowOpts.webPreferences.preload = path.join(app.getAppPath(), 'cdv-electron-preload.js');
     browserWindowOpts.webPreferences.contextIsolation = true;
+    // @todo review if using default "sandbox" is possible. When enabled, "Unable to load preload script:" error occurs.
+    // Other require statements also fails.
+    browserWindowOpts.webPreferences.sandbox = false;
 
     mainWindow = new BrowserWindow(browserWindowOpts);
 
@@ -99,12 +103,26 @@ function createWindow () {
 }
 
 function configureProtocol () {
-    protocol.registerFileProtocol(scheme, (request, cb) => {
-        const url = request.url.substr(basePath.length + 1);
-        cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
-    });
-
-    protocol.interceptFileProtocol('file', (_, cb) => { cb(null); });
+    // `protocol.handle` was added in Electron 25.0 and replaced the deprecated
+    // `protocol.{register,intercept}{String,Buffer,Stream,Http,File}Protocol`.
+    if (protocol.handle) {
+        // If using Electron 25.0+
+        protocol.handle(scheme, request => {
+            const url = request.url.substr(basePath.length + 1);
+            const fileUrl = `file://${path.normalize(path.join(__dirname, url))}`;
+            return net.fetch(fileUrl);
+        });
+    } else if (protocol.registerFileProtocol) {
+        // If using Electron 24.x and older
+        protocol.registerFileProtocol(scheme, (request, cb) => {
+            const url = request.url.substr(basePath.length + 1);
+            cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
+        });
+        protocol.interceptFileProtocol('file', (_, cb) => { cb(null); });
+    } else {
+        // Cant configure if missing `protocol.handle` and `protocol.registerFileProtocol`...
+        console.info('Unable to configure the protocol.');
+    }
 }
 
 // This method will be called when Electron has finished
