@@ -52,7 +52,7 @@ module.exports = function (success, fail, service, action, args) {
             const callbackId = service + cordova.callbackId++;
 
             if (typeof success === 'function' || typeof fail === 'function') {
-                cordova.callbacks[callbackId] = { success: success, fail: fail };
+                cordova.callbacks[callbackId] = { success, fail };
             }
             try {
                 // callbackOptions param represents additional optional parameters command could pass back, like keepCallback or
