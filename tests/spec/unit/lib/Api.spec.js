@@ -394,7 +394,7 @@ describe('Api class', () => {
             const call = jasmine.createSpy('run');
             const mockBuildOptions = { foo: 'bar' };
 
-            Api.__set__('require', () => ({ run: { call: call } }));
+            Api.__set__('require', () => ({ run: { call } }));
             api.build(mockBuildOptions);
             expect(call).toHaveBeenCalledWith(api, mockBuildOptions, api);
             Api.__set__('require', apiRequire);

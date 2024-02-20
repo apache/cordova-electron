@@ -116,7 +116,7 @@ function configureProtocol () {
         // If using Electron 24.x and older
         protocol.registerFileProtocol(scheme, (request, cb) => {
             const url = request.url.substr(basePath.length + 1);
-            cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line node/no-callback-literal
+            cb({ path: path.normalize(path.join(__dirname, url)) }); // eslint-disable-line n/no-callback-literal
         });
         protocol.interceptFileProtocol('file', (_, cb) => { cb(null); });
     } else {
