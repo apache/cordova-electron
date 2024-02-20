@@ -169,7 +169,7 @@ ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, ...args) => {
         const plugin = require(cordova.services[serviceName]);
 
         return plugin[action]
-            ? plugin[action](args)
+            ? plugin[action](...args)
             : Promise.reject(new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`));
     } else {
         return Promise.reject(new Error(`The requested plugin service "${serviceName}" does not exist have native support.`));
