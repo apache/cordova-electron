@@ -32,7 +32,7 @@
     "cordova-js": "^6.1.0",
     "jasmine": "^4.1.0",
     "nyc": "^15.1.0",
-    "rewire": "^6.0.0"
+    "rewire": "^7.0.0"
   },
   "author": "Apache Software Foundation",
   "license": "Apache-2.0",
