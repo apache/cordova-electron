@@ -34,5 +34,29 @@ module.exports = {
         } catch (e) {
             console.log(e);
         }
+    },
+    countdown$: (successCallback, errorCallback, args) => {
+         if (!args || !args.length || typeof args[0] != "number") {
+           errorCallback("NUMERIC_ARG_NEEDED");
+           return;
+         }
+
+         let num = args[0];
+
+         if (num <= 0) {
+           successCallback(0, false);
+         }
+
+         successCallback(num, true);
+
+         const interval = setInterval(() => {
+           num--;
+           if (num > 0) {
+             successCallback(num, true);
+           } else {
+             clearInterval(interval);
+             successCallback(num, false);
+           }
+         }, 1000);
     }
 };

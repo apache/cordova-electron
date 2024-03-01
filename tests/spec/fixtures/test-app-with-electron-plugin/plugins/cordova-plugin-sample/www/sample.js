@@ -59,4 +59,16 @@ Sample.prototype.getInfo = function (successCallback, errorCallback) {
     exec(successCallback, errorCallback, 'Sample', 'getSampleInfo', []);
 };
 
+/**
+ * Count down
+ *
+ * @param {Function} successCallback The function to call when the heading data is available
+ * @param {Function} errorCallback The function to call when there is an error getting the heading data.
+ * @param {Function} num Number to start the countdown from
+ */
+Sample.prototype.countdown = function (successCallback, errorCallback, num) {
+    argscheck.checkArgs("fF", "Sample.countDown", arguments);
+    exec(successCallback, errorCallback, "Sample", "countdown$", [num]);
+};
+
 module.exports = new Sample();
