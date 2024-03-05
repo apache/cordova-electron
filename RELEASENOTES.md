@@ -19,6 +19,46 @@
 
 ## Release Notes for Cordova Electron
 
+### 4.0.0 (Mar 05, 2024)
+
+This release requires the environment to have **Node.js** `18.0.0` or higher. It is recommended to use the current LTS, which is `20.11.1` at the time of this release.
+
+Project Dependencies:
+
+* `cordova-common@^5.0.0`
+* `electron@^29.0.0`
+* `electron-builder@^24.12.0`
+* `electron-devtools-installer@^3.2.0`
+* `execa@^5.1.1`
+* `fs-extra@^11.2.0`
+
+Electron App Stack:
+
+* [Electron](https://www.electronjs.org/blog/electron-29-0) 29.0.0
+* Chromium 122.0.6261.39
+* Node v20.9.0
+* V8 12.2
+
+**Breaking:**
+
+* [GH-263](https://github.com/apache/cordova-electron/pull/263) feat!: bump `electron@^29.0.0` w/ supporting changes
+* [GH-266](https://github.com/apache/cordova-electron/pull/266) fix!: remove extra array wrapper from passed arguments
+* [GH-264](https://github.com/apache/cordova-electron/pull/264) npm(dep)!: bump `electron-builder@^24.12.0`, bump node engine requirement & CI
+  * Updates Node Engine Requirement `>= 18.0.0`
+* [GH-271](https://github.com/apache/cordova-electron/pull/271) dep!: bump `fs-extra@^11.2.0`
+* [GH-265](https://github.com/apache/cordova-electron/pull/265) npm(dep)!: bump other dependencies
+
+**Others:**
+
+* [GH-232](https://github.com/apache/cordova-electron/pull/232) dep(npm): bump dev dependencies
+* [GH-270](https://github.com/apache/cordova-electron/pull/270) chore: rebuilt `package-lock.json`
+
+**CI:**
+
+* [GH-268](https://github.com/apache/cordova-electron/pull/268) ci: downgrade codecov action dependency to v3
+* [GH-267](https://github.com/apache/cordova-electron/pull/267) ci: add node 20.x & use latest action dependencies
+* [GH-236](https://github.com/apache/cordova-electron/pull/236) ci: update github action workflow
+
 ### 3.1.0 (May 25, 2022)
 
 **Features:**
