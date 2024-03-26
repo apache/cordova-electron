@@ -17,8 +17,8 @@
     under the License.
 */
 
-const fs = require('fs-extra');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const rewire = require('rewire');
 const { events, PluginInfo, ConfigParser, CordovaError } = require('cordova-common');
 
@@ -62,15 +62,15 @@ describe('Api class', () => {
     let apiEvents;
 
     beforeAll(() => {
-        fs.ensureDirSync(tmpDir);
-        fs.copySync(path.resolve(fixturesDir, 'testapp'), testProjectDir);
+        fs.mkdirSync(tmpDir, { recursive: true });
+        fs.cpSync(path.resolve(fixturesDir, 'testapp'), testProjectDir, { recursive: true });
 
         apiEvents = Api.__get__('selfEvents');
         apiEvents.addListener('verbose', (data) => { });
     });
 
     afterAll(() => {
-        fs.removeSync(tmpDir);
+        fs.rmSync(tmpDir, { recursive: true, force: true });
         apiEvents.removeAllListeners();
     });
 
@@ -152,13 +152,13 @@ describe('Api class', () => {
         beforeEach(() => {
             spyOn(events, 'emit');
 
-            fs.removeSync(path.resolve(testProjectDir, 'electron.json'));
-            fs.removeSync(path.resolve(testProjectDir, 'www'));
+            fs.rmSync(path.resolve(testProjectDir, 'electron.json'), { recursive: true, force: true });
+            fs.rmSync(path.resolve(testProjectDir, 'www'), { recursive: true, force: true });
         });
 
         afterEach(() => {
-            fs.removeSync(path.resolve(testProjectDir, 'electron.json'));
-            fs.removeSync(path.resolve(testProjectDir, 'www'));
+            fs.rmSync(path.resolve(testProjectDir, 'electron.json'), { recursive: true, force: true });
+            fs.rmSync(path.resolve(testProjectDir, 'www'), { recursive: true, force: true });
 
             apiEvents.removeAllListeners();
         });
@@ -208,14 +208,14 @@ describe('Api class', () => {
             });
 
             it('should have "clobber", "merge", and "run" set when defined in "js-module".', () => {
-                const { modules } = fs.readJsonSync(path.resolve(testProjectDir, 'electron.json'));
+                const { modules } = JSON.parse(fs.readFileSync(path.resolve(testProjectDir, 'electron.json'), 'utf8'));
                 expect(modules[0].clobbers).toBeDefined();
                 expect(modules[0].merges).toBeDefined();
                 expect(modules[0].runs).toBeDefined();
             });
 
             it('should have module id containing the name attribute value.', () => {
-                const { modules } = fs.readJsonSync(path.resolve(testProjectDir, 'electron.json'));
+                const { modules } = JSON.parse(fs.readFileSync(path.resolve(testProjectDir, 'electron.json'), 'utf8'));
                 expect(modules[0].id).toBe('org.apache.testplugin.TestPlugin');
             });
         });
@@ -228,14 +228,14 @@ describe('Api class', () => {
             });
 
             it('should not have "clobber", "merge", and "run" set when not defined in "js-module".', () => {
-                const { modules } = fs.readJsonSync(path.resolve(testProjectDir, 'electron.json'));
+                const { modules } = JSON.parse(fs.readFileSync(path.resolve(testProjectDir, 'electron.json'), 'utf8'));
                 expect(modules[0].clobbers).not.toBeDefined();
                 expect(modules[0].merges).not.toBeDefined();
                 expect(modules[0].runs).not.toBeDefined();
             });
 
             it('should use js filename for plugin id if name is missing.', () => {
-                const { modules } = fs.readJsonSync(path.resolve(testProjectDir, 'electron.json'));
+                const { modules } = JSON.parse(fs.readFileSync(path.resolve(testProjectDir, 'electron.json'), 'utf8'));
                 expect(modules[0].id).toBe('org.apache.testplugin2.MyTestPlugin2');
             });
         });
@@ -250,7 +250,7 @@ describe('Api class', () => {
             });
 
             it('should use custom package name.', () => {
-                const { installed_plugins } = fs.readJsonSync(path.resolve(testProjectDir, 'electron.json'));
+                const { installed_plugins } = JSON.parse(fs.readFileSync(path.resolve(testProjectDir, 'electron.json'), 'utf8'));
                 expect(installed_plugins['org.apache.testplugin'].PACKAGE_NAME).toEqual('com.foobar.newpackagename');
             });
 
@@ -293,13 +293,13 @@ describe('Api class', () => {
         beforeEach(() => {
             spyOn(events, 'emit');
 
-            fs.removeSync(path.resolve(testProjectDir, 'electron.json'));
-            fs.removeSync(path.resolve(testProjectDir, 'www'));
+            fs.rmSync(path.resolve(testProjectDir, 'electron.json'), { recursive: true, force: true });
+            fs.rmSync(path.resolve(testProjectDir, 'www'), { recursive: true, force: true });
         });
 
         afterEach(() => {
-            fs.removeSync(path.resolve(testProjectDir, 'electron.json'));
-            fs.removeSync(path.resolve(testProjectDir, 'www'));
+            fs.rmSync(path.resolve(testProjectDir, 'electron.json'), { recursive: true, force: true });
+            fs.rmSync(path.resolve(testProjectDir, 'www'), { recursive: true, force: true });
 
             apiEvents.removeAllListeners();
         });
@@ -331,7 +331,7 @@ describe('Api class', () => {
             it('should remove the empty plugin data from electron.json.', () => {
                 return api.removePlugin(pluginInfo).then(
                     () => {
-                        const { plugin_metadata, modules, installed_plugins } = fs.readJsonSync(path.resolve(testProjectDir, 'electron.json'));
+                        const { plugin_metadata, modules, installed_plugins } = JSON.parse(fs.readFileSync(path.resolve(testProjectDir, 'electron.json'), 'utf8'));
                         expect(plugin_metadata).toEqual({});
                         expect(modules).toEqual([]);
                         expect(installed_plugins).toEqual({});
@@ -452,12 +452,12 @@ describe('Api prototype methods', () => {
         let config;
 
         beforeEach(() => {
-            fs.removeSync(tmpDir);
+            fs.rmSync(tmpDir, { recursive: true, force: true });
             config = new ConfigParser(path.join(fixturesDir, 'test-config-empty.xml'));
         });
 
         afterEach(() => {
-            fs.removeSync(tmpDir);
+            fs.rmSync(tmpDir, { recursive: true, force: true });
         });
 
         it('should create cordova project at the provided destination', () => {
