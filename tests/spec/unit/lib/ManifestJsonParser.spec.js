@@ -19,7 +19,7 @@
 
 const rewire = require('rewire');
 const path = require('path');
-const fs = require('fs-extra');
+const fs = require('node:fs');
 const { ConfigParser } = require('cordova-common');
 
 const rootDir = path.resolve(__dirname, '../../../..');
