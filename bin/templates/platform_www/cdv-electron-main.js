@@ -17,7 +17,7 @@
     under the License.
 */
 
-const fs = require('fs');
+const fs = require('node:fs');
 const path = require('node:path');
 const { cordova } = require('./package.json');
 // Module to control application life, browser window and tray.
