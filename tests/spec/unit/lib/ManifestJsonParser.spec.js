@@ -18,7 +18,7 @@
 */
 
 const rewire = require('rewire');
-const path = require('path');
+const path = require('node:path');
 const fs = require('node:fs');
 const { ConfigParser } = require('cordova-common');
 

@@ -19,7 +19,7 @@
 
 const os = require('os');
 const fs = require('node:fs');
-const path = require('path');
+const path = require('node:path');
 const rewire = require('rewire');
 
 const rootDir = path.resolve(__dirname, '../../../..');
