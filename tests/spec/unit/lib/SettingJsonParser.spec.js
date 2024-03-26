@@ -18,7 +18,7 @@
 */
 
 const rewire = require('rewire');
-const path = require('path');
+const path = require('node:path');
 const ConfigParser = require('cordova-common').ConfigParser;
 
 const rootDir = path.resolve(__dirname, '../../../..');
