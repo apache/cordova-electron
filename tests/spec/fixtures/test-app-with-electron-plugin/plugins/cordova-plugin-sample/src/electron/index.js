@@ -18,7 +18,6 @@
 */
 
 const { system, osInfo } = require('systeminformation');
-const electron = require
 
 module.exports = {
     getSampleInfo: async () => {
