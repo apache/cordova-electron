@@ -43,10 +43,10 @@ jobs:
           node --version
           npm --version
 
-      # "bin/templates/platform_www/cordova.js" is ignored because it is generated file.
-      # It contains mixed content from npm package "cordova-js" & "./cordova-js-src".
-      # The report might not be resovable because of the external package.
-      # If report related to this repo, it would be detected when scanning "./cordova-js-src".
+      # "bin/templates/platform_www/cordova.js" is ignored because it is a generated file.
+      # It contains mixed content from the npm package "cordova-js" and "./cordova-js-src".
+      # The report might not be resolvable because of the external package.
+      # If the report is related to this repository, it would be detected when scanning "./cordova-js-src".
       - uses: github/codeql-action/init@v3
         with:
           languages: javascript
