@@ -17,9 +17,9 @@
     under the License.
 */
 
-const os = require('os');
-const fs = require('fs-extra');
-const path = require('path');
+const os = require('node:os');
+const fs = require('node:fs');
+const path = require('node:path');
 const rewire = require('rewire');
 
 const rootDir = path.resolve(__dirname, '../../../..');
@@ -37,7 +37,7 @@ describe('create', () => {
         tmpDir = makeTempDir();
     });
     afterEach(() => {
-        fs.removeSync(tmpDir);
+        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
     it('creates a project that has the expected files', () => {
@@ -58,9 +58,9 @@ describe('create', () => {
         const projectPath = path.join(tmpDir, projectname);
 
         create.__set__('fs', {
-            ensureDirSync: fs.ensureDirSync,
+            mkdirSync: fs.mkdirSync,
             existsSync: path => path !== projectPath,
-            copySync: () => true
+            cpSync: () => true
         });
 
         return create.createProject(projectPath, projectname, projectid).then(() => {

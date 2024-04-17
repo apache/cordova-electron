@@ -17,15 +17,15 @@
     under the License.
 */
 
-const path = require('path');
-const fs = require('fs-extra');
-const rewire = require('rewire');
+const path = require('node:path');
+const fs = require('node:fs');
+const os = require('node:os');
 const { ConfigParser, events } = require('cordova-common');
 
 const rootDir = path.resolve(__dirname, '../../../..');
 const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
 
-const PackageJsonParser = rewire(path.join(rootDir, 'lib/PackageJsonParser'));
+const PackageJsonParser = require(path.join(rootDir, 'lib/PackageJsonParser'));
 
 // Create a real config object before mocking out everything.
 const cfg = new ConfigParser(path.join(fixturesDir, 'test-config-1.xml'));
@@ -50,24 +50,28 @@ const defaultMockProjectPackageJson = {
     }
 };
 
-const locations = {
-    buildRes: path.join('mock', 'build-res'),
-    www: path.join('mock', 'www'),
-    configXml: path.join('mock', 'config.xml')
-};
-
 const defaultInitPackageObj = { main: 'cdv-electron-main.js' };
 
 describe('PackageJsonParser class', () => {
     let packageJsonParser;
+    let locations;
+    let tmpDir;
 
     beforeEach(() => {
+        tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cordovaElectronTest-'));
+
+        locations = {
+            buildRes: path.join(tmpDir, 'build-res'),
+            www: path.join(tmpDir, 'www'),
+            configXml: path.join(tmpDir, 'config.xml')
+        };
+
         packageJsonParser = new PackageJsonParser(locations.www, '/root/project');
         spyOn(events, 'emit');
     });
 
     afterAll(() => {
-        fs.removeSync('mock');
+        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
     it('should have been constructed with initial values.', () => {
@@ -191,5 +195,40 @@ describe('PackageJsonParser class', () => {
             jasmine.stringMatching(/whatever/),
             'utf8'
         );
+    });
+});
+
+describe('PackageJsonParser (2) class', () => {
+    it('should have constructed and already detected directories and files', () => {
+        const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cordovaElectronTest-'));
+        const locations = {
+            buildRes: path.join(tmpDir, 'build-res'),
+            www: path.join(tmpDir, 'www'),
+            configXml: path.join(tmpDir, 'config.xml')
+        };
+        const wwwDir = locations.www;
+        const pkgFile = path.join(wwwDir, 'package.json');
+
+        fs.mkdirSync(wwwDir, { recursive: true });
+        fs.writeFileSync(pkgFile, '{}', 'utf8');
+
+        spyOn(events, 'emit');
+        spyOn(fs, 'readFileSync');
+
+        // files & directories should already exisy
+        expect(fs.existsSync(wwwDir)).toBeTruthy();
+        expect(fs.existsSync(pkgFile)).toBeTruthy();
+
+        /* eslint-disable-next-line */
+        const packageJsonParser = new PackageJsonParser(wwwDir, '/root/project');
+
+        expect(fs.readFileSync).toHaveBeenCalled();
+        // There should be no change in truthy values.
+        expect(fs.existsSync(wwwDir)).toBeTruthy();
+        expect(fs.existsSync(pkgFile)).toBeTruthy();
+
+        expect(packageJsonParser.package).toBeDefined();
+
+        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 });

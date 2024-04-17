@@ -19,8 +19,8 @@
 */
 
 const rewire = require('rewire');
-const path = require('path');
-const fs = require('fs-extra');
+const path = require('node:path');
+const fs = require('node:fs');
 
 const rootDir = path.resolve(__dirname, '../../../..');
 const fixturesDir = path.join(rootDir, 'tests/spec/fixtures');
@@ -35,13 +35,13 @@ describe('Testing build.js:', () => {
     let api;
 
     beforeAll(() => {
-        fs.ensureDirSync(tmpDir);
-        fs.copySync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'));
+        fs.mkdirSync(tmpDir, { recursive: true });
+        fs.cpSync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'), { recursive: true });
         api = new Api(null, testProjectDir);
     });
 
     afterAll(() => {
-        fs.removeSync(tmpDir);
+        fs.rmSync(tmpDir, { recursive: true, force: true });
     });
 
     beforeEach(() => {

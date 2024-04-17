@@ -18,8 +18,8 @@
 */
 
 const rewire = require('rewire');
-const path = require('path');
-const fs = require('fs-extra');
+const path = require('node:path');
+const fs = require('node:fs');
 const CordovaError = require('cordova-common').CordovaError;
 
 const rootDir = path.resolve(__dirname, '../../../..');
@@ -223,13 +223,13 @@ describe('Testing prepare.js:', () => {
         let api;
 
         beforeAll(() => {
-            fs.ensureDirSync(tmpDir);
-            fs.copySync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'));
+            fs.mkdirSync(tmpDir, { recursive: true });
+            fs.cpSync(path.resolve(fixturesDir, 'testapp'), path.resolve(tmpDir, 'testapp'), { recursive: true });
             api = new Api(null, testProjectDir);
         });
 
         afterAll(() => {
-            fs.removeSync(tmpDir);
+            fs.rmSync(tmpDir, { recursive: true, force: true });
         });
 
         beforeEach(() => {
@@ -253,12 +253,12 @@ describe('Testing prepare.js:', () => {
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         return configPath === defaultConfigPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -279,7 +279,7 @@ describe('Testing prepare.js:', () => {
 
                 prepare.prepare.call(api, cordovaProject, { }, api);
 
-                expect(copySyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock);
+                expect(cpSyncSpy).toHaveBeenCalledWith(defaultConfigPathMock, ownConfigPathMock, { recursive: true });
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
@@ -308,12 +308,12 @@ describe('Testing prepare.js:', () => {
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         return configPath === defaultConfigPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -357,12 +357,12 @@ describe('Testing prepare.js:', () => {
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         return configPath === defaultConfigPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -406,13 +406,13 @@ describe('Testing prepare.js:', () => {
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         if (configPath === defaultConfigPathMock) return true;
                         if (configPath.includes('fail_test_path')) return false;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -451,13 +451,13 @@ describe('Testing prepare.js:', () => {
                 api.parser.update_project = () => this;
 
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         if (configPath === defaultConfigPathMock) return true;
                         if (configPath.includes('pass_test_path')) return true;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -498,12 +498,12 @@ describe('Testing prepare.js:', () => {
                 const defaultConfigPathMock = path.join(api.locations.platformRootDir, 'cordova', 'defaults.xml');
                 const ownConfigPathMock = api.locations.configXml;
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         return configPath === ownConfigPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -524,7 +524,7 @@ describe('Testing prepare.js:', () => {
 
                 prepare.prepare.call(api, cordovaProject, { }, api);
 
-                expect(copySyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock);
+                expect(cpSyncSpy).toHaveBeenCalledWith(ownConfigPathMock, defaultConfigPathMock, { recursive: true });
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
@@ -555,12 +555,12 @@ describe('Testing prepare.js:', () => {
                 const ownConfigPathMock = api.locations.configXml;
                 const sourceCfgMock = cordovaProject.projectConfig;
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (configPath) {
                         return configPath !== ownConfigPathMock && configPath !== defaultConfigPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -581,7 +581,7 @@ describe('Testing prepare.js:', () => {
 
                 prepare.prepare.call(api, cordovaProject, { }, api);
 
-                expect(copySyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock);
+                expect(cpSyncSpy).toHaveBeenCalledWith(sourceCfgMock.path, ownConfigPathMock, { recursive: true });
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
@@ -611,12 +611,12 @@ describe('Testing prepare.js:', () => {
                 const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
                 const manifestPathMock = path.join(api.locations.www, 'manifest.json');
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (srcManifestPath) {
                         return srcManifestPath === srcManifestPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -637,7 +637,7 @@ describe('Testing prepare.js:', () => {
 
                 prepare.prepare.call(api, cordovaProject, { }, api);
 
-                expect(copySyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock);
+                expect(cpSyncSpy).toHaveBeenCalledWith(srcManifestPathMock, manifestPathMock, { recursive: true });
                 expect(mergeXmlSpy).toHaveBeenCalled();
                 expect(updateIconsSpy).toHaveBeenCalled();
                 expect(updateSplashScreensSpy).toHaveBeenCalled();
@@ -666,12 +666,12 @@ describe('Testing prepare.js:', () => {
 
                 const srcManifestPathMock = path.join(cordovaProject.locations.www, 'manifest.json');
 
-                const copySyncSpy = jasmine.createSpy('copySync');
+                const cpSyncSpy = jasmine.createSpy('cpSync');
                 prepare.__set__('fs', {
                     existsSync: function (srcManifestPath) {
                         return srcManifestPath !== srcManifestPathMock;
                     },
-                    copySync: copySyncSpy,
+                    cpSync: cpSyncSpy,
                     readFileSync: function (filePath) {
                         if (filePath === path.join('MOCK_PROJECT_ROOT', 'package.json')) {
                             return defaultMockProjectPackageJson;
@@ -1758,7 +1758,7 @@ describe('Testing prepare.js:', () => {
 
     describe('copyResources method', () => {
         let copyResources;
-        let fsCopySyncSpy;
+        let cpSyncSpy;
         let cordovaProject;
 
         beforeEach(() => {
@@ -1767,13 +1767,13 @@ describe('Testing prepare.js:', () => {
             cordovaProject = Object.assign({}, cordovaProjectDefault);
             copyResources = prepare.__get__('copyResources');
 
-            fsCopySyncSpy = jasmine.createSpy('copySync');
-            prepare.__set__('fs', { copySync: fsCopySyncSpy });
+            cpSyncSpy = jasmine.createSpy('cpSync');
+            prepare.__set__('fs', { cpSync: cpSyncSpy });
         });
 
         it('should not copy as no resources provided.', () => {
             copyResources(cordovaProject.root, [{}]);
-            expect(fsCopySyncSpy).not.toHaveBeenCalled();
+            expect(cpSyncSpy).not.toHaveBeenCalled();
         });
 
         it('should copy provided resources.', () => {
@@ -1782,15 +1782,15 @@ describe('Testing prepare.js:', () => {
                 { [path.join('res', 'electron', 'cordova.png')]: path.join(cordovaProject.root, 'www', 'img', 'icon.png') }
             ]);
 
-            expect(fsCopySyncSpy).toHaveBeenCalled();
+            expect(cpSyncSpy).toHaveBeenCalled();
 
-            const installerIconSrcPathTest = fsCopySyncSpy.calls.argsFor(0)[0];
-            const installerIconDestPathTest = fsCopySyncSpy.calls.argsFor(0)[1];
+            const installerIconSrcPathTest = cpSyncSpy.calls.argsFor(0)[0];
+            const installerIconDestPathTest = cpSyncSpy.calls.argsFor(0)[1];
             expect(installerIconSrcPathTest).toBe(path.join(cordovaProject.root, 'res', 'electron', 'cordova_512.png'));
             expect(installerIconDestPathTest).toBe(path.join(cordovaProject.root, 'build-res', 'installer.png'));
 
-            const appIconSrcPathTest = fsCopySyncSpy.calls.argsFor(1)[0];
-            const appIconDestPathTest = fsCopySyncSpy.calls.argsFor(1)[1];
+            const appIconSrcPathTest = cpSyncSpy.calls.argsFor(1)[0];
+            const appIconDestPathTest = cpSyncSpy.calls.argsFor(1)[1];
             expect(appIconSrcPathTest).toBe(path.join(cordovaProject.root, 'res', 'electron', 'cordova.png'));
             expect(appIconDestPathTest).toBe(path.join(cordovaProject.root, 'www', 'img', 'icon.png'));
         });

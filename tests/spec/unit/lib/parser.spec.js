@@ -17,8 +17,8 @@
     under the License.
 */
 
-const path = require('path');
-const fs = require('fs-extra');
+const path = require('node:path');
+const fs = require('node:fs');
 const rewire = require('rewire');
 const { CordovaError, events } = require('cordova-common');
 
@@ -149,14 +149,14 @@ describe('Parser class', () => {
 
         describe('update_project method', () => {
             it('should copy munged config.xml to platform www dir.', () => {
-                const fsCopySyncSpy = jasmine.createSpy('copySync');
-                Parser.__set__('fs', { copySync: fsCopySyncSpy });
+                const cpSyncSpy = jasmine.createSpy('cpSync');
+                Parser.__set__('fs', { cpSync: cpSyncSpy });
 
                 parser.update_project().then(() => {
-                    const actualSrc = fsCopySyncSpy.calls.argsFor(0)[0];
-                    const actualDest = fsCopySyncSpy.calls.argsFor(0)[1];
+                    const actualSrc = cpSyncSpy.calls.argsFor(0)[0];
+                    const actualDest = cpSyncSpy.calls.argsFor(0)[1];
 
-                    expect(fsCopySyncSpy).toHaveBeenCalled();
+                    expect(cpSyncSpy).toHaveBeenCalled();
                     expect(actualSrc).toBe(path.join(mockProjectPath, 'config.xml'));
                     expect(actualDest).toBe(path.join(mockProjectPath, 'www', 'config.xml'));
                 });

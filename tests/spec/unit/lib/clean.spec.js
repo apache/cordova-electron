@@ -17,8 +17,8 @@
     under the License.
 */
 
-const path = require('path');
-const fs = require('fs-extra');
+const path = require('node:path');
+const fs = require('node:fs');
 
 const rootDir = path.resolve(__dirname, '../../../..');
 
@@ -45,30 +45,30 @@ describe('Clean', () => {
         it('should not find previous build dir and not attempt to remove.', () => {
             spyOn(check_reqs, 'run').and.returnValue(true);
             spyOn(fs, 'existsSync').and.returnValue(false);
-            spyOn(fs, 'removeSync');
+            spyOn(fs, 'rmSync');
 
             clean.run();
 
             expect(fs.existsSync).toHaveBeenCalled();
-            expect(fs.removeSync).not.toHaveBeenCalled();
+            expect(fs.rmSync).not.toHaveBeenCalled();
         });
 
         it('should find previous build dir and attempt to remove.', () => {
             spyOn(check_reqs, 'run').and.returnValue(true);
             spyOn(fs, 'existsSync').and.returnValue(true);
-            spyOn(fs, 'removeSync');
+            spyOn(fs, 'rmSync');
 
             clean.run();
 
             expect(fs.existsSync).toHaveBeenCalled();
-            expect(fs.removeSync).toHaveBeenCalled();
+            expect(fs.rmSync).toHaveBeenCalled();
         });
 
         it('should find previous build dir and fail to remove.', () => {
             spyOn(console, 'log');
             spyOn(check_reqs, 'run').and.returnValue(true);
             spyOn(fs, 'existsSync').and.returnValue(true);
-            spyOn(fs, 'removeSync').and.callFake(() => {
+            spyOn(fs, 'rmSync').and.callFake(() => {
                 throw new Error('Fake Error');
             });
 
