@@ -48,6 +48,7 @@ allowed-licenses:
   - PHP-3.01
   - PostgreSQL
   - PSF-2.0
+  - Python-2.0
   - SMLNJ
   - Unicode-DFS-2016
   - Unlicense
