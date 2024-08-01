@@ -176,5 +176,48 @@ ipcMain.handle('cdv-plugin-exec', async (_, serviceName, action, ...args) => {
     }
 });
 
+function cdvPluginExec$Reply (event, request, error, data, keepCallback) {
+    event.reply('cdv-plugin-exec$', {
+        id: request.id,
+        serviceName: request.serviceName,
+        action: request.action,
+        data,
+        error,
+        keepCallback
+    });
+}
+
+ipcMain.on('cdv-plugin-exec$', (event, request) => {
+    const { serviceName, action, args } = request;
+
+    if (!cordova || !cordova.services || !cordova.services[serviceName]) {
+        const error = new Error(`The requested plugin service "${serviceName}" does not exist have native support.`);
+        return cdvPluginExec$Reply(event, request, error);
+    }
+
+    const plugin = require(cordova.services[serviceName]);
+
+    if (!plugin[action]) {
+        const error = new Error(`The action "${action}" for the requested plugin service "${serviceName}" does not exist.`);
+        return cdvPluginExec$Reply(event, request, error);
+    }
+
+    function successCallback (data, keepCallback) {
+        cdvPluginExec$Reply(event, request, null, data, keepCallback);
+    }
+
+    function errorCallback (error) {
+        cdvPluginExec$Reply(event, request, error);
+    }
+
+    try {
+        plugin[action](successCallback, errorCallback, args);
+    } catch (e) {
+        console.error(e);
+        const error = new Error(`An error occured executing action "${action}" for the requested plugin service "${serviceName}".`);
+        cdvPluginExec$Reply(event, request, error);
+    }
+});
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
