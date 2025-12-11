@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "cordova-common": "^5.0.0",
-    "electron": "^29.0.0",
+    "electron": "^35.7.5",
     "electron-builder": "^24.12.0",
     "electron-devtools-installer": "^3.2.0",
     "execa": "^5.1.1"
