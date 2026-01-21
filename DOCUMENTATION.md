@@ -475,6 +475,8 @@ Each OS node contains properties that are used to identify what package to gener
 
 Any properties that are undefined will fallback to default values.
 
+You may include any additional per-platform properties as defined by `electron-builder` [here](https://www.electron.build/configuration/configuration#overridable-per-platform-options). These properties will be passed to `electron-builder`.
+
 #### Adding a `package`
 
 The `package` property is an array list of packages to be outputted. If the property is defined, the default packages are not used unless added. The order of the packages has no importance.
