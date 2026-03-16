@@ -1,13 +1,12 @@
 ---
 name: 💬 Support Question
 about: If you have a question, please check out our Slack or StackOverflow!
-
 ---
 
-<!------------^ Click "Preview" for a nicer view! -->
+<!-- Click "Preview" for a nicer view! -->
 
-Apache Cordova uses GitHub Issues as a feature request and bug tracker _only_.
-For usage and support questions, please check out the resources below. Thanks!
+Apache Cordova uses GitHub Issues _only_ for feature requests and tracking issues.
+For usage and support questions, please check out the resources below. Thank you!
 
 ---
 
@@ -18,7 +17,7 @@ You can get answers to your usage and support questions about **Apache Cordova**
 
 ---
 
-If you are using a tool that uses Cordova internally, like e.g. Ionic, check their support channels:
+If you are using a tool that uses Cordova internally, for instance, Ionic, check their support channels:
 
 * **Ionic Framework**
   * [Ionic Community Forum](https://forum.ionicframework.com/)
