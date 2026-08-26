@@ -41,10 +41,13 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-15]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -57,7 +60,7 @@ jobs:
       # It contains mixed content from the npm package "cordova-js" and "./cordova-js-src".
       # The report might not be resolvable because of the external package.
       # If the report is related to this repository, it would be detected when scanning "./cordova-js-src".
-      - uses: github/codeql-action/init@v4
+      - uses: github/codeql-action/init@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
         with:
           languages: javascript
           queries: security-and-quality
@@ -72,10 +75,9 @@ jobs:
         env:
           CI: true
 
-      - uses: github/codeql-action/analyze@v4
+      - uses: github/codeql-action/analyze@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
 
-      # v4.6.0
-      - uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         if: success()
         with:
           name: ${{ runner.os }} node.js ${{ matrix.node-version }}
