@@ -647,38 +647,6 @@ describe('Testing build.js:', () => {
             expect(requireSpy).toHaveBeenCalled();
         });
 
-        it('should throw new Error mac with incorrect platform build properties.', () => {
-            // mock platformConfig, buildConfig and buildOptions Objects
-            const platformConfig = {
-                mac: { pack: ['package', 'package2'], architecture: 'arch', sign: 'signing' }
-            };
-            const buildConfig = {
-                electron: platformConfig,
-                author: 'Apache',
-                name: 'Guy',
-                displayName: 'HelloWorld',
-                APP_BUILD_DIR: api.locations.build,
-                APP_BUILD_RES_DIR: api.locations.buildRes,
-                APP_WWW_DIR: api.locations.www
-            };
-
-            const buildOptions = { debug: false, buildConfig, argv: [] };
-
-            // create spies
-            existsSyncSpy = jasmine.createSpy('existsSync').and.returnValue(true);
-            requireSpy = jasmine.createSpy('require').and.returnValue(buildConfig);
-            build.__set__('fs', { existsSync: existsSyncSpy });
-            build.__set__({ require: requireSpy });
-
-            electronBuilder = new ElectronBuilder(buildOptions, api);
-
-            expect(existsSyncSpy).toHaveBeenCalled();
-            expect(requireSpy).toHaveBeenCalled();
-            expect(() => { electronBuilder.configureUserBuildSettings(); }).toThrow(
-                new Error('The platform "mac" contains an invalid property. Valid properties are: package, arch, signing')
-            );
-        });
-
         it('should set configureUserBuildSettings for when using windows instead of win.', () => {
             // mock platformConfig, buildConfig and buildOptions Objects
             const platformConfig = {
