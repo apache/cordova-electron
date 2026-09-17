@@ -41,7 +41,10 @@ const execProxy = require('cordova/exec/proxy');
 module.exports = function (success, fail, service, action, args) {
     if (window._cdvElectronIpc.hasService(service)) {
         // Electron based plugin support
-        window._cdvElectronIpc.exec(success, fail, service, action, args);
+        const f = action.endsWith('$')
+            ? window._cdvElectronIpc.exec$
+            : window._cdvElectronIpc.exec;
+        f(success, fail, service, action, args);
     } else {
         // Fall back for browser based plugin support...
         const proxy = execProxy.get(service, action);

@@ -28,8 +28,26 @@ contextBridge.exposeInMainWorld('_cdvElectronIpc', {
                 error
             );
     },
-
+    exec$: (success, error, serviceName, action, args) => {
+        const id = Date.now() + Math.random();
+        const listener = (event, response) => {
+            if (id !== response.id) {
+                return;
+            }
+            if (response.error) {
+                ipcRenderer.removeListener('cdv-plugin-exec$', listener);
+                error(response.error);
+                return;
+            }
+            if (!response.keepCallback) {
+                ipcRenderer.removeListener('cdv-plugin-exec$', listener);
+            }
+            success(response.data);
+        };
+        ipcRenderer.on('cdv-plugin-exec$', listener);
+        ipcRenderer.send('cdv-plugin-exec$', { id, serviceName, action, args });
+    },
     hasService: (serviceName) => cordova &&
-    cordova.services &&
-    cordova.services[serviceName]
+        cordova.services &&
+        cordova.services[serviceName]
 });
